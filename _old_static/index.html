@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="UX Designer Sênior em transição para Product Design - Transformo interações complexas em experiências digitais eficientes, escaláveis e centradas no usuário.">
+    <meta name="keywords"
+        content="UX Designer, Product Designer, UX Design, Product Design, Design Thinking, User Experience">
+    <meta name="author" content="Tiago Magno">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tiago Magno - UX Designer Sênior | Product Design">
+    <meta property="og:description"
+        content="Transformo interações complexas em experiências digitais eficientes e centradas no usuário">
+
+    <title>Tiago Magno - UX Designer Sênior | Product Design</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="#home" class="logo">Tiago<span>Magno</span></a>
+
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#about" class="nav-link" data-i18n="nav.about">Sobre</a></li>
+                    <li><a href="#process" class="nav-link" data-i18n="nav.process">Como Trabalho</a></li>
+                    <li><a href="#work" class="nav-link" data-i18n="nav.work">Atuação</a></li>
+                    <li><a href="#cases" class="nav-link" data-i18n="nav.cases">Cases</a></li>
+                    <li><a href="#insights" class="nav-link" data-i18n="nav.insights">Insights</a></li>
+                </ul>
+
+                <div class="header-actions">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="pt-BR" onclick="setLanguage('pt-BR')">PT</button>
+                        <span class="lang-divider">|</span>
+                        <button class="lang-btn" data-lang="en-US" onclick="setLanguage('en-US')">EN</button>
+                    </div>
+
+                    <a href="#contact" class="nav-contact-btn">
+                        <span data-i18n="nav.contact">CONTATO</span>
+                        <span class="arrow">→</span>
+                    </a>
+                </div>
+
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="container hero-container"
+            style="position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center;">
+            <div class="hero-content" style="margin-top: -80px;"> <!-- Mais alto para balancear -->
+                <!-- Main Title -->
+                <h1 class="hero-title" style="margin-bottom: 0.5rem;">
+                    <span style="display: block; color: white;">UX Designer Sênior</span>
+                </h1>
+
+                <!-- Subtitle (24px as requested) -->
+                <h2 class="hero-subtitle-role"
+                    style="font-size: 1.5rem; font-weight: 400; color: var(--color-primary); margin-bottom: 2rem; letter-spacing: 0.05em; text-transform: uppercase;">
+                    Em Transição Para Product Design
+                </h2>
+
+                <!-- Description Paragraph -->
+                <p class="hero-description" data-i18n="hero.subtitle"
+                    style="max-width: 650px; margin: 0 auto 2rem auto; font-size: 1.125rem; color: #888; line-height: 1.6;">
+                    Transformo interações complexas em experiências digitais eficientes, escaláveis e centradas no
+                    usuário, conectando estratégia, tecnologia e dados.
+                </p>
+
+                <!-- Buttons (Smaller) -->
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary btn-sm" data-i18n="hero.cta.primary">Vamos Conversar</a>
+                    <a href="#process" class="btn btn-outline btn-sm" data-i18n="hero.cta.secondary">Ver Como Eu
+                        Trabalho</a>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator Mouse -->
+            <div class="scroll-indicator"
+                style="position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);">
+                <div class="mouse-icon"
+                    style="width: 26px; height: 40px; border: 2px solid white; border-radius: 20px; position: relative;">
+                    <div class="wheel"
+                        style="width: 4px; height: 8px; background-color: var(--color-primary); border-radius: 2px; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); animation: scrollWheel 1.5s infinite;">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION - SPLIT LAYOUT -->
+    <section class="section" id="about">
+        <div class="container">
+            <!-- Part 1: Intro -->
+            <div class="split-layout">
+                <!-- Visual Column -->
+                <div class="split-visual">
+                    <h2 class="split-title" data-i18n="about.title">Fazemos parte da sua transformação digital</h2>
+
+                    <div class="about-badge-placeholder">
+                        <div class="badge-circle">
+                            <span>Digital Partner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Column -->
+                <div class="split-content">
+                    <div class="text-block">
+                        <p data-i18n="about.text1">
+                            Minha jornada profissional começou em 2004, atuando como UI Designer, e desde então venho
+                            evoluindo
+                            continuamente dentro do universo do design digital.
+                        </p>
+                        <p data-i18n="about.text2">
+                            Com o tempo, ampliei minha atuação para além do visual, aprofundando-me em UX Design,
+                            estratégia
+                            digital e pensamento de produto. Trabalhei como freelancer, liderei projetos em ambientes
+                            corporativos e
+                            atuei em empresas de grande porte.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part 2: Journey / Stats -->
+            <div class="split-layout" style="margin-top: var(--space-20);">
+                <!-- Visual Column -->
+                <div class="split-visual">
+                    <h2 class="split-title" data-i18n="stats.title">Uma jornada de conquistas</h2>
+                    <p class="split-subtitle">Há mais de 20 anos transformando produtos digitais e gerando resultados.
+                    </p>
+                </div>
+
+                <!-- Content Column (Stats Grid) -->
+                <div class="split-content">
+                    <div class="stats-grid-compact">
+                        <div class="stat-item-compact">
+                            <span class="stat-num">+20</span>
+                            <span class="stat-lbl" data-i18n="stats.1.label">Anos de Experiência</span>
+                        </div>
+                        <div class="stat-item-compact">
+                            <span class="stat-num">Milhões</span>
+                            <span class="stat-lbl" data-i18n="stats.2.label">de Usuários Impactados</span>
+                        </div>
+                        <div class="stat-item-compact">
+                            <span class="stat-num">Sistemas</span>
+                            <span class="stat-lbl" data-i18n="stats.3.label">Apps, E-commerce e Plataformas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MANIFESTO / CTA SECTION -->
+    <section class="section" style="padding: var(--space-20) 0; text-align: center;">
+        <div class="container">
+            <div class="manifesto-content" style="max-width: 800px; margin: 0 auto;">
+                <h3 class="manifesto-text"
+                    style="font-size: 2rem; line-height: 1.4; color: var(--text-secondary); font-weight: 400; margin-bottom: var(--space-8);">
+                    Acredito no <span style="color: var(--text-primary); font-weight: 700;">Design Estratégico</span>
+                    como fator viabilizador de produtos digitais eficientes — e na <span
+                        style="color: var(--text-primary); font-weight: 700;">Experiência do Usuário</span> como o
+                    diferencial entre produtos que apenas funcionam e aqueles que lideram o mercado.
+                </h3>
+
+                <a href="#contact" class="cta-link-minimal">
+                    COMECE UM PROJETO <span style="color: var(--color-primary); margin-left: 5px;">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES / PROCESS SECTION - INTERACTIVE TABS -->
+    <section class="section" id="process" style="padding-top: var(--space-20); padding-bottom: var(--space-20);">
+        <div class="container">
+            <!-- Header Part -->
+            <div class="services-header" style="margin-bottom: var(--space-12);">
+                <div style="border-top: 1px solid var(--color-primary); width: 40px; margin-bottom: var(--space-4);">
+                </div>
+                <span
+                    style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: var(--space-2);">Serviços</span>
+                <h2
+                    style="font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1.1; margin-bottom: var(--space-4);">
+                    Soluções sob medida</h2>
+                <p style="font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; line-height: 1.6;">
+                    Oferecemos um portfólio completo de serviços para a digitalização de produtos e canais de venda.
+                </p>
+            </div>
+
+            <!-- Tabs Layout -->
+            <div class="services-tabs-layout"
+                style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; align-items: start;">
+
+                <!-- Left: Tab Menu -->
+                <div class="services-menu" style="display: flex; flex-direction: column;">
+                    <button class="service-tab active" onclick="openService(event, 'strategy')"
+                        style="text-align: left; padding: 1.5rem 0; background: none; border: none; border-bottom: 1px solid #333; color: white; font-size: 1.25rem; font-weight: 700; cursor: pointer; transition: all 0.3s; position: relative;">
+                        Estratégia
+                    </button>
+                    <button class="service-tab" onclick="openService(event, 'ux')"
+                        style="text-align: left; padding: 1.5rem 0; background: none; border: none; border-bottom: 1px solid #333; color: #666; font-size: 1.25rem; font-weight: 700; cursor: pointer; transition: all 0.3s; position: relative;">
+                        Experiência & Conversão
+                    </button>
+                    <button class="service-tab" onclick="openService(event, 'product')"
+                        style="text-align: left; padding: 1.5rem 0; background: none; border: none; border-bottom: 1px solid #333; color: #666; font-size: 1.25rem; font-weight: 700; cursor: pointer; transition: all 0.3s; position: relative;">
+                        Product Design
+                    </button>
+                    <button class="service-tab" onclick="openService(event, 'tech')"
+                        style="text-align: left; padding: 1.5rem 0; background: none; border: none; border-bottom: 1px solid #333; color: #666; font-size: 1.25rem; font-weight: 700; cursor: pointer; transition: all 0.3s; position: relative;">
+                        Squads Ágeis
+                    </button>
+                </div>
+
+                <!-- Right: Content Panel -->
+                <div class="service-content-panel"
+                    style="background-color: var(--bg-secondary); padding: 3rem; border-radius: 4px; min-height: 350px;">
+
+                    <!-- Content 1: Strategy -->
+                    <div id="strategy" class="service-details" style="display: block; animation: fadeIn 0.5s;">
+                        <div class="tags-container"
+                            style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Discovery
+                                & Scoring</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Arquitetura
+                                de Solução</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Roadmap
+                                Estratégico</span>
+                        </div>
+                        <p style="font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary);">
+                            O framework de aceleração digital conecta o cenário atual do cliente com os objetivos a
+                            serem atingidos em curto, médio e longo prazo. Cobrimos de forma integrada todo o processo
+                            de levantamento de dores, modelagem de solução e roadmap.
+                        </p>
+                    </div>
+
+                    <!-- Content 2: UX -->
+                    <div id="ux" class="service-details" style="display: none; animation: fadeIn 0.5s;">
+                        <div class="tags-container"
+                            style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">CRO</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">UX
+                                Audit</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Testes
+                                A/B</span>
+                        </div>
+                        <p style="font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary);">
+                            Focamos na remoção de fricção e aumento de conversão. Através de auditorias de UX e testes
+                            contínuos, otimizamos cada etapa da jornada do usuário para garantir que o produto não
+                            apenas funcione, mas venda.
+                        </p>
+                    </div>
+
+                    <!-- Content 3: Product -->
+                    <div id="product" class="service-details" style="display: none; animation: fadeIn 0.5s;">
+                        <div class="tags-container"
+                            style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Design
+                                System</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Prototipagem</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Documentação</span>
+                        </div>
+                        <p style="font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary);">
+                            Construção de produtos digitais escaláveis e consistentes. Desenvolvemos Design Systems
+                            completos que aceleram o time-to-market e garantem qualidade visual e funcional em todas as
+                            telas.
+                        </p>
+                    </div>
+
+                    <!-- Content 4: Tech -->
+                    <div id="tech" class="service-details" style="display: none; animation: fadeIn 0.5s;">
+                        <div class="tags-container"
+                            style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Front-end</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">Integração</span>
+                            <span class="pill"
+                                style="border: 1px solid #333; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #999;">QA</span>
+                        </div>
+                        <p style="font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary);">
+                            Times ágeis prontos para implementar. Atuamos com as melhores práticas de desenvolvimento
+                            para garantir que a visão de produto seja executada com performance, segurança e qualidade
+                            de código.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openService(evt, serviceName) {
+                var i, x, tablinks;
+                x = document.getElementsByClassName("service-details");
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("service-tab");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].style.color = "#666";
+                    // Remove red line from all
+                    tablinks[i].style.boxShadow = "none";
+                }
+                document.getElementById(serviceName).style.display = "block";
+                evt.currentTarget.style.color = "white";
+                // Add red line indicator via box-shadow inset to avoid layout shift, or border-left
+                evt.currentTarget.style.boxShadow = "inset 4px 0 0 var(--color-primary)";
+                evt.currentTarget.style.paddingLeft = "20px"; // small shift
+            }
+
+            // Add initial active style
+            document.addEventListener("DOMContentLoaded", function () {
+                const activeTab = document.querySelector(".service-tab.active");
+                if (activeTab) {
+                    activeTab.style.boxShadow = "inset 4px 0 0 var(--color-primary)";
+                    activeTab.style.paddingLeft = "20px";
+                }
+            });
+        </script>
+
+        <style>
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .service-tab {
+                transition: all 0.3s ease;
+            }
+
+            .service-tab:hover {
+                color: white !important;
+            }
+
+            @media (max-width: 768px) {
+                .services-tabs-layout {
+                    grid-template-columns: 1fr !important;
+                    gap: 2rem !important;
+                }
+
+                .services-menu {
+                    flex-direction: row !important;
+                    overflow-x: auto;
+                    padding-bottom: 1rem;
+                    border-bottom: 1px solid #333;
+                }
+
+                .service-tab {
+                    padding: 0.5rem 1rem !important;
+                    font-size: 1rem !important;
+                    white-space: nowrap;
+                    border-bottom: none !important;
+                }
+
+                /* Adjust active indicator for mobile (bottom line instead of left) */
+                .service-tab.active {
+                    box-shadow: inset 0 -4px 0 var(--color-primary) !important;
+                    padding-left: 0 !important;
+                }
+            }
+        </style>
+    </section>
+
+    <!-- WORK / SERVICES SECTION -->
+    <section class="section dark-section" id="work" style="background-color: var(--color-black);">
+        <div class="container">
+            <h2 class="section-title" data-i18n="work.title">Atuação Profissional</h2>
+            <p class="section-subtitle" data-i18n="work.subtitle">
+                Onde posso ajudar
+            </p>
+
+            <p class="work-intro" data-i18n="work.intro"
+                style="text-align: center; max-width: 700px; margin: 0 auto var(--space-8); font-size: var(--text-lg); color: var(--color-gray-400);">
+                Atuo de forma flexível, de acordo com a necessidade do projeto ou da equipe:
+            </p>
+
+            <div class="work-list">
+                <div class="work-item">
+                    <div class="work-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" />
+                            <path d="M8 21h8M12 17v4" />
+                        </svg>
+                    </div>
+                    <p data-i18n="work.item1">UX Design para produtos digitais</p>
+                </div>
+                <div class="work-item">
+                    <div class="work-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <p data-i18n="work.item2">Product Design (Discovery, validação e evolução)</p>
+                </div>
+                <div class="work-item">
+                    <div class="work-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                    </div>
+                    <p data-i18n="work.item3">Reestruturação de sistemas e plataformas</p>
+                </div>
+                <div class="work-item">
+                    <div class="work-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                    </div>
+                    <p data-i18n="work.item4">UX para e-commerce e produtos orientados à conversão</p>
+                </div>
+                <div class="work-item">
+                    <div class="work-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <p data-i18n="work.item5">Apoio estratégico a times internos de produto e tecnologia</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI SECTION -->
+    <section class="section" id="ai">
+        <div class="container">
+            <h2 class="section-title" data-i18n="ai.title">Produto, Tecnologia e IA</h2>
+            <p class="section-subtitle" data-i18n="ai.subtitle">
+                IA como acelerador de processo, não como atalho
+            </p>
+
+            <div class="ai-content" style="max-width: 900px; margin: 0 auto;">
+                <p class="ai-intro" data-i18n="ai.intro"
+                    style="font-size: var(--text-lg); color: var(--color-gray-700); text-align: center; margin-bottom: var(--space-6);">
+                    Atualmente, integro inteligência artificial ao meu fluxo de trabalho como uma ferramenta estratégica
+                    para acelerar análises, explorar soluções e validar hipóteses com mais eficiência.
+                </p>
+
+                <div class="ai-uses">
+                    <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-4); text-align: center;"
+                        data-i18n="ai.uses.title">Utilizo IA para:</h3>
+                    <ul class="ai-uses-list">
+                        <li data-i18n="ai.uses.item1">Apoiar processos de discovery e análise</li>
+                        <li data-i18n="ai.uses.item2">Organizar e sintetizar informações complexas</li>
+                        <li data-i18n="ai.uses.item3">Explorar cenários e alternativas de solução</li>
+                        <li data-i18n="ai.uses.item4">Acelerar prototipação e testes conceituais</li>
+                    </ul>
+                </div>
+
+                <p class="ai-footer" data-i18n="ai.footer"
+                    style="font-size: var(--text-base); color: var(--color-gray-600); text-align: center; margin-top: var(--space-6); font-style: italic;">
+                    Ferramentas como ChatGPT, Gemini, Cursor e Antigravity fazem parte do meu dia a dia, sempre como
+                    meio, nunca como fim. O pensamento crítico, a estratégia e o contexto continuam sendo o centro das
+                    decisões.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CASES SECTION -->
+    <!-- CASES SECTION - VERTICAL GALLERY STYLE -->
+    <section class="section dark-section" id="cases" style="background-color: var(--color-black); overflow: hidden;">
+        <div class="container">
+            <!-- New Header Layout -->
+            <div class="cases-header-flex"
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-12); padding-top: var(--space-10);">
+                <div class="cases-title-wrapper">
+                    <span
+                        style="color: var(--color-primary); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: var(--space-4);">Cases</span>
+                    <h2 class="section-title" style="text-align: left; margin: 0; font-size: 3rem; line-height: 1.1;">
+                        Impacto real em projetos</h2>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <div class="cases-nav" style="display: flex; gap: 1rem;">
+                    <button id="btnPrev"
+                        style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid #333; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                        <span style="font-size: 1.5rem; margin-top: -4px;">←</span>
+                    </button>
+                    <button id="btnNext"
+                        style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid #333; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                        <span style="font-size: 1.5rem; margin-top: -4px;">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Carousel Container -->
+            <div class="cases-carousel" id="casesTrack" style="margin-left: -5%; width: 110%; padding-left: 5%;">
+                <!-- Case 1 -->
+                <div class="case-card" style="min-width: 350px; max-width: 350px;">
+                    <div class="case-image-placeholder" style="aspect-ratio: 3/4; background-color: #1a1a1a;">
+                        <span style="opacity: 0.3;">Poster Vertical</span>
+                    </div>
+                    <div class="case-info" style="margin-top: 1.5rem; padding: 0;">
+                        <h3 class="case-client" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Go Box</h3>
+                        <p class="case-service" style="font-size: 1rem; color: #888;">Redesign da experiência de locação
+                            focada em conversão mobile.</p>
+                    </div>
+                </div>
+
+                <!-- Case 2 -->
+                <div class="case-card" style="min-width: 350px; max-width: 350px;">
+                    <div class="case-image-placeholder" style="aspect-ratio: 3/4; background-color: #1a1a1a;">
+                        <span style="opacity: 0.3;">Poster Vertical</span>
+                    </div>
+                    <div class="case-info" style="margin-top: 1.5rem; padding: 0;">
+                        <h3 class="case-client" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Hidroete</h3>
+                        <p class="case-service" style="font-size: 1rem; color: #888;">App de campo que reduziu o tempo
+                            operacional em 40%.</p>
+                    </div>
+                </div>
+
+                <!-- Case 3 -->
+                <div class="case-card" style="min-width: 350px; max-width: 350px;">
+                    <div class="case-image-placeholder" style="aspect-ratio: 3/4; background-color: #1a1a1a;">
+                        <span style="opacity: 0.3;">Poster Vertical</span>
+                    </div>
+                    <div class="case-info" style="margin-top: 1.5rem; padding: 0;">
+                        <h3 class="case-client" style="font-size: 1.5rem; margin-bottom: 0.5rem;">SaaS Manutenção</h3>
+                        <p class="case-service" style="font-size: 1rem; color: #888;">Plataforma de gestão de ativos
+                            industriais escalável.</p>
+                    </div>
+                </div>
+
+                <!-- Case 4 -->
+                <div class="case-card" style="min-width: 350px; max-width: 350px;">
+                    <div class="case-image-placeholder" style="aspect-ratio: 3/4; background-color: #1a1a1a;">
+                        <span style="opacity: 0.3;">Poster Vertical</span>
+                    </div>
+                    <div class="case-info" style="margin-top: 1.5rem; padding: 0;">
+                        <h3 class="case-client" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Plataforma EAD</h3>
+                        <p class="case-service" style="font-size: 1rem; color: #888;">Sistema de aprendizado híbrido
+                            para retenção de alunos.</p>
+                    </div>
+                </div>
+
+                <!-- Case 5 -->
+                <div class="case-card" style="min-width: 350px; max-width: 350px;">
+                    <div class="case-image-placeholder" style="aspect-ratio: 3/4; background-color: #1a1a1a;">
+                        <span style="opacity: 0.3;">Poster Vertical</span>
+                    </div>
+                    <div class="case-info" style="margin-top: 1.5rem; padding: 0;">
+                        <h3 class="case-client" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Produtos Digitais</h3>
+                        <p class="case-service" style="font-size: 1rem; color: #888;">Consultoria para Go-to-Market de
+                            novos produtos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Carousel Navigation Logic
+            (function () {
+                const track = document.getElementById('casesTrack');
+                const btnPrev = document.getElementById('btnPrev');
+                const btnNext = document.getElementById('btnNext');
+                const scrollAmount = 400; // Card width + gap
+
+                if (btnPrev && btnNext && track) {
+                    btnNext.addEventListener('click', () => {
+                        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    });
+
+                    btnPrev.addEventListener('click', () => {
+                        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    });
+
+                    // Add hover effect via JS for simplicity or CSS class
+                    [btnPrev, btnNext].forEach(btn => {
+                        btn.addEventListener('mouseenter', () => {
+                            btn.style.borderColor = 'var(--color-primary)';
+                            btn.style.color = 'var(--color-primary)';
+                        });
+                        btn.addEventListener('mouseleave', () => {
+                            btn.style.borderColor = '#333';
+                            btn.style.color = 'white';
+                        });
+                    });
+                }
+            })();
+        </script>
+    </section>
+
+    <!-- INSIGHTS SECTION -->
+    <section class="section" id="insights">
+        <div class="container">
+            <h2 class="section-title" data-i18n="insights.title">Insights</h2>
+            <p class="section-subtitle" data-i18n="insights.subtitle">
+                Reflexões, aprendizados e estudos sobre UX, Product Design, tecnologia e experiência do usuário, sempre
+                conectando teoria e prática.
+            </p>
+
+            <div class="insights-placeholder" style="text-align: center; padding: var(--space-12) 0;">
+                <p style="font-size: var(--text-lg); color: var(--color-gray-500);">
+                    Em breve, artigos e reflexões sobre design, produto e tecnologia.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="section" id="contact"
+        style="background: linear-gradient(135deg, var(--color-gray-900) 0%, var(--color-gray-800) 100%);">
+        <div class="container">
+            <h2 class="section-title" style="color: var(--color-white);" data-i18n="contact.title">Vamos Construir Algo
+                Melhor Juntos?</h2>
+            <p class="section-subtitle" style="color: var(--color-gray-300);" data-i18n="contact.subtitle">
+                Se você tem um produto digital, uma ideia ou um desafio complexo, vamos conversar sobre como UX, produto
+                e estratégia podem trabalhar juntos para gerar mais valor.
+            </p>
+
+            <div class="grid grid-2 mt-8" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                <div style="color: var(--color-white);">
+                    <h3 style="color: var(--color-white); margin-bottom: 1.5rem;" data-i18n="contact.heading">Entre em
+                        Contato</h3>
+                    <p style="color: var(--color-gray-300); margin-bottom: 2rem;" data-i18n="contact.text">
+                        Estou sempre interessado em ouvir sobre novos projetos e oportunidades. Se você tem uma pergunta
+                        ou apenas quer dizer oi, sinta-se à vontade para entrar em contato!
+                    </p>
+
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Behance">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988h-6.466v-14.967h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zm-3.466-8.988h3.584c2.508 0 2.906-3-.312-3h-3.272v3zm3.391 3h-3.391v3.016h3.341c3.055 0 2.868-3.016.05-3.016z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Email">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <form id="contactForm">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label for="name" data-i18n="contact.form.name">Nome</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label for="email" data-i18n="contact.form.email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label for="message" data-i18n="contact.form.message">Mensagem</label>
+                        <textarea id="message" name="message" rows="4" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;"
+                        data-i18n="contact.form.submit">Vamos Conversar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA SECTION -->
+    <section class="section" id="contact"
+        style="padding: var(--space-24) 0; text-align: center; background-color: var(--color-black);">
+        <div class="container">
+            <h2
+                style="font-size: 3.5rem; font-weight: 700; color: white; line-height: 1.1; margin-bottom: var(--space-6); max-width: 800px; margin-left: auto; margin-right: auto;">
+                Leve sua operação ao próximo nível
+            </h2>
+            <p
+                style="font-size: 1.25rem; color: #888; margin-bottom: var(--space-12); max-width: 600px; margin-left: auto; margin-right: auto;">
+                Descubra como nossas soluções podem impulsionar o crescimento de seus canais digitais.
+            </p>
+
+            <a href="mailto:tiago@example.com" class="cta-link-large"
+                style="font-size: 1rem; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;">
+                CONTATO <span style="color: var(--color-primary);">→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- MINIMALIST FOOTER -->
+    <footer class="footer-minimal"
+        style="background-color: var(--color-black); border-top: 1px solid #222; padding: var(--space-12) 0 var(--space-8);">
+        <div class="container">
+            <!-- Top Row: Logo & Back to Top -->
+            <div class="footer-top"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-12);">
+                <div class="footer-logo">
+                    <a href="#home"
+                        style="font-size: 1.5rem; font-weight: 700; color: white; text-decoration: none; letter-spacing: -0.02em;">
+                        Tiago<span style="color: #666;">Magno</span>
+                        <span
+                            style="display: block; font-size: 0.75rem; color: #666; font-weight: 400; letter-spacing: 0.05em; margin-top: 5px;">Digital
+                            Product Designer</span>
+                    </a>
+                </div>
+
+                <a href="#home" class="back-to-top"
+                    style="font-size: 0.75rem; font-weight: 700; color: white; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    IR PARA O TOPO <span>↑</span>
+                </a>
+            </div>
+
+            <!-- Divider -->
+            <div style="height: 1px; background-color: #222; width: 100%; margin-bottom: var(--space-8);"></div>
+
+            <!-- Bottom Row: Copyright & Links -->
+            <div class="footer-bottom"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+                <div class="copyright" style="font-size: 0.75rem; color: #666;">
+                    © Tiago Magno. 2026
+                </div>
+
+                <div class="footer-links-row" style="display: flex; align-items: center; gap: 2rem;">
+                    <a href="#"
+                        style="font-size: 0.75rem; color: #999; text-decoration: none; transition: color 0.2s;">Insights</a>
+                    <a href="#"
+                        style="font-size: 0.75rem; color: #999; text-decoration: none; transition: color 0.2s;">Carreiras</a>
+                    <a href="#"
+                        style="font-size: 0.75rem; color: #999; text-decoration: none; transition: color 0.2s;">Política
+                        de Privacidade</a>
+                    <a href="#"
+                        style="font-size: 0.75rem; color: #999; text-decoration: none; transition: color 0.2s;">Código
+                        de ética</a>
+
+                    <!-- LinkedIn Icon -->
+                    <a href="#" style="color: white; font-size: 1.25rem; margin-left: 1rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .cta-link-large:hover {
+                color: var(--color-primary) !important;
+            }
+
+            .back-to-top:hover {
+                opacity: 0.7;
+            }
+
+            .footer-links-row a:hover {
+                color: white !important;
+            }
+
+            @media (max-width: 768px) {
+
+                .footer-top,
+                .footer-bottom {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 1.5rem;
+                }
+
+                .footer-links-row {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 1rem;
+                }
+
+                .back-to-top {
+                    align-self: flex-start;
+                }
+            }
+        </style>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/translations.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- SCROLL PROGRESS SCRIPT (ALREADY ADDED) -->
+    <script>
+        window.onscroll = function () {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            // Check if element exists before setting width
+            const el = document.getElementById("scrollProgress");
+            if (el) el.style.width = scrolled + "%";
+        };
+    </script>
+</body>
+
+</html>
