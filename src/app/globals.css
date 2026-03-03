@@ -301,36 +301,8 @@ p:last-child {
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 80px;
-  background: var(--bg-primary);
   position: relative;
   overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: floatBg 20s ease-in-out infinite;
-}
-
-@keyframes floatBg {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  50% {
-    transform: translate(-50px, -50px) scale(1.1);
-  }
 }
 
 .hero-container {
@@ -339,10 +311,15 @@ p:last-child {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  z-index: 2;
 }
 
 .hero-content {
   margin-top: -80px;
+  text-align: left;
+  max-width: 800px;
   animation: fadeInUp 1s ease-out;
 }
 
@@ -378,7 +355,7 @@ p:last-child {
 
 .hero-description {
   max-width: 650px;
-  margin: 0 auto 2rem auto;
+  margin: 0 0 2rem 0;
   font-size: var(--text-lg);
   color: #888;
   line-height: 1.6;
@@ -388,6 +365,7 @@ p:last-child {
   display: flex;
   gap: var(--space-3);
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .scroll-indicator {

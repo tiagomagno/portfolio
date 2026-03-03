@@ -29,11 +29,18 @@ export async function POST(req: NextRequest) {
         const url = new URL('https://api.trello.com/1/cards');
         url.searchParams.set('key', apiKey);
         url.searchParams.set('token', token);
-        url.searchParams.set('idList', listId);
-        url.searchParams.set('name', cardName);
-        url.searchParams.set('desc', cardDesc);
 
-        const response = await fetch(url.toString(), { method: 'POST' });
+        const response = await fetch(url.toString(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idList: listId,
+                name: cardName,
+                desc: cardDesc
+            })
+        });
 
         if (!response.ok) {
             const error = await response.text();

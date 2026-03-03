@@ -14,27 +14,24 @@ export default function Hero() {
     };
 
     return (
-        <section
-            className="hero"
-            id="home"
-            style={{
-                backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%), url(/eu.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
-            }}
-        >
-            <div className="container hero-container" style={{ alignItems: 'flex-start' }}>
-                <div className="hero-content" style={{ textAlign: 'left', maxWidth: '800px' }}>
-                    <h1 className="hero-title">
+        <section className="hero" id="home">
+            <div className="container hero-container" style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '2rem'
+            }}>
+                {/* Coluna 1: Texto à Esquerda */}
+                <div className="hero-content" style={{ flex: '1 1 50%', maxWidth: '600px', marginTop: 0, textAlign: 'left' }}>
+                    <h1 className="hero-title" style={{ fontSize: '4rem' }}>
                         <span>{t('hero.title')}</span>
                     </h1>
 
-                    <h2 className="hero-subtitle-role">
+                    <h2 className="hero-subtitle-role" style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>
                         {t('hero.subtitle.role')}
                     </h2>
 
-                    <p className="hero-description" style={{ margin: '0 0 2rem 0' }}>
+                    <p className="hero-description" style={{ margin: '0 0 2rem 0', fontSize: '1rem' }}>
                         {t('hero.subtitle')}
                     </p>
 
@@ -56,7 +53,26 @@ export default function Hero() {
                     </div>
                 </div>
 
-                <div className="scroll-indicator">
+                {/* Coluna 2: Imagem à Direita */}
+                <div className="hero-image-wrapper" style={{
+                    flex: '1 1 50%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <img
+                        src="/eu.jpg"
+                        alt="Tiago Magno"
+                        style={{
+                            maxWidth: '100%',
+                            height: 'auto',
+                            maxHeight: '80vh',
+                            objectFit: 'contain',
+                        }}
+                    />
+                </div>
+
+                <div className="scroll-indicator" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)' }}>
                     <div className="mouse-icon">
                         <div className="wheel"></div>
                     </div>
