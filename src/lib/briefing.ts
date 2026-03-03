@@ -56,13 +56,13 @@ const contactSchema = z.object({
 export const briefingSchema = z
     .object({
         businessSegment: z.enum(BUSINESS_SEGMENTS, {
-            errorMap: () => ({ message: 'Selecione o segmento da sua empresa' }),
+            message: 'Selecione o segmento da sua empresa',
         }),
         siteObjective: z.enum(SITE_OBJECTIVES, {
-            errorMap: () => ({ message: 'Selecione o objetivo do projeto' }),
+            message: 'Selecione o objetivo do projeto',
         }),
         targetAudience: z.enum(TARGET_AUDIENCE, {
-            errorMap: () => ({ message: 'Selecione o público-alvo' }),
+            message: 'Selecione o público-alvo',
         }),
         idealCustomer: z.string().min(5, 'Descreva seu cliente ideal (mín. 5 caracteres)'),
         differential: z.string().min(10, 'Descreva o diferencial (mín. 10 caracteres)'),
