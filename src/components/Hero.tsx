@@ -17,12 +17,20 @@ export default function Hero() {
         <section className="hero" id="home">
             <div className="container hero-container" style={{
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'stretch',
                 justifyContent: 'space-between',
                 gap: '2rem'
             }}>
                 {/* Coluna 1: Texto à Esquerda */}
-                <div className="hero-content" style={{ flex: '1 1 50%', maxWidth: '600px', marginTop: 0, textAlign: 'left' }}>
+                <div className="hero-content" style={{
+                    flex: '1 1 50%',
+                    maxWidth: '600px',
+                    textAlign: 'left',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    paddingBottom: '80px' // Compensar pro texto ficar no meio optico considerando o scroll indicator
+                }}>
                     <h1 className="hero-title" style={{ fontSize: '4rem' }}>
                         <span>{t('hero.title')}</span>
                     </h1>
@@ -57,17 +65,17 @@ export default function Hero() {
                 <div className="hero-image-wrapper" style={{
                     flex: '1 1 50%',
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-end' // Encosta a imagem na base
                 }}>
                     <img
                         src="/eu.jpg"
                         alt="Tiago Magno"
                         style={{
                             maxWidth: '100%',
-                            height: 'auto',
-                            maxHeight: '80vh',
+                            height: 'calc(100vh - 80px)', // Ocupa exatamente do navbar até o fundo
                             objectFit: 'contain',
+                            objectPosition: 'bottom right'
                         }}
                     />
                 </div>
