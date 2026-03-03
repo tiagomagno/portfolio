@@ -1,8 +1,9 @@
 'use client';
 
+import React from 'react';
 import { useLang } from '@/context/LangContext';
 
-const workIcons: Record<string, JSX.Element> = {
+const workIcons: Record<string, React.ReactNode> = {
     monitor: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="2" y="3" width="20" height="14" rx="2" />
