@@ -74,14 +74,13 @@ export default function Header() {
                             </button>
                         </div>
 
-                        <a
-                            href="#contact"
+                        <Link
+                            href="/briefing"
                             className="nav-contact-btn"
-                            onClick={(e) => { e.preventDefault(); scrollTo('#contact'); }}
                         >
-                            <span>{t('nav.contact')}</span>
+                            <span>Briefing</span>
                             <span className="arrow">→</span>
-                        </a>
+                        </Link>
                     </div>
 
                     <button

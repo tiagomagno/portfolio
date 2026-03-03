@@ -14,9 +14,18 @@ export default function Hero() {
     };
 
     return (
-        <section className="hero" id="home">
-            <div className="container hero-container">
-                <div className="hero-content">
+        <section
+            className="hero"
+            id="home"
+            style={{
+                backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%), url(/eu.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            }}
+        >
+            <div className="container hero-container" style={{ alignItems: 'flex-start' }}>
+                <div className="hero-content" style={{ textAlign: 'left', maxWidth: '800px' }}>
                     <h1 className="hero-title">
                         <span>{t('hero.title')}</span>
                     </h1>
@@ -25,7 +34,7 @@ export default function Hero() {
                         {t('hero.subtitle.role')}
                     </h2>
 
-                    <p className="hero-description">
+                    <p className="hero-description" style={{ margin: '0 0 2rem 0' }}>
                         {t('hero.subtitle')}
                     </p>
 
