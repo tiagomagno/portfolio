@@ -15,23 +15,26 @@ export default function Hero() {
 
     return (
         <section className="hero" id="home">
-            <div className="container hero-container" style={{
+            <div className="hero-container" style={{
                 flexDirection: 'row',
                 alignItems: 'stretch',
                 justifyContent: 'space-between',
+                width: '100%',
+                paddingLeft: 'max(var(--space-4), calc((100vw - var(--container-max)) / 2))', // Alinha com o resto do site
+                paddingRight: '0', // Deixa a imagem colar na direita sem margem
                 gap: '2rem'
             }}>
                 {/* Coluna 1: Texto à Esquerda */}
                 <div className="hero-content" style={{
-                    flex: '1 1 50%',
-                    maxWidth: '600px',
+                    flex: '1 1 45%',
+                    maxWidth: '800px', // Texto tem mais espaço se precisar
                     textAlign: 'left',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    paddingBottom: '80px' // Compensar pro texto ficar no meio optico considerando o scroll indicator
+                    paddingBottom: '0' // Removendo paddingBottom para o texto alinhar perfeitamente com a altura optica da imagem
                 }}>
-                    <h1 className="hero-title" style={{ fontSize: '4rem' }}>
+                    <h1 className="hero-title" style={{ fontSize: '4.5rem' }}>
                         <span>{t('hero.title')}</span>
                     </h1>
 
@@ -39,7 +42,7 @@ export default function Hero() {
                         {t('hero.subtitle.role')}
                     </h2>
 
-                    <p className="hero-description" style={{ margin: '0 0 2rem 0', fontSize: '1rem' }}>
+                    <p className="hero-description" style={{ margin: '0 0 2rem 0', fontSize: '1.1rem', maxWidth: '100%' }}>
                         {t('hero.subtitle')}
                     </p>
 
