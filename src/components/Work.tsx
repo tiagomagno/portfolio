@@ -1,65 +1,173 @@
 'use client';
 
-import React from 'react';
-import { useLang } from '@/context/LangContext';
+import FadeIn from './ui/FadeIn';
 
-const workIcons: Record<string, React.ReactNode> = {
-    monitor: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <path d="M8 21h8M12 17v4" />
-        </svg>
-    ),
-    layers: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-        </svg>
-    ),
-    code: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="16 18 22 12 16 6" />
-            <polyline points="8 6 2 12 8 18" />
-        </svg>
-    ),
-    cart: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-        </svg>
-    ),
-    users: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-    ),
-};
+const servicesList = [
+  {
+    category: 'Produtos Digitais',
+    icon: 'web',
+    title: 'Landing Pages',
+    label: 'Sites institucionais e páginas estruturadas para alta conversão.',
+  },
+  {
+    category: 'Produtos Digitais',
+    icon: 'storefront',
+    title: 'E-commerces',
+    label: 'Lojas virtuais, portais e blogs corporativos integrados.',
+  },
+  {
+    category: 'Produtos Digitais',
+    icon: 'dashboard',
+    title: 'Sistemas Web',
+    label: 'Dashboards e painéis administrativos criados sob medida.',
+  },
 
-const workItemKeys = ['work.item1', 'work.item2', 'work.item3', 'work.item4', 'work.item5'];
-const workIconKeys = ['monitor', 'layers', 'code', 'cart', 'users'];
+  {
+    category: 'Produtos Digitais',
+    icon: 'update',
+    title: 'Manutenção',
+    label: 'Evolução de sistemas contínua e desenvolvimento de novas features.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'search_insights',
+    title: 'UX Research',
+    label: 'Diagnóstico e entendimento profundo das necessidades do usuário.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'account_tree',
+    title: 'Arquitetura da Informação',
+    label: 'Criação de wireframes para o alinhamento de fluxos ideais.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'design_services',
+    title: 'Design de Interfaces (UI)',
+    label: 'Telas de altíssima fidelidade prontas para a equipe de programação.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'touch_app',
+    title: 'Protótipos Navegáveis',
+    label: 'Validação ágil e testes de usabilidade práticos de uso.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'code_blocks',
+    title: 'Design Systems',
+    label: 'Criação, governança escalável e documentação técnica.',
+  },
+  {
+    category: 'Consultoria UX/UI',
+    icon: 'monitoring',
+    title: 'Produto & Evolução',
+    label: 'Acompanho a evolução do produto com base em dados, feedback e uso real, refinando continuamente a experiência.',
+  }
+];
 
 export default function Work() {
-    const { t } = useLang();
+  return (
+    <section id="work" style={{ background: 'var(--color-bg-low)', padding: '120px 0' }}>
+      <div className="work-container" style={{ margin: '0 auto' }}>
+        <style>{`
+          .work-container {
+            width: 85%;
+            padding: 0;
+          }
+          .service-card:hover {
+            border-color: var(--color-primary) !important;
+            transform: translateY(-4px);
+          }
+          @media (max-width: 768px) {
+            .work-container {
+              width: 100%;
+              padding: 0 16px;
+            }
+          }
+        `}</style>
+        <FadeIn delay={0.1} direction="up">
+          <div style={{ textAlign: 'center', marginBottom: '72px' }}>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: '16px',
+              }}
+            >
+              Como posso ajudar
+            </span>
+            <h2
+              style={{
+                fontSize: 'clamp(36px, 4vw, 52px)',
+                fontWeight: 900,
+                color: 'var(--color-text)',
+                lineHeight: 1.1,
+                margin: '0',
+              }}
+            >
+              Atuação <span style={{ color: 'var(--color-primary)' }}>Profissional</span>
+            </h2>
+          </div>
+        </FadeIn>
 
-    return (
-        <section className="section dark-section" id="work">
-            <div className="container">
-                <h2 className="section-title">{t('work.title')}</h2>
-                <p className="section-subtitle">{t('work.subtitle')}</p>
-                <p className="work-intro">{t('work.intro')}</p>
-
-                <div className="work-list">
-                    {workItemKeys.map((key, i) => (
-                        <div key={key} className="work-item">
-                            <div className="work-icon">{workIcons[workIconKeys[i]]}</div>
-                            <p>{t(key)}</p>
-                        </div>
-                    ))}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          {servicesList.map((item, i) => (
+            <FadeIn key={item.title} delay={0.2 + i * 0.05} direction="up" style={{ height: '100%' }}>
+              <div
+                className="service-card"
+                style={{
+                  background: 'var(--color-bg-card)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '20px',
+                  padding: '32px',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: 'var(--color-primary)', fontSize: '32px' }}
+                  >
+                    {item.icon}
+                  </span>
+                  <span style={{ 
+                    fontSize: '10px', 
+                    fontWeight: 700, 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '0.05em', 
+                    background: 'var(--color-bg-high)', 
+                    padding: '4px 10px', 
+                    borderRadius: '999px',
+                    color: 'var(--color-text-dim)'
+                  }}>
+                    {item.category}
+                  </span>
                 </div>
-            </div>
-        </section>
-    );
+                <h4 style={{ color: 'var(--color-text)', fontSize: '18px', fontWeight: 700, margin: '0 0 12px' }}>
+                  {item.title}
+                </h4>
+                <p style={{ color: 'var(--color-text-dim)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
+                  {item.label}
+                </p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

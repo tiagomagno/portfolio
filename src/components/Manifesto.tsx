@@ -1,43 +1,51 @@
 'use client';
 
-import { useLang } from '@/context/LangContext';
+import FadeIn from './ui/FadeIn';
 
 export default function Manifesto() {
-    const { t } = useLang();
+  return (
+    <section style={{ background: '#0e0e0e', padding: '96px 0' }}>
+      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+        <FadeIn delay={0.1}>
+        <p
+          style={{
+            fontSize: 'clamp(22px, 3vw, 36px)',
+            fontWeight: 300,
+            color: '#a8a29e',
+            lineHeight: 1.6,
+            margin: 0,
+          }}
+        >
+          Acredito no{' '}
+          <strong style={{ color: '#fff', fontWeight: 700 }}>Design Estratégico</strong> como fator
+          viabilizador de negócios e na{' '}
+          <strong style={{ color: '#fff', fontWeight: 700 }}>Experiência do Usuário</strong> como o
+          maior ativo de uma marca moderna.
+        </p>
+        </FadeIn>
 
-    const scrollTo = (href: string) => {
-        const target = document.querySelector(href);
-        if (target) {
-            const offset = (target as HTMLElement).offsetTop - 80;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-        }
-    };
-
-    const text = t('manifesto.text');
-    const parts = text.split(/(Design Estratégico|Experiência do Usuário|Strategic Design|User Experience)/g);
-
-    return (
-        <section className="section manifesto-section">
-            <div className="container">
-                <div className="manifesto-content">
-                    <h3 className="manifesto-text">
-                        {parts.map((part, i) =>
-                            ['Design Estratégico', 'Experiência do Usuário', 'Strategic Design', 'User Experience'].includes(part) ? (
-                                <span key={i} className="manifesto-highlight">{part}</span>
-                            ) : (
-                                <span key={i}>{part}</span>
-                            )
-                        )}
-                    </h3>
-                    <a
-                        href="#contact"
-                        className="cta-link-minimal"
-                        onClick={(e) => { e.preventDefault(); scrollTo('#contact'); }}
-                    >
-                        {t('manifesto.cta')} <span className="cta-arrow">→</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-    );
+        <FadeIn delay={0.2}>
+        <div style={{ marginTop: '40px' }}>
+          <a
+            href="#services"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#ff5625',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+            }}
+          >
+            Conheça minha metodologia
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>south</span>
+          </a>
+        </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
 }

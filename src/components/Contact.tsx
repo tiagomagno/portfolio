@@ -1,131 +1,230 @@
 'use client';
 
-import { useState } from 'react';
-import { useLang } from '@/context/LangContext';
+import FadeIn from './ui/FadeIn';
 
 export default function Contact() {
-    const { t } = useLang();
-    const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-    const [form, setForm] = useState({ name: '', email: '', message: '' });
+  return (
+    <section
+      id="contact"
+      style={{ background: '#131313', padding: '96px 0', position: 'relative', overflow: 'hidden' }}
+    >
+      {/* Glow */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '400px',
+          height: '400px',
+          background: '#ff5625',
+          opacity: 0.05,
+          filter: 'blur(100px)',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+        }}
+      />
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setStatus('sending');
-
-        try {
-            const res = await fetch('/api/contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
-            });
-
-            if (res.ok) {
-                setStatus('success');
-                setForm({ name: '', email: '', message: '' });
-                setTimeout(() => setStatus('idle'), 4000);
-            } else {
-                setStatus('error');
-                setTimeout(() => setStatus('idle'), 3000);
-            }
-        } catch {
-            setStatus('error');
-            setTimeout(() => setStatus('idle'), 3000);
-        }
-    };
-
-    const getButtonText = () => {
-        if (status === 'sending') return t('contact.form.sending');
-        if (status === 'success') return t('contact.form.success');
-        if (status === 'error') return t('contact.form.error');
-        return t('contact.form.submit');
-    };
-
-    const getButtonClass = () => {
-        if (status === 'success') return 'btn btn-primary btn-full btn-success';
-        if (status === 'error') return 'btn btn-primary btn-full btn-error';
-        return 'btn btn-primary btn-full';
-    };
-
-    return (
-        <section className="section contact-section" id="contact">
-            <div className="container">
-                <h2 className="section-title contact-title">{t('contact.title')}</h2>
-                <p className="section-subtitle contact-subtitle">{t('contact.subtitle')}</p>
-
-                <div className="contact-grid">
-                    <div className="contact-info">
-                        <h3 className="contact-heading">{t('contact.heading')}</h3>
-                        <p className="contact-text">{t('contact.text')}</p>
-
-                        <div className="social-links">
-                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                                </svg>
-                            </a>
-                            <a href="https://behance.net" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Behance">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988h-6.466v-14.967h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zm-3.466-8.988h3.584c2.508 0 2.906-3-.312-3h-3.272v3zm3.391 3h-3.391v3.016h3.341c3.055 0 2.868-3.016.05-3.016z" />
-                                </svg>
-                            </a>
-                            <a href="mailto:tiago@example.com" className="social-link" aria-label="Email">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <form id="contactForm" onSubmit={handleSubmit} className="contact-form">
-                        <div className="form-group">
-                            <label htmlFor="name">{t('contact.form.name')}</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={form.name}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'sending'}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="email">{t('contact.form.email')}</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={form.email}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'sending'}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="message">{t('contact.form.message')}</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                rows={4}
-                                value={form.message}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'sending'}
-                            ></textarea>
-                        </div>
-
-                        <button type="submit" className={getButtonClass()} disabled={status === 'sending'}>
-                            {getButtonText()}
-                        </button>
-                    </form>
-                </div>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '64px',
+            alignItems: 'start',
+          }}
+        >
+          {/* Left */}
+          <FadeIn delay={0.1} direction="right">
+          <div>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#ff5625',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: '16px',
+              }}
+            >
+              Vamos conversar
+            </span>
+            <h2
+              style={{
+                fontSize: 'clamp(40px, 5vw, 64px)',
+                fontWeight: 900,
+                color: '#fff',
+                lineHeight: 1.05,
+                margin: '0 0 24px',
+              }}
+            >
+              Vamos Construir<br />
+              <span style={{ color: '#ff5625' }}>Algo Melhor</span><br />
+              Juntos?
+            </h2>
+            <p style={{ fontSize: '17px', color: '#a8a29e', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
+              Se você tem um produto com potencial que ainda não chegou onde deveria, este é o
+              momento certo para mudar isso.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>mail</span>
+                <span style={{ color: '#a8a29e', fontSize: '15px' }}>tiagosilvamagno@gmail.com</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>phone</span>
+                <span style={{ color: '#a8a29e', fontSize: '15px' }}>+55 92 98116-8163</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>open_in_new</span>
+                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: '#a8a29e', fontSize: '15px', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
+              </div>
             </div>
-        </section>
-    );
+          </div>
+          </FadeIn>
+
+          {/* Right: Form */}
+          <FadeIn delay={0.3} direction="left" style={{ height: '100%' }}>
+          <div
+            style={{
+              background: '#1c1b1b',
+              border: '1px solid #2a2a2a',
+              borderRadius: '20px',
+              padding: '40px',
+            }}
+          >
+            <form action="https://formsubmit.co/tiagosilvamagno@gmail.com" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* Desabilitar captcha por padrão (formsubmit options) */}
+              <input type="hidden" name="_captcha" value="false" />
+              {/* Name + Email */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                {[
+                  { label: 'Nome', name: 'name', type: 'text', placeholder: 'Seu nome' },
+                  { label: 'E-mail', name: 'email', type: 'email', placeholder: 'seu@email.com' },
+                ].map(({ label, name, type, placeholder }) => (
+                  <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: '#a8a29e',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                      }}
+                    >
+                      {label}
+                    </label>
+                    <input
+                      type={type}
+                      name={name}
+                      placeholder={placeholder}
+                      required
+                      style={{
+                        background: '#131313',
+                        border: '1px solid #2a2a2a',
+                        borderRadius: '8px',
+                        padding: '12px 16px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Budget */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#a8a29e',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  Qual o seu orçamento?
+                </label>
+                <select
+                  name="budget"
+                  style={{
+                    background: '#131313',
+                    border: '1px solid #2a2a2a',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    color: '#a8a29e',
+                    fontSize: '14px',
+                    outline: 'none',
+                    appearance: 'none',
+                  }}
+                >
+                  <option value="">Selecione uma faixa</option>
+                  <option value="Até R$ 5.000">Até R$ 5.000</option>
+                  <option value="R$ 5k – R$ 10k">R$ 5k – R$ 10k</option>
+                  <option value="R$ 10k – R$ 30k">R$ 10k – R$ 30k</option>
+                  <option value="Acima de R$ 30k">Acima de R$ 30k</option>
+                </select>
+              </div>
+
+              {/* Message */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#a8a29e',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  Mensagem
+                </label>
+                <textarea
+                  name="message"
+                  rows={4}
+                  required
+                  placeholder="Descreva seu projeto ou desafio..."
+                  style={{
+                    background: '#131313',
+                    border: '1px solid #2a2a2a',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    outline: 'none',
+                    resize: 'none',
+                    fontFamily: 'inherit',
+                  }}
+                />
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                style={{
+                  background: '#ff5625',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  padding: '16px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                Enviar Briefing
+                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>send</span>
+              </button>
+            </form>
+          </div>
+          </FadeIn>
+        </div>
+      </div>
+    </section>
+  );
 }

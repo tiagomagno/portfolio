@@ -1,42 +1,138 @@
-'use client';
-
-import { useLang } from '@/context/LangContext';
-
 export default function Footer() {
-    const { t } = useLang();
+  const year = new Date().getFullYear();
 
-    return (
-        <footer className="footer-minimal">
-            <div className="container">
-                <div className="footer-top">
-                    <div className="footer-logo">
-                        <a href="#home">
-                            Tiago<span>Magno</span>
-                            <span className="footer-role">{t('footer.role')}</span>
-                        </a>
-                    </div>
-                    <a href="#home" className="back-to-top">
-                        {t('footer.totop')} <span>↑</span>
-                    </a>
-                </div>
+  return (
+    <footer
+      style={{
+        background: '#0e0e0e',
+        borderTop: '1px solid #1c1b1b',
+        padding: '56px 0 40px',
+      }}
+    >
+      <style>{`
+        .footer-link:hover { color: #fff !important; }
+        .footer-back:hover { color: #ff5625 !important; }
+      `}</style>
 
-                <div className="footer-divider"></div>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+        {/* Top row */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            marginBottom: '48px',
+            flexWrap: 'wrap',
+            gap: '24px',
+          }}
+        >
+          {/* Logo */}
+          <div>
+            <a
+              href="#"
+              className="footer-back"
+              style={{
+                color: '#fff',
+                fontWeight: 900,
+                fontSize: '28px',
+                textDecoration: 'none',
+                letterSpacing: '-0.02em',
+                transition: 'color 0.15s',
+              }}
+            >
+              TM<span style={{ color: '#ff5625' }}>.</span>
+            </a>
+            <span
+              style={{
+                display: 'block',
+                fontSize: '10px',
+                color: '#4a4a4a',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                marginTop: '4px',
+              }}
+            >
+              Digital Product Architect
+            </span>
+          </div>
 
-                <div className="footer-bottom">
-                    <div className="copyright">{t('footer.copyright')}</div>
-                    <div className="footer-links-row">
-                        <a href="#insights">Insights</a>
-                        <a href="#">Carreiras</a>
-                        <a href="#">Política de Privacidade</a>
-                        <a href="#">Código de ética</a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-social">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
+          {/* Back to top */}
+          <a
+            href="#"
+            className="footer-back"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#fff',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.15s',
+            }}
+          >
+            Voltar ao topo
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+              arrow_upward
+            </span>
+          </a>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: '1px', background: '#1c1b1b', marginBottom: '32px' }} />
+
+        {/* Bottom row */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          <p style={{ color: '#4a4a4a', fontSize: '12px', margin: 0 }}>
+            © {year} Tiago Magno. Todos os direitos reservados.
+          </p>
+
+          <div style={{ display: 'flex', gap: '32px' }}>
+            <a
+              href="https://www.linkedin.com/in/tiagosmagno/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link"
+              style={{ color: '#666', fontSize: '12px', textDecoration: 'none', transition: 'color 0.15s' }}
+            >
+              LinkedIn
+            </a>
+            <a
+              href="mailto:tiagosilvamagno@gmail.com"
+              className="footer-link"
+              style={{ color: '#666', fontSize: '12px', textDecoration: 'none', transition: 'color 0.15s' }}
+            >
+              Email
+            </a>
+            <a
+              href="https://wa.me/5592981168163"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link"
+              style={{ color: '#666', fontSize: '12px', textDecoration: 'none', transition: 'color 0.15s' }}
+            >
+              WhatsApp
+            </a>
+            <a
+              href="https://tiagosmagno.com.br/"
+              className="footer-link"
+              style={{ color: '#666', fontSize: '12px', textDecoration: 'none', transition: 'color 0.15s' }}
+            >
+              Site
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

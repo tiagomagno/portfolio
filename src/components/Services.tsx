@@ -1,52 +1,163 @@
 'use client';
 
 import { useState } from 'react';
-import { useLang } from '@/context/LangContext';
-import { services } from '@/lib/data';
+import FadeIn from './ui/FadeIn';
+
+const SERVICES = [
+  {
+    id: 'discovery',
+    label: 'Estratégia & Discovery',
+    tags: ['Pesquisa', 'Benchmark', 'Visão de Produto'],
+    desc: 'Estruturo o diagnóstico do produto com pesquisas qualitativas e quantitativas, benchmarks competitivos e workshops de alinhamento estratégico.',
+    items: ['Entrevistas com Usuários', 'Jobs-to-be-Done', 'Mapa de Oportunidades', 'Visão de Produto'],
+  },
+  {
+    id: 'ux',
+    label: 'UX & Interface Design',
+    tags: ['Wireframe', 'UI Design', 'Prototipagem'],
+    desc: 'Projeto fluxos, wireframes e interfaces de alta fidelidade com foco em clareza, conversão e acessibilidade. Cada pixel tem intenção, cada interação tem propósito.',
+    items: ['Arquitetura da Informação', 'Wireframes & Protótipos', 'Design Visual (UI)', 'Testes de Usabilidade'],
+  },
+  {
+    id: 'systems',
+    label: 'Design Systems',
+    tags: ['Components', 'Tokens', 'Documentação'],
+    desc: 'Construo sistemas de design escaláveis com tokens semânticos, biblioteca de componentes e documentação viva.',
+    items: ['Design Tokens', 'Component Library', 'Guia de Uso', 'Handoff para Dev'],
+  },
+  {
+    id: 'evolution',
+    label: 'Produto & Evolução',
+    tags: ['Growth', 'Dados', 'Produto'],
+    desc: 'Acompanho a evolução do produto com base em dados, feedback e uso real, refinando continuamente a experiência. Trabalho na identificação de pontos de melhoria, garantindo que o produto continue escalando e respondendo aos objetivos do negócio.',
+    items: ['Análise de Uso e Dados', 'Iteração de Experiência', 'Acompanhamento de Métricas', 'Priorização de Melhorias'],
+  },
+];
 
 export default function Services() {
-    const { lang, t } = useLang();
-    const [activeId, setActiveId] = useState('strategy');
+  const [active, setActive] = useState('discovery');
+  const current = SERVICES.find((s) => s.id === active)!;
 
-    const active = services.find((s) => s.id === activeId)!;
-    const tags = lang === 'pt-BR' ? active.tags : active.tagsEn;
-    const description = lang === 'pt-BR' ? active.description : active.descriptionEn;
+  return (
+    <section id="services" style={{ background: '#131313', padding: '96px 0' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+        {/* Header */}
+        <FadeIn delay={0.1}>
+        <div style={{ marginBottom: '56px' }}>
+          <span
+            style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#ff5625',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: '12px',
+            }}
+          >
+            O que eu faço
+          </span>
+          <h2
+            style={{
+              fontSize: 'clamp(36px, 4vw, 52px)',
+              fontWeight: 900,
+              color: '#fff',
+              lineHeight: 1.1,
+              margin: '0 0 16px',
+            }}
+          >
+            Soluções <span style={{ color: '#ff5625' }}>sob medida</span>
+          </h2>
+          <p style={{ fontSize: '17px', color: '#a8a29e', lineHeight: 1.7, maxWidth: '480px' }}>
+            Do modelo de negócio ao componente em produção. Atuo em todas as camadas do produto digital.
+          </p>
+        </div>
+        </FadeIn>
 
-    return (
-        <section className="section" id="process">
-            <div className="container">
-                <div className="services-header">
-                    <div className="services-label-line"></div>
-                    <span className="services-label-text">{t('services.label')}</span>
-                    <h2 className="services-title">{t('services.title')}</h2>
-                    <p className="services-subtitle">{t('services.subtitle')}</p>
-                </div>
+        {/* Layout */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
+          {/* Tabs */}
+          <FadeIn delay={0.2} direction="right">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {SERVICES.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActive(s.id)}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '14px 20px',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  border: active === s.id ? '1px solid rgba(255,86,37,0.3)' : '1px solid transparent',
+                  background: active === s.id ? 'rgba(255,86,37,0.1)' : 'transparent',
+                  color: active === s.id ? '#fff' : '#a8a29e',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+          </FadeIn>
 
-                <div className="services-tabs-layout">
-                    {/* Tabs menu */}
-                    <div className="services-menu">
-                        {services.map((service) => (
-                            <button
-                                key={service.id}
-                                className={`service-tab${activeId === service.id ? ' active' : ''}`}
-                                onClick={() => setActiveId(service.id)}
-                            >
-                                {lang === 'pt-BR' ? service.label : service.labelEn}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Content panel */}
-                    <div className="service-content-panel">
-                        <div className="tags-container">
-                            {tags.map((tag) => (
-                                <span key={tag} className="pill">{tag}</span>
-                            ))}
-                        </div>
-                        <p className="service-description">{description}</p>
-                    </div>
-                </div>
+          {/* Content panel */}
+          <FadeIn delay={0.3} direction="left" style={{ height: '100%' }}>
+          <div
+            style={{
+              background: '#1c1b1b',
+              border: '1px solid #2a2a2a',
+              borderRadius: '16px',
+              padding: '36px',
+              height: '100%',
+            }}
+          >
+            {/* Tags */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+              {current.tags.map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: '#ff5625',
+                    background: 'rgba(255,86,37,0.1)',
+                    border: '1px solid rgba(255,86,37,0.2)',
+                    padding: '4px 12px',
+                    borderRadius: '999px',
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
             </div>
-        </section>
-    );
+
+            <p style={{ fontSize: '16px', color: '#a8a29e', lineHeight: 1.7, marginBottom: '28px' }}>
+              {current.desc}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              {current.items.map((item) => (
+                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: '#10b981', fontSize: '18px', flexShrink: 0 }}
+                  >
+                    check_circle
+                  </span>
+                  <span style={{ color: '#fff', fontSize: '14px' }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          </FadeIn>
+        </div>
+      </div>
+    </section>
+  );
 }

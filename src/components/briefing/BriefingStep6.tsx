@@ -1,120 +1,108 @@
 'use client';
 
-import { UseFormRegister } from 'react-hook-form';
-import { BriefingFormData, ATUACAO_AREAS } from '@/lib/briefing';
-import { cn } from '@/lib/utils';
-
-const AREA_LABELS: Record<(typeof ATUACAO_AREAS)[number], string> = {
-    civil: 'Civil',
-    trabalhista: 'Trabalhista',
-    consumidor: 'Consumidor',
-    empresarial: 'Empresarial',
-    familia: 'Família',
-    imobiliario: 'Imobiliário',
-    outros: 'Outros',
-};
-
-const OPTIONS_ATENDIMENTO = [
-    { value: 'online', label: 'Online' },
-    { value: 'presencial', label: 'Presencial' },
-    { value: 'ambos', label: 'Ambos' },
-];
-
-const OPTIONS_QUALIFICAR = [
-    { value: 'sim', label: 'Sim' },
-    { value: 'nao', label: 'Não' },
-];
-
-const OPTIONS_CASOS = [
-    { value: 'volume', label: 'Volume de casos' },
-    { value: 'estrategicos', label: 'Casos estratégicos' },
-];
+import {
+  UseFormRegister,
+  FieldErrors,
+  UseFormSetValue,
+  UseFormGetValues,
+} from 'react-hook-form';
+import { BriefingFormData } from '@/lib/briefing';
+import { Input } from '@/components/ui/Input';
 
 interface Props {
-    register: UseFormRegister<BriefingFormData>;
-    errors: {
-        juridicoAreas?: { message?: string };
-        atendimentoTipo?: { message?: string };
-        qualificarClientes?: { message?: string };
-        tipoCasos?: { message?: string };
-    };
+  register: UseFormRegister<BriefingFormData>;
+  errors: FieldErrors<BriefingFormData>;
+  setValue: UseFormSetValue<BriefingFormData>;
+  getValues: UseFormGetValues<BriefingFormData>;
+  /** Campos que o usuário já tocou (blur) */
+  touchedFields: Partial<Record<keyof BriefingFormData, boolean>>;
+  /** true após a primeira tentativa de submit */
+  isSubmitted: boolean;
 }
 
-export function BriefingStep6({ register, errors }: Props) {
-    return (
-        <div className="space-y-8">
-            <h3 className="briefing-step-title">Módulo Jurídico — Informações adicionais</h3>
+/** Aplica máscara brasileira de celular: (XX) XXXXX-XXXX */
+function maskPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2) return digits.length ? `(${digits}` : '';
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
 
-            <div>
-                <p className="text-sm font-medium text-gray-300 mb-3">Áreas de atuação (selecione as que se aplicam)</p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                    {ATUACAO_AREAS.map((value) => (
-                        <label key={value} className={cn('briefing-option-card py-3')}>
-                            <input
-                                type="checkbox"
-                                value={value}
-                                {...register('juridicoAreas')}
-                                className="h-4 w-4 rounded border-gray-600 text-orange-500 focus:ring-orange-500 bg-transparent"
-                            />
-                            <span className="text-sm text-white">{AREA_LABELS[value]}</span>
-                        </label>
-                    ))}
-                </div>
-                {errors.juridicoAreas && (
-                    <p className="mt-2 text-sm text-red-400" role="alert">{errors.juridicoAreas.message}</p>
-                )}
-            </div>
+export function BriefingStep6({
+  register,
+  errors,
+  setValue,
+  getValues,
+  touchedFields,
+  isSubmitted,
+}: Props) {
+  const whatsappReg = register('whatsapp');
 
-            <div>
-                <p className="text-sm font-medium text-gray-300 mb-3">Atendimento online ou presencial?</p>
-                <div className="flex flex-wrap gap-3">
-                    {OPTIONS_ATENDIMENTO.map((opt) => (
-                        <label key={opt.value} className={cn('briefing-option-card py-2 px-4')}>
-                            <input
-                                type="radio"
-                                value={opt.value}
-                                {...register('atendimentoTipo')}
-                                className="h-4 w-4 border-gray-600 text-orange-500 focus:ring-orange-500 bg-transparent"
-                            />
-                            <span className="text-white">{opt.label}</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
+  /**
+   * Retorna a mensagem de erro SOMENTE se o campo foi tocado pelo usuário
+   * ou se houve uma tentativa de envio. Evita exibição prematura de erros
+   * causada pela validação em cascata do Zod nas etapas anteriores.
+   */
+  const err = (field: keyof BriefingFormData): string | undefined => {
+    if (!touchedFields[field] && !isSubmitted) return undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (errors[field] as any)?.message;
+  };
 
-            <div>
-                <p className="text-sm font-medium text-gray-300 mb-3">Deseja qualificar clientes antes da reunião?</p>
-                <div className="flex gap-3">
-                    {OPTIONS_QUALIFICAR.map((opt) => (
-                        <label key={opt.value} className={cn('briefing-option-card py-2 px-4')}>
-                            <input
-                                type="radio"
-                                value={opt.value}
-                                {...register('qualificarClientes')}
-                                className="h-4 w-4 border-gray-600 text-orange-500 focus:ring-orange-500 bg-transparent"
-                            />
-                            <span className="text-white">{opt.label}</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
+  return (
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold text-heading-light dark:text-heading-dark">
+        Falta pouco! Como podemos contatar você?
+      </h3>
 
-            <div>
-                <p className="text-sm font-medium text-gray-300 mb-3">Prefere volume de casos ou casos estratégicos?</p>
-                <div className="flex flex-wrap gap-3">
-                    {OPTIONS_CASOS.map((opt) => (
-                        <label key={opt.value} className={cn('briefing-option-card py-2 px-4')}>
-                            <input
-                                type="radio"
-                                value={opt.value}
-                                {...register('tipoCasos')}
-                                className="h-4 w-4 border-gray-600 text-orange-500 focus:ring-orange-500 bg-transparent"
-                            />
-                            <span className="text-white">{opt.label}</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Input
+            id="name"
+            label="Seu Nome / Empresa"
+            {...register('name')}
+            placeholder="João Silva"
+            error={err('name')}
+          />
         </div>
-    );
+
+        <div className="space-y-2">
+          <Input
+            id="email"
+            type="email"
+            label="E-mail Profissional"
+            {...register('email')}
+            placeholder="joao@empresa.com"
+            error={err('email')}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Input
+            id="whatsapp"
+            label="WhatsApp (com DDD)"
+            placeholder="(11) 99999-9999"
+            inputMode="numeric"
+            error={err('whatsapp')}
+            {...whatsappReg}
+            onChange={(e) => {
+              const masked = maskPhone(e.target.value);
+              e.target.value = masked;
+              whatsappReg.onChange(e);
+            }}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Input
+            id="deadline"
+            label="Prazo Desejado"
+            {...register('deadline')}
+            placeholder="Ex: 30 dias, Para o próximo mês"
+            error={err('deadline')}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
