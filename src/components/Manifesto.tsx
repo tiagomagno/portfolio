@@ -5,7 +5,7 @@ import FadeIn from './ui/FadeIn';
 export default function Manifesto() {
   return (
     <section style={{ background: '#0e0e0e', padding: '96px 0' }}>
-      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
         <FadeIn delay={0.1}>
         <p
           style={{
@@ -49,3 +49,4 @@ export default function Manifesto() {
     </section>
   );
 }
+

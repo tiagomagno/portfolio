@@ -1,14 +1,37 @@
 'use client';
 
-import { UseFormRegister, FieldError } from 'react-hook-form';
+import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData } from '@/lib/briefing';
-import { cn } from '@/lib/utils';
 
 const AUDIENCE_OPTIONS = [
   { value: 'pf', label: 'Pessoa Física (B2C)' },
   { value: 'pj', label: 'Empresas (B2B)' },
   { value: 'ambos', label: 'Ambos' },
 ];
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '11px',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.12em',
+  color: '#a8a29e',
+};
+
+const textareaStyle: React.CSSProperties = {
+  width: '100%',
+  boxSizing: 'border-box',
+  background: '#131313',
+  border: '1px solid #2a2a2a',
+  borderRadius: '8px',
+  padding: '12px 16px',
+  color: '#fff',
+  fontSize: '14px',
+  fontFamily: 'inherit',
+  outline: 'none',
+  resize: 'vertical',
+  minHeight: '110px',
+};
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -20,75 +43,89 @@ interface Props {
 }
 
 export function BriefingStep5({ register, errors }: Props) {
+  const { watch } = useFormContext<BriefingFormData>();
+  const selected = watch('targetAudience');
+
   return (
-    <div className="flex flex-col gap-8 mt-4">
-      <div>
-        <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark mb-4">
-          Sobre o Seu Negócio
-        </h3>
-        
-        <div className="flex flex-col gap-3">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Quem é o seu público-alvo principal?
-          </label>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {AUDIENCE_OPTIONS.map((opt) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+      <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.2 }}>
+        Sobre o Seu Negócio
+      </h3>
+
+      {/* Target audience pills */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={labelStyle}>Quem é o seu público-alvo principal?</label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+          {AUDIENCE_OPTIONS.map((opt) => {
+            const isSelected = selected === opt.value;
+            return (
               <label
                 key={opt.value}
-                className={cn(
-                  'flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-3 text-center transition-all',
-                  'border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark',
-                  'hover:border-primary/50',
-                  'has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:text-primary'
-                )}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '12px 16px',
+                  background: isSelected ? 'rgba(255,86,37,0.08)' : '#131313',
+                  border: `1px solid ${isSelected ? '#ff5625' : '#2a2a2a'}`,
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: isSelected ? 600 : 400,
+                  color: isSelected ? '#ff5625' : '#a8a29e',
+                  transition: 'all 0.15s',
+                  textAlign: 'center',
+                }}
               >
                 <input
                   type="radio"
                   value={opt.value}
                   {...register('targetAudience')}
-                  className="sr-only" // Hidden visually but available for logic
+                  style={{ display: 'none' }}
                 />
-                <span className="font-medium text-sm">{opt.label}</span>
+                {opt.label}
               </label>
-            ))}
-          </div>
-          {errors.targetAudience && (
-            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-              {errors.targetAudience.message}
-            </p>
-          )}
+            );
+          })}
         </div>
+        {errors.targetAudience && (
+          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
+            {errors.targetAudience.message}
+          </p>
+        )}
       </div>
 
-      <div className="flex flex-col gap-3">
-        <label htmlFor="idealCustomer" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      {/* Ideal customer */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label htmlFor="idealCustomer" style={labelStyle}>
           Como você descreve seu cliente ideal?
         </label>
         <textarea
           id="idealCustomer"
           {...register('idealCustomer')}
           placeholder="Ex: Clínicas médicas de médio porte, ou jovens de 20 a 30 anos que gostam de esportes..."
-          className="w-full min-h-[100px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4 text-text-light dark:text-text-dark focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+          style={textareaStyle}
         />
         {errors.idealCustomer && (
-          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
             {errors.idealCustomer.message}
           </p>
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
-        <label htmlFor="differential" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      {/* Differential */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label htmlFor="differential" style={labelStyle}>
           O que torna sua empresa única? (Qual seu diferencial?)
         </label>
         <textarea
           id="differential"
           {...register('differential')}
           placeholder="Por que os clientes compram de você e não do concorrente?"
-          className="w-full min-h-[100px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4 text-text-light dark:text-text-dark focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+          style={textareaStyle}
         />
         {errors.differential && (
-          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
             {errors.differential.message}
           </p>
         )}

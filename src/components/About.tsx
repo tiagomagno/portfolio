@@ -8,28 +8,28 @@ const S = {
     padding: '96px 0',
   }),
   container: {
-    maxWidth: '1280px',
+    maxWidth: '85vw',
     margin: '0 auto',
     padding: '0 24px',
   },
   label: {
-    fontSize: '11px',
+    fontSize: 'var(--fs-eyebrow)',
     fontWeight: 700,
     color: '#ff5625',
-    letterSpacing: '0.15em',
+    letterSpacing: 'var(--ls-eyebrow)',
     textTransform: 'uppercase' as const,
     display: 'block',
     marginBottom: '12px',
   },
   h2: {
-    fontSize: 'clamp(36px, 4vw, 52px)',
+    fontSize: 'var(--fs-h2)',
     fontWeight: 900,
     color: '#fff',
     lineHeight: 1.1,
     margin: '0 0 24px',
   },
   body: {
-    fontSize: '17px',
+    fontSize: 'var(--fs-body-lg)',
     color: '#a8a29e',
     lineHeight: 1.7,
   },
@@ -46,7 +46,7 @@ export default function About() {
 
   return (
     <section id="about" style={S.section('#131313')}>
-      <div style={S.container}>
+      <div className="section-container" style={S.container}>
         {/* Grid: Heading + Text */}
         <div
           style={{
@@ -59,7 +59,7 @@ export default function About() {
         >
           <FadeIn delay={0.1}>
           <div>
-            <h2 style={{ ...S.h2, fontSize: 'clamp(32px, 4vw, 48px)' }}>
+            <h2 style={{ ...S.h2 }}>
               Acredito no <span style={{ color: '#ff5625' }}>Design Estratégico</span> como fator
               viabilizador de negócios e na <span style={{ color: '#ff5625' }}>Experiência do Usuário</span>{' '}
               como o maior ativo de uma marca moderna.
@@ -86,6 +86,7 @@ export default function About() {
 
         {/* Stats grid */}
         <div
+          className="about-stats-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -95,6 +96,7 @@ export default function About() {
           {stats.map(({ title, text }, i) => (
             <FadeIn key={title} delay={0.3 + i * 0.1} style={{ height: '100%' }}>
             <div
+              className="stat-card"
               style={{
                 background: '#1c1b1b',
                 border: '1px solid #2a2a2a',
@@ -104,11 +106,12 @@ export default function About() {
               }}
             >
               <span
-                style={{ fontSize: '18px', fontWeight: 700, color: '#fff', display: 'block', marginBottom: '12px' }}
+                className="stat-title"
+                style={{ fontSize: 'var(--fs-card-title)', fontWeight: 700, color: '#fff', display: 'block', marginBottom: '12px' }}
               >
                 {title}
               </span>
-              <span style={{ fontSize: '14px', color: '#a8a29e', lineHeight: 1.5 }}>{text}</span>
+              <span className="stat-text" style={{ fontSize: 'var(--fs-body)', color: '#a8a29e', lineHeight: 1.5 }}>{text}</span>
             </div>
             </FadeIn>
           ))}
@@ -117,3 +120,4 @@ export default function About() {
     </section>
   );
 }
+

@@ -1,11 +1,9 @@
 'use client';
 
 import { UseFormRegister, UseFormWatch, FieldError } from 'react-hook-form';
-import { BriefingFormData } from '@/lib/briefing';
-import { cn } from '@/lib/utils';
-import { MAIN_CHALLENGES } from '@/lib/briefing';
+import { BriefingFormData, MAIN_CHALLENGES } from '@/lib/briefing';
 
-const DYNAMIC_FEATURES: Record<(typeof MAIN_CHALLENGES)[number], Array<{value: string, label: string}>> = {
+const DYNAMIC_FEATURES: Record<(typeof MAIN_CHALLENGES)[number], Array<{ value: string; label: string }>> = {
   branding: [
     { value: 'novo-logo', label: 'Novo Logotipo' },
     { value: 'manual-marca', label: 'Manual da Marca' },
@@ -17,7 +15,7 @@ const DYNAMIC_FEATURES: Record<(typeof MAIN_CHALLENGES)[number], Array<{value: s
     { value: 'site-institucional', label: 'Site Institucional' },
     { value: 'loja-virtual', label: 'Loja Virtual (E-commerce)' },
     { value: 'landing-page', label: 'Landing Page de Vendas' },
-    { value: 'sistema-web', label: 'Sistema Web Submedida' },
+    { value: 'sistema-web', label: 'Sistema Web Sob Medida' },
     { value: 'agendamento', label: 'Agendamento Online' },
     { value: 'integracao-whatsapp', label: 'Integração com WhatsApp' },
     { value: 'area-cliente', label: 'Área do Cliente' },
@@ -29,8 +27,8 @@ const DYNAMIC_FEATURES: Record<(typeof MAIN_CHALLENGES)[number], Array<{value: s
     { value: 'design-posts', label: 'Design de Posts / Templates' },
   ],
   growth: [
-    { value: 'tráfego-google', label: 'Anúncios no Google (Google Ads)' },
-    { value: 'tráfego-meta', label: 'Anúncios no Face/Insta (Meta Ads)' },
+    { value: 'trafego-google', label: 'Anúncios no Google (Google Ads)' },
+    { value: 'trafego-meta', label: 'Anúncios no Face/Insta (Meta Ads)' },
     { value: 'automacao-leads', label: 'Automação de Leads (RD Station etc)' },
     { value: 'dashboards', label: 'Dashboards de BI' },
   ],
@@ -45,7 +43,7 @@ const DYNAMIC_FEATURES: Record<(typeof MAIN_CHALLENGES)[number], Array<{value: s
     { value: 'video-campanha', label: 'Vídeo para Campanhas' },
     { value: 'cobertura-evento', label: 'Cobertura de Evento' },
     { value: 'conteudo-redes', label: 'Conteúdo Rápido para Redes Sociais' },
-  ]
+  ],
 };
 
 interface Props {
@@ -57,44 +55,53 @@ interface Props {
 export function BriefingStep4({ register, watch, error }: Props) {
   const challenge = watch('mainChallenge');
   const selectedFeatures = watch('features') ?? [];
-
-  // Se o usuário ainda não tiver selecionado um desafio, mostramos as opções de website como fallback ou nada.
-  // Como as regras indicam, a pessoa deve ter passado do step 2 para cá.
   const options = challenge ? DYNAMIC_FEATURES[challenge] : DYNAMIC_FEATURES.website;
 
   return (
-    <div className="flex flex-col gap-8 mt-4">
-      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
-        Quais itens melhor descrevem o que você busca?
-      </h3>
-      <p className="text-text-light dark:text-text-dark text-sm">
-        Selecione todos que se aplicam.
-      </p>
-      <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2">
-        {options.map((opt) => (
-          <label
-            key={opt.value}
-            className={cn(
-              'flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all',
-              'border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark',
-              'hover:border-primary/50 hover:shadow-sm',
-              selectedFeatures.includes(opt.value) && 'border-primary ring-2 ring-primary/20'
-            )}
-          >
-            <input
-              type="checkbox"
-              value={opt.value}
-              {...register('features')}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-            />
-            <span className="text-heading-light dark:text-heading-dark font-medium">
-              {opt.label}
-            </span>
-          </label>
-        ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+      <div>
+        <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: '#fff', margin: '0 0 6px', lineHeight: 1.2 }}>
+          Quais itens melhor descrevem o que você busca?
+        </h3>
+        <p style={{ fontSize: '14px', color: '#a8a29e', margin: 0 }}>
+          Selecione todos que se aplicam.
+        </p>
       </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+        {options.map((opt) => {
+          const isSelected = selectedFeatures.includes(opt.value);
+          return (
+            <label
+              key={opt.value}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                background: isSelected ? 'rgba(255,86,37,0.08)' : '#131313',
+                border: `1px solid ${isSelected ? '#ff5625' : '#2a2a2a'}`,
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: isSelected ? '#fff' : '#a8a29e',
+                transition: 'all 0.15s',
+              }}
+            >
+              <input
+                type="checkbox"
+                value={opt.value}
+                {...register('features')}
+                style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
+              />
+              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+            </label>
+          );
+        })}
+      </div>
+
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
           {error.message}
         </p>
       )}

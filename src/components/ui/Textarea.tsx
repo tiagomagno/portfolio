@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label: string;
@@ -11,7 +12,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
         return (
             <div className="w-full">
-                <label htmlFor={textareaId} className="briefing-label">
+                <label
+                    htmlFor={textareaId}
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-[#a8a29e]"
+                >
                     {label}
                     {props.required && <span className="text-red-400 ml-1">*</span>}
                 </label>
@@ -19,7 +23,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                     ref={ref}
                     id={textareaId}
                     rows={4}
-                    className={`briefing-input resize-y ${error ? 'border-red-500' : ''} ${className}`}
+                    className={cn(
+                        'w-full min-h-[120px] resize-y rounded-[8px] border px-4 py-3 text-sm transition-all',
+                        'border-[#2a2a2a] bg-[#131313] text-white',
+                        'placeholder:text-[var(--color-text-dim)]',
+                        'focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20',
+                        'disabled:cursor-not-allowed disabled:opacity-60',
+                        error && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                        className
+                    )}
                     aria-invalid={error ? 'true' : 'false'}
                     aria-describedby={error ? `${textareaId}-error` : undefined}
                     {...props}
@@ -34,3 +46,4 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     }
 );
 Textarea.displayName = 'Textarea';
+

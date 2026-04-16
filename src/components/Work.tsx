@@ -90,10 +90,10 @@ export default function Work() {
           <div style={{ textAlign: 'center', marginBottom: '72px' }}>
             <span
               style={{
-                fontSize: '11px',
+                fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
                 color: 'var(--color-primary)',
-                letterSpacing: '0.15em',
+                letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
                 marginBottom: '16px',
@@ -103,7 +103,7 @@ export default function Work() {
             </span>
             <h2
               style={{
-                fontSize: 'clamp(36px, 4vw, 52px)',
+                fontSize: 'var(--fs-h2)',
                 fontWeight: 900,
                 color: 'var(--color-text)',
                 lineHeight: 1.1,
@@ -116,6 +116,7 @@ export default function Work() {
         </FadeIn>
 
         <div
+          className="work-services-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -137,30 +138,27 @@ export default function Work() {
                   transition: 'all 0.3s ease',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                <div style={{ marginBottom: '16px' }}>
                   <span
-                    className="material-symbols-outlined"
-                    style={{ color: 'var(--color-primary)', fontSize: '32px' }}
+                    className="material-symbols-outlined service-icon"
+                    style={{ color: 'var(--color-primary)', fontSize: '32px', display: 'block', marginBottom: '16px' }}
                   >
                     {item.icon}
                   </span>
                   <span style={{ 
-                    fontSize: '10px', 
+                    fontSize: 'var(--fs-tiny)', 
                     fontWeight: 700, 
                     textTransform: 'uppercase', 
-                    letterSpacing: '0.05em', 
-                    background: 'var(--color-bg-high)', 
-                    padding: '4px 10px', 
-                    borderRadius: '999px',
+                    letterSpacing: 'var(--ls-tiny)',
                     color: 'var(--color-text-dim)'
                   }}>
                     {item.category}
                   </span>
                 </div>
-                <h4 style={{ color: 'var(--color-text)', fontSize: '18px', fontWeight: 700, margin: '0 0 12px' }}>
+                <h4 style={{ color: 'var(--color-text)', fontSize: 'var(--fs-card-title)', fontWeight: 700, margin: '0 0 12px' }}>
                   {item.title}
                 </h4>
-                <p style={{ color: 'var(--color-text-dim)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
+                <p style={{ color: 'var(--color-text-dim)', fontSize: 'var(--fs-body)', lineHeight: 1.6, margin: 0 }}>
                   {item.label}
                 </p>
               </div>
@@ -171,3 +169,4 @@ export default function Work() {
     </section>
   );
 }
+

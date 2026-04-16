@@ -1,8 +1,7 @@
 'use client';
 
-import { UseFormRegister, FieldError } from 'react-hook-form';
+import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData } from '@/lib/briefing';
-import { cn } from '@/lib/utils';
 
 const OPTIONS = [
   { value: 'branding', label: 'Criar / Modernizar minha Identidade Visual' },
@@ -19,34 +18,49 @@ interface Props {
 }
 
 export function BriefingStep3({ register, error }: Props) {
+  const { watch } = useFormContext<BriefingFormData>();
+  const selected = watch('mainChallenge');
+
   return (
-    <div className="flex flex-col gap-8 mt-4">
-      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+      <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.2 }}>
         Em qual área você precisa de mais ajuda hoje?
       </h3>
-      <div className="grid gap-3 sm:grid-cols-1">
-        {OPTIONS.map((opt) => (
-          <label
-            key={opt.value}
-            className={cn(
-              'flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all',
-              'border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark',
-              'hover:border-primary/50 hover:shadow-sm',
-              'has-[:checked]:border-primary has-[:checked]:ring-2 has-[:checked]:ring-primary/20'
-            )}
-          >
-            <input
-              type="radio"
-              value={opt.value}
-              {...register('mainChallenge')}
-              className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-            />
-            <span className="text-heading-light dark:text-heading-dark font-medium">{opt.label}</span>
-          </label>
-        ))}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {OPTIONS.map((opt) => {
+          const isSelected = selected === opt.value;
+          return (
+            <label
+              key={opt.value}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '14px 16px',
+                background: isSelected ? 'rgba(255,86,37,0.08)' : '#131313',
+                border: `1px solid ${isSelected ? '#ff5625' : '#2a2a2a'}`,
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: isSelected ? '#fff' : '#a8a29e',
+                transition: 'all 0.15s',
+              }}
+            >
+              <input
+                type="radio"
+                value={opt.value}
+                {...register('mainChallenge')}
+                style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
+              />
+              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+            </label>
+          );
+        })}
       </div>
+
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
           {error.message}
         </p>
       )}

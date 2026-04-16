@@ -40,16 +40,16 @@ export default function Services() {
 
   return (
     <section id="services" style={{ background: '#131313', padding: '96px 0' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px' }}>
         {/* Header */}
         <FadeIn delay={0.1}>
         <div style={{ marginBottom: '56px' }}>
           <span
             style={{
-              fontSize: '11px',
+              fontSize: 'var(--fs-eyebrow)',
               fontWeight: 700,
               color: '#ff5625',
-              letterSpacing: '0.15em',
+              letterSpacing: 'var(--ls-eyebrow)',
               textTransform: 'uppercase',
               display: 'block',
               marginBottom: '12px',
@@ -59,7 +59,7 @@ export default function Services() {
           </span>
           <h2
             style={{
-              fontSize: 'clamp(36px, 4vw, 52px)',
+              fontSize: 'var(--fs-h2)',
               fontWeight: 900,
               color: '#fff',
               lineHeight: 1.1,
@@ -68,17 +68,24 @@ export default function Services() {
           >
             Soluções <span style={{ color: '#ff5625' }}>sob medida</span>
           </h2>
-          <p style={{ fontSize: '17px', color: '#a8a29e', lineHeight: 1.7, maxWidth: '480px' }}>
+          <p style={{ fontSize: 'var(--fs-body-lg)', color: '#a8a29e', lineHeight: 1.7, maxWidth: '480px' }}>
             Do modelo de negócio ao componente em produção. Atuo em todas as camadas do produto digital.
           </p>
         </div>
         </FadeIn>
 
         {/* Layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
+        <style>{`
+          @media (max-width: 767px) {
+            .services-grid { grid-template-columns: 1fr !important; }
+            .services-tabs { flex-direction: row !important; flex-wrap: wrap !important; gap: 8px !important; }
+            .services-tabs button { width: auto !important; padding: 10px 16px !important; font-size: 13px !important; }
+          }
+        `}</style>
+        <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
           {/* Tabs */}
           <FadeIn delay={0.2} direction="right">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div className="services-tabs" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {SERVICES.map((s) => (
               <button
                 key={s.id}
@@ -90,7 +97,7 @@ export default function Services() {
                   padding: '14px 20px',
                   borderRadius: '10px',
                   fontWeight: 600,
-                  fontSize: '15px',
+                  fontSize: 'var(--fs-btn)',
                   cursor: 'pointer',
                   border: active === s.id ? '1px solid rgba(255,86,37,0.3)' : '1px solid transparent',
                   background: active === s.id ? 'rgba(255,86,37,0.1)' : 'transparent',
@@ -121,10 +128,10 @@ export default function Services() {
                 <span
                   key={t}
                   style={{
-                    fontSize: '11px',
+                    fontSize: 'var(--fs-eyebrow)',
                     fontWeight: 700,
                     textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
+                    letterSpacing: 'var(--ls-eyebrow)',
                     color: '#ff5625',
                     background: 'rgba(255,86,37,0.1)',
                     border: '1px solid rgba(255,86,37,0.2)',
@@ -137,7 +144,7 @@ export default function Services() {
               ))}
             </div>
 
-            <p style={{ fontSize: '16px', color: '#a8a29e', lineHeight: 1.7, marginBottom: '28px' }}>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: '#a8a29e', lineHeight: 1.7, marginBottom: '28px' }}>
               {current.desc}
             </p>
 
@@ -150,7 +157,7 @@ export default function Services() {
                   >
                     check_circle
                   </span>
-                  <span style={{ color: '#fff', fontSize: '14px' }}>{item}</span>
+                  <span style={{ color: '#fff', fontSize: 'var(--fs-body)' }}>{item}</span>
                 </div>
               ))}
             </div>
@@ -161,3 +168,4 @@ export default function Services() {
     </section>
   );
 }
+

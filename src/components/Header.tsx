@@ -8,10 +8,21 @@ export default function Header() {
   const { lang, setLang, t } = useLang();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
 
   const navLinks = [
     { href: '#about', label: t('nav.about') },
@@ -23,14 +34,6 @@ export default function Header() {
   const langs: { value: 'pt-BR' | 'en-US'; label: string }[] = [
     { value: 'pt-BR', label: 'PT' },
     { value: 'en-US', label: 'EN' },
-  ];
-
-  const mobileLinks = [
-    { href: '#', icon: 'home', label: t('nav.home') },
-    { href: '#services', icon: 'category', label: t('nav.services') },
-    { href: '#cases', icon: 'view_cozy', label: t('nav.cases') },
-    { href: '#contact', icon: 'mail', label: t('nav.contact') },
-    { href: '/briefing', icon: 'description', label: t('nav.project') },
   ];
 
   return (
@@ -51,8 +54,9 @@ export default function Header() {
         className="hidden-mobile"
       >
         <div
+          className="section-container"
           style={{
-            maxWidth: '1280px',
+            maxWidth: '85vw',
             margin: '0 auto',
             padding: '0 24px',
             height: '72px',
@@ -98,7 +102,6 @@ export default function Header() {
 
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* Theme Toggle */}
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -123,7 +126,6 @@ export default function Header() {
               </button>
             )}
 
-            {/* Language toggle */}
             <div
               style={{
                 display: 'flex',
@@ -157,7 +159,7 @@ export default function Header() {
 
             <div style={{ display: 'flex', gap: '8px' }}>
               <a
-                href="#contact"
+                href="/#contact"
                 className="nav-link"
                 style={{
                   color: 'var(--color-text)',
@@ -201,7 +203,7 @@ export default function Header() {
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 100,
+          zIndex: 200,
           borderBottom: '1px solid var(--color-border)',
           background: 'var(--color-bg)',
           backdropFilter: 'blur(12px)',
@@ -211,18 +213,47 @@ export default function Header() {
       >
         <div
           style={{
-            padding: '0 20px',
-            height: '64px',
+            padding: '0 16px',
+            height: '60px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: '12px',
           }}
         >
-          <a href="#" style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}>
-            {"TM."}
-          </a>
+          {/* Left: Hamburger + Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => setDrawerOpen((o) => !o)}
+              style={{
+                background: 'var(--color-bg-card)',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text)',
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+              aria-label={drawerOpen ? 'Fechar menu' : 'Abrir menu'}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                {drawerOpen ? 'close' : 'menu'}
+              </span>
+            </button>
+            <a
+              href="#"
+              style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
+            >
+              TM.
+            </a>
+          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Right: Theme + Lang */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -230,18 +261,18 @@ export default function Header() {
                   background: 'var(--color-bg-card)',
                   border: '1px solid var(--color-border)',
                   color: 'var(--color-text)',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '16px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '18px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  padding: 0
+                  padding: 0,
                 }}
                 aria-label="Toggle Theme"
               >
-                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                   {theme === 'dark' ? 'light_mode' : 'dark_mode'}
                 </span>
               </button>
@@ -276,69 +307,155 @@ export default function Header() {
                 </button>
               ))}
             </div>
-            <a
-              href="#contact"
-              style={{
-                background: 'var(--color-primary)',
-                color: '#fff',
-                fontSize: '12px',
-                fontWeight: 700,
-                padding: '8px 16px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-              }}
-            >
-              {t('nav.contact')}
-            </a>
           </div>
         </div>
       </nav>
 
-      {/* ── Mobile Bottom Navigation ── */}
-      <nav
+      {/* ── Mobile Drawer Overlay ── */}
+      {drawerOpen && (
+        <div
+          className="show-mobile"
+          onClick={() => setDrawerOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 190,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+          }}
+        />
+      )}
+
+      {/* ── Mobile Drawer ── */}
+      <div
+        className="show-mobile"
         style={{
           position: 'fixed',
-          bottom: 0,
+          top: 0,
           left: 0,
-          right: 0,
-          zIndex: 100,
-          borderTop: '1px solid var(--color-border)',
+          bottom: 0,
+          zIndex: 210,
+          width: '75vw',
+          maxWidth: '300px',
           background: 'var(--color-bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          borderRight: '1px solid var(--color-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '0 0 32px',
+          transform: drawerOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
+          overflowY: 'auto',
         }}
-        className="show-mobile"
       >
+        {/* Drawer header */}
         <div
           style={{
+            height: '60px',
             display: 'flex',
-            justifyContent: 'space-around',
             alignItems: 'center',
-            padding: '12px 8px 16px',
-            maxWidth: '400px',
-            margin: '0 auto',
+            justifyContent: 'space-between',
+            padding: '0 20px',
+            borderBottom: '1px solid var(--color-border)',
+            flexShrink: 0,
           }}
         >
-          {mobileLinks.map(({ href, icon, label }) => (
+          <a
+            href="#"
+            onClick={() => setDrawerOpen(false)}
+            style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
+          >
+            TM.
+          </a>
+          <button
+            onClick={() => setDrawerOpen(false)}
+            style={{
+              background: 'var(--color-bg-card)',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <div style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
+          {navLinks.map(({ href, label }) => (
             <a
-              key={href + label}
+              key={href}
               href={href}
+              onClick={() => setDrawerOpen(false)}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '4px',
-                color: 'var(--color-text-dim)',
+                color: 'var(--color-text)',
+                fontSize: '17px',
+                fontWeight: 600,
                 textDecoration: 'none',
-                minWidth: '56px',
+                padding: '16px 20px',
+                borderBottom: '1px solid var(--color-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>{icon}</span>
-              <span style={{ fontSize: '10px', fontWeight: 500 }}>{label}</span>
+              {label}
+              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-text-dim)' }}>
+                chevron_right
+              </span>
             </a>
           ))}
         </div>
-      </nav>
+
+        {/* CTAs */}
+        <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '10px', flexShrink: 0 }}>
+          <a
+            href="/#contact"
+            onClick={() => setDrawerOpen(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-text)',
+              fontSize: '14px',
+              fontWeight: 600,
+              padding: '13px 20px',
+              borderRadius: '10px',
+              textDecoration: 'none',
+              border: '1px solid var(--color-border)',
+              background: 'transparent',
+            }}
+          >
+            {t('nav.contactCTA')}
+          </a>
+          <a
+            href="/briefing"
+            onClick={() => setDrawerOpen(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              background: 'var(--color-primary)',
+              color: '#fff',
+              fontSize: '14px',
+              fontWeight: 700,
+              padding: '13px 20px',
+              borderRadius: '10px',
+              textDecoration: 'none',
+            }}
+          >
+            {t('nav.startProject')}
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+          </a>
+        </div>
+      </div>
 
       {/* Responsive visibility styles */}
       <style>{`
@@ -348,9 +465,11 @@ export default function Header() {
         }
         @media (max-width: 767px) {
           .hidden-mobile { display: none !important; }
-          .show-mobile { display: block !important; }
+          .show-mobile { display: flex !important; }
+          .show-mobile[style*="flex-direction: column"] { display: flex !important; }
         }
       `}</style>
     </>
   );
 }
+

@@ -20,7 +20,7 @@ const INSIGHTS = [
 export default function Insights() {
   return (
     <section id="insights" style={{ background: '#0e0e0e', padding: '96px 0' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px' }}>
         {/* Header */}
         <FadeIn delay={0.1}>
         <div
@@ -138,3 +138,4 @@ export default function Insights() {
     </section>
   );
 }
+

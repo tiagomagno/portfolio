@@ -68,20 +68,33 @@ export default function Hero() {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
           .hero-image-bg {
             width: 100% !important;
-            opacity: 0.2;
+            opacity: 0.18;
+          }
+          .hero-content {
+            padding: 90px 20px 48px !important;
+            min-height: auto !important;
+          }
+          .hero-cta-group a {
+            width: 100%;
+            justify-content: center;
+          }
+          .hero-stats {
+            grid-template-columns: 1fr 1fr !important;
+            padding: 24px 20px !important;
           }
         }
       `}</style>
 
       {/* Main content */}
       <div
+        className="section-container hero-content"
         style={{
           position: 'relative',
           zIndex: 1,
-          maxWidth: '1280px',
+          maxWidth: '85vw',
           margin: '0 auto',
           padding: '120px 24px 60px',
           display: 'flex',
@@ -120,10 +133,10 @@ export default function Hero() {
             />
             <span
               style={{
-                fontSize: '11px',
+                fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
                 color: '#e7bdb2',
-                letterSpacing: '0.1em',
+                letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
               }}
             >
@@ -136,7 +149,7 @@ export default function Hero() {
           <FadeIn delay={0.2}>
           <h1
             style={{
-              fontSize: 'clamp(52px, 7vw, 96px)',
+              fontSize: 'var(--fs-h1)',
               fontWeight: 900,
               lineHeight: 1.0,
               letterSpacing: '-0.02em',
@@ -153,8 +166,9 @@ export default function Hero() {
           {/* Description */}
           <FadeIn delay={0.3}>
           <p
+            className="hero-desc"
             style={{
-              fontSize: '18px',
+              fontSize: 'var(--fs-body-lg)',
               lineHeight: 1.7,
               color: '#a8a29e',
               maxWidth: '480px',
@@ -167,7 +181,7 @@ export default function Hero() {
 
           {/* CTAs */}
           <FadeIn delay={0.4}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '40px' }}>
+          <div className="hero-cta-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '40px' }}>
             <a
               href="#contact"
               style={{
@@ -177,7 +191,7 @@ export default function Hero() {
                 background: '#ff5625',
                 color: '#fff',
                 fontWeight: 700,
-                fontSize: '15px',
+                fontSize: 'var(--fs-btn)',
                 padding: '14px 32px',
                 borderRadius: '8px',
                 textDecoration: 'none',
@@ -198,7 +212,7 @@ export default function Hero() {
                 background: 'transparent',
                 color: '#fff',
                 fontWeight: 500,
-                fontSize: '15px',
+                fontSize: 'var(--fs-btn)',
                 padding: '14px 32px',
                 borderRadius: '8px',
                 border: '1px solid #353534',
@@ -218,7 +232,7 @@ export default function Hero() {
               <span
                 key={tag}
                 style={{
-                  fontSize: '12px',
+                  fontSize: 'var(--fs-small)',
                   fontWeight: 500,
                   color: '#a8a29e',
                   background: '#1c1b1b',
@@ -274,12 +288,13 @@ export default function Hero() {
       {/* Stats bar */}
       <div style={{ borderTop: '1px solid #1c1b1b', background: 'var(--color-bg)' }}>
         <div
+          className="section-container hero-stats"
           style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-            padding: '32px 24px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          maxWidth: '85vw',
+          margin: '0 auto',
+          padding: '32px 24px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
             gap: '24px 0',
           }}
         >
@@ -296,10 +311,10 @@ export default function Hero() {
                 height: '100%',
               }}
               >
-                <span style={{ fontSize: 'clamp(20px, 2.5vw, 24px)', fontWeight: 900, color: '#fff' }}>
+                <span style={{ fontSize: 'var(--fs-card-title)', fontWeight: 900, color: '#fff' }}>
                   {s.value}
                 </span>
-                <span style={{ fontSize: '12px', color: '#a8a29e', marginTop: '4px' }}>{s.label}</span>
+                <span style={{ fontSize: 'var(--fs-small)', color: '#a8a29e', marginTop: '4px' }}>{s.label}</span>
               </div>
             </FadeIn>
           ))}
@@ -308,3 +323,4 @@ export default function Hero() {
     </section>
   );
 }
+

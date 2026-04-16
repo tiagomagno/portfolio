@@ -5,7 +5,22 @@
    ============================================ */
 :root {
   --font-headline: 'Lufga', system-ui, -apple-system, sans-serif;
-  
+
+  /* ── Typography Scale ── */
+  --fs-h1:          clamp(44px, 7vw, 84px);
+  --fs-h2:          clamp(28px, 4vw, 44px);
+  --fs-card-title:  18px;
+  --fs-body-lg:     16px;
+  --fs-btn:         14px;
+  --fs-body:        14px;
+  --fs-small:       12px;
+  --fs-eyebrow:     11px;
+  --fs-tiny:        10px;
+
+  /* ── Letter spacing ── */
+  --ls-eyebrow: 0.15em;
+  --ls-tiny:    0.08em;
+
   /* Light Theme as default / fallback */
   --color-primary: #ff5625;
   --color-primary-hover: #e84e20;
@@ -75,6 +90,117 @@ section[id] {
    ============================================ */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ============================================
+   RESPONSIVE LAYOUT
+   ============================================ */
+/* Mobile typography scale overrides */
+@media (max-width: 767px) {
+  :root {
+    --fs-h1:         clamp(36px, 10vw, 52px);
+    --fs-h2:         clamp(24px, 7vw, 32px);
+    --fs-card-title: 15px;
+    --fs-body-lg:    15px;
+    --fs-body:       13px;
+    --fs-small:      11px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section-container {
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: 100% !important;
+  }
+
+  /* Cases: 2 colunas de cards em mobile */
+  .cases-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Cases: card interno compacto em 2 colunas */
+  .cases-grid h3 {
+    font-size: 13px !important;
+    margin-bottom: 4px !important;
+  }
+  .cases-grid .card-body {
+    padding: 12px !important;
+  }
+  .cases-grid .card-tag {
+    font-size: 8px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* About: stats em 2 colunas */
+  .about-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .about-stats-grid .stat-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+  .about-stats-grid .stat-title {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+  .about-stats-grid .stat-text {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Work: serviços em 2 colunas */
+  .work-services-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .work-services-grid .service-card {
+    padding: 16px !important;
+    border-radius: 14px !important;
+  }
+  .work-services-grid .service-card h4 {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+  .work-services-grid .service-card p {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+  .work-services-grid .service-icon {
+    font-size: 24px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Sections: padding vertical reduzido */
+  .section-mobile-compact {
+    padding-top: 64px !important;
+    padding-bottom: 64px !important;
+  }
+
+  /* Contact: campos em coluna única */
+  .contact-fields-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Filters: scroll horizontal */
+  .filters-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px;
+    /* extend to full bleed on mobile */
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .filters-scroll::-webkit-scrollbar {
+    display: none !important;
+  }
 }
 
 /* ============================================
