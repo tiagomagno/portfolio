@@ -67,7 +67,7 @@ export default function Header() {
         >
           {/* Logo */}
           <a
-            href="#"
+            href="/"
             style={{
               color: 'var(--color-text)',
               fontWeight: 900,
@@ -245,7 +245,7 @@ export default function Header() {
               </span>
             </button>
             <a
-              href="#"
+              href="/"
               style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
             >
               TM.
@@ -360,7 +360,7 @@ export default function Header() {
           }}
         >
           <a
-            href="#"
+            href="/"
             onClick={() => setDrawerOpen(false)}
             style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
           >
