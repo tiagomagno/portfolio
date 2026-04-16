@@ -25,10 +25,10 @@ export default function Header() {
   }, [drawerOpen]);
 
   const navLinks = [
-    { href: '#about', label: t('nav.about') },
-    { href: '#services', label: t('nav.services') },
-    { href: '#work', label: t('nav.work') },
-    { href: '#cases', label: t('nav.cases') },
+    { href: '/#about', label: t('nav.about') },
+    { href: '/#services', label: t('nav.services') },
+    { href: '/#work', label: t('nav.work') },
+    { href: '/#cases', label: t('nav.cases') },
   ];
 
   const langs: { value: 'pt-BR' | 'en-US'; label: string }[] = [
