@@ -63,8 +63,8 @@ export function BriefingStep4({ register, watch, error }: Props) {
   const options = challenge ? DYNAMIC_FEATURES[challenge] : DYNAMIC_FEATURES.website;
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-bold text-heading-light dark:text-heading-dark">
+    <div className="flex flex-col gap-8 mt-4">
+      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
         Quais itens melhor descrevem o que você busca?
       </h3>
       <p className="text-text-light dark:text-text-dark text-sm">

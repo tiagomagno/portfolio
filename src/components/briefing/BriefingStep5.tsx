@@ -21,13 +21,13 @@ interface Props {
 
 export function BriefingStep5({ register, errors }: Props) {
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-8 mt-4">
       <div>
-        <h3 className="text-xl font-bold text-heading-light dark:text-heading-dark mb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark mb-4">
           Sobre o Seu Negócio
         </h3>
         
-        <div className="space-y-4">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Quem é o seu público-alvo principal?
           </label>
@@ -60,7 +60,7 @@ export function BriefingStep5({ register, errors }: Props) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-3">
         <label htmlFor="idealCustomer" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Como você descreve seu cliente ideal?
         </label>
@@ -77,7 +77,7 @@ export function BriefingStep5({ register, errors }: Props) {
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-3">
         <label htmlFor="differential" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           O que torna sua empresa única? (Qual seu diferencial?)
         </label>

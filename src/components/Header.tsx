@@ -30,7 +30,7 @@ export default function Header() {
     { href: '#services', icon: 'category', label: t('nav.services') },
     { href: '#cases', icon: 'view_cozy', label: t('nav.cases') },
     { href: '#contact', icon: 'mail', label: t('nav.contact') },
-    { href: '/briefing', icon: 'description', label: 'Projeto' },
+    { href: '/briefing', icon: 'description', label: t('nav.project') },
   ];
 
   return (
@@ -171,7 +171,7 @@ export default function Header() {
                   transition: 'all 0.15s',
                 }}
               >
-                Entre em contato
+                {t('nav.contactCTA')}
               </a>
               <a
                 href="/briefing"
@@ -187,7 +187,7 @@ export default function Header() {
                   transition: 'background 0.15s',
                 }}
               >
-                Inicie um projeto
+                {t('nav.startProject')}
               </a>
             </div>
           </div>

@@ -20,8 +20,8 @@ interface Props {
 
 export function BriefingStep3({ register, error }: Props) {
   return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-bold text-heading-light dark:text-heading-dark">
+    <div className="flex flex-col gap-8 mt-4">
+      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
         Em qual área você precisa de mais ajuda hoje?
       </h3>
       <div className="grid gap-3 sm:grid-cols-1">

@@ -50,13 +50,13 @@ export function BriefingStep6({
   };
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-bold text-heading-light dark:text-heading-dark">
+    <div className="flex flex-col gap-8 mt-4">
+      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
         Falta pouco! Como podemos contatar você?
       </h3>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
+        <div className="flex flex-col gap-3">
           <Input
             id="name"
             label="Seu Nome / Empresa"
@@ -66,7 +66,7 @@ export function BriefingStep6({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-3">
           <Input
             id="email"
             type="email"
@@ -77,7 +77,7 @@ export function BriefingStep6({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-3">
           <Input
             id="whatsapp"
             label="WhatsApp (com DDD)"
@@ -93,7 +93,7 @@ export function BriefingStep6({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-3">
           <Input
             id="deadline"
             label="Prazo Desejado"

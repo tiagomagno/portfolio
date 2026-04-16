@@ -24,7 +24,7 @@ export default function BriefingStep2() {
 
   if (businessSegment === 'advocacia') {
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-8 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="text-center md:text-left mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">
             Raio-X do seu Escritório
@@ -41,7 +41,7 @@ export default function BriefingStep2() {
           {...register('advocacia_practiceAreas')}
         />
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual o formato de atendimento principal? *
           </label>
@@ -80,7 +80,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Você realiza triagem/qualificação dos clientes antes de atender? *
           </label>
@@ -119,7 +119,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual o foco dos casos que você deseja atrair? *
           </label>
@@ -163,7 +163,7 @@ export default function BriefingStep2() {
 
   if (businessSegment === 'saude') {
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-8 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="text-center md:text-left mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">
             Raio-X da Saúde
@@ -173,7 +173,7 @@ export default function BriefingStep2() {
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual a modalidade de atendimento mais comum? *
           </label>
@@ -219,7 +219,7 @@ export default function BriefingStep2() {
           {...register('saude_mainVolume')}
         />
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             A clínica utiliza algum software médico/prontuário digital atual? *
           </label>
@@ -258,7 +258,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual o foco de volume que você busca? *
           </label>
@@ -309,7 +309,7 @@ export default function BriefingStep2() {
     ];
 
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-8 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="text-center md:text-left mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">
             Raio-X do Comércio
@@ -319,7 +319,7 @@ export default function BriefingStep2() {
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Quais seus canais de venda atuais? (Selecione todos que se aplicam) *
           </label>
@@ -358,7 +358,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual seu formato principal de venda? *
           </label>
@@ -397,7 +397,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Como funciona a sua logística principal hoje? *
           </label>
@@ -436,7 +436,7 @@ export default function BriefingStep2() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Você possui um sistema ERP ou gerenciador de estoque atual? *
           </label>
@@ -480,7 +480,7 @@ export default function BriefingStep2() {
 
   if (businessSegment === 'servicos') {
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-8 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="text-center md:text-left mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">
             Raio-X de Serviços
@@ -490,7 +490,7 @@ export default function BriefingStep2() {
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="block text-sm font-medium text-heading-light dark:text-heading-dark">
             Qual o modelo principal de fechamento do seu serviço? *
           </label>
@@ -550,7 +550,7 @@ export default function BriefingStep2() {
   const painPointsError = errors.genericRaioXPainPoints?.message;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex flex-col gap-8 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-center md:text-left mb-8">
         <h2 className="text-2xl md:text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">
           Raio-X de Negócios
@@ -560,7 +560,7 @@ export default function BriefingStep2() {
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <span className="block text-sm font-medium text-heading-light dark:text-heading-dark">
           O que mais te incomoda em vendas ou em atrair clientes?{' '}
           <span className="text-red-500">*</span>
@@ -593,7 +593,7 @@ export default function BriefingStep2() {
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <label
           htmlFor="briefing-raiox-detalhes"
           className="block text-sm font-medium text-heading-light dark:text-heading-dark"
