@@ -11,6 +11,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 
 export const metadata: Metadata = {
   title: 'Tiago Magno - UX Designer Sênior | Product Design',
@@ -58,14 +59,16 @@ export default function RootLayout({
         <meta name="theme-color" content="#131313" />
       </head>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LangProvider>{children}</LangProvider>
-        </ThemeProvider>
+        <SmoothScrollProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <LangProvider>{children}</LangProvider>
+          </ThemeProvider>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

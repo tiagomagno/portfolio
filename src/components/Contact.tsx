@@ -130,6 +130,8 @@ export default function Contact() {
             `}</style>
             <form action="https://formsubmit.co/tiagosilvamagno@gmail.com" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_subject" value="Novo Lead via Portfólio!" />
+              <input type="hidden" name="_template" value="box" />
 
               {/* Name + Email */}
               <div className="contact-fields-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -146,17 +148,20 @@ export default function Contact() {
                 ))}
               </div>
 
-              {/* Budget */}
+              {/* Service */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: 'var(--ls-eyebrow)' }}>
-                  Qual o seu orçamento?
+                  Serviço desejado
                 </label>
-                <select name="budget">
-                  <option value="">Selecione uma faixa</option>
-                  <option value="Até R$ 5.000">Até R$ 5.000</option>
-                  <option value="R$ 5k – R$ 10k">R$ 5k – R$ 10k</option>
-                  <option value="R$ 10k – R$ 30k">R$ 10k – R$ 30k</option>
-                  <option value="Acima de R$ 30k">Acima de R$ 30k</option>
+                <select name="service" required>
+                  <option value="">Selecione o serviço</option>
+                  <option value="Produtos Digitais (Sites/Sistemas)">Produtos Digitais (Sites/Sistemas)</option>
+                  <option value="Identidade Visual">Identidade Visual</option>
+                  <option value="Consultoria UX/UI">Consultoria UX/UI</option>
+                  <option value="Redes Sociais">Redes Sociais</option>
+                  <option value="Design Gráfico">Design Gráfico</option>
+                  <option value="Fotografia">Fotografia</option>
+                  <option value="Outros">Outros</option>
                 </select>
               </div>
 

@@ -1,27 +1,71 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import FadeIn from './ui/FadeIn';
 import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, type AtuacaoCategory, type PortfolioItem } from '@/data/portfolio';
 
-const ITEMS_PER_PAGE = 9;
-
 export default function Cases() {
   const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
-  const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // Drag states
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const hasDragged = useRef(false);
 
   const filtered = activeFilter
     ? PORTFOLIO_ITEMS.filter((item) => item.atuacao.includes(activeFilter))
     : PORTFOLIO_ITEMS;
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-
   function handleFilter(cat: AtuacaoCategory | null) {
     setActiveFilter(cat);
-    setPage(1);
   }
+
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!carouselRef.current) return;
+    isDragging.current = true;
+    hasDragged.current = false;
+    carouselRef.current.style.cursor = 'grabbing';
+    carouselRef.current.style.scrollSnapType = 'none';
+    startX.current = e.pageX - carouselRef.current.offsetLeft;
+    scrollLeft.current = carouselRef.current.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    isDragging.current = false;
+    if (carouselRef.current) {
+      carouselRef.current.style.cursor = 'grab';
+      carouselRef.current.style.scrollSnapType = 'x mandatory';
+    }
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+    if (carouselRef.current) {
+      carouselRef.current.style.cursor = 'grab';
+      carouselRef.current.style.scrollSnapType = 'x mandatory';
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !carouselRef.current) return;
+    e.preventDefault();
+    hasDragged.current = true;
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX.current) * 2.5; // Multiplicador maior para movimento mais solto/fluido
+    carouselRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  const handleCardClick = (e: React.MouseEvent, item: PortfolioItem) => {
+    if (hasDragged.current) {
+      e.preventDefault();
+      return;
+    }
+    setSelected(item);
+  };
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -72,9 +116,23 @@ export default function Cases() {
               </h2>
             </div>
 
-            <span style={{ fontSize: 'var(--fs-small)', color: '#666', alignSelf: 'flex-end' }}>
-              {filtered.length} {filtered.length === 1 ? 'projeto' : 'projetos'}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '24px' }}>
+              <span style={{ fontSize: 'var(--fs-small)', color: '#666', marginBottom: '8px' }}>
+                {filtered.length} {filtered.length === 1 ? 'projeto' : 'projetos'}
+              </span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <PaginationButton
+                  icon="chevron_left"
+                  disabled={false}
+                  onClick={() => carouselRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+                />
+                <PaginationButton
+                  icon="chevron_right"
+                  disabled={false}
+                  onClick={() => carouselRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+                />
+              </div>
+            </div>
           </div>
         </FadeIn>
 
@@ -105,164 +163,156 @@ export default function Cases() {
           </div>
         </FadeIn>
 
-        {/* Cards Grid */}
-        <div
-          className="cases-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '24px',
-          }}
+        {/* Carousel Style */}
+        <style>{`
+          .cases-carousel {
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: auto; /* Garante que o CSS global não interfira no arrasto */
+            padding-bottom: 24px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            cursor: grab;
+            user-select: none;
+            -webkit-overflow-scrolling: touch;
+          }
+          .cases-carousel::-webkit-scrollbar {
+            display: none;
+          }
+          .case-card-wrapper {
+            scroll-snap-align: start;
+            flex: 0 0 calc(25% - 18px);
+            min-width: 280px;
+          }
+          @media (max-width: 1200px) {
+            .case-card-wrapper { flex: 0 0 calc(33.333% - 16px); }
+          }
+          @media (max-width: 900px) {
+            .case-card-wrapper { flex: 0 0 calc(50% - 12px); }
+          }
+          @media (max-width: 600px) {
+            .case-card-wrapper { flex: 0 0 100%; }
+          }
+        `}</style>
+
+        {/* Cards Carousel */}
+        <div 
+          className="cases-carousel" 
+          ref={carouselRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
         >
-          {paginated.map((item, i) => (
-            <FadeIn key={item.id} delay={0.05 * (i % ITEMS_PER_PAGE)} direction="up" style={{ height: '100%' }}>
-              <div
-                onClick={() => setSelected(item)}
-                style={{
-                  background: '#1c1b1b',
-                  border: '1px solid #2a2a2a',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  transition: 'border-color 0.2s, transform 0.2s',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,86,37,0.4)';
-                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = '#2a2a2a';
-                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-                }}
-              >
-                {/* Image placeholder */}
+          {filtered.map((item, i) => (
+            <div key={item.id} className="case-card-wrapper">
+              <FadeIn delay={0.05 * Math.min(i, 8)} direction="up" style={{ height: '100%' }}>
                 <div
+                  onClick={(e) => handleCardClick(e, item)}
                   style={{
-                    background: '#0e0e0e',
-                    aspectRatio: '16/9',
+                    background: '#1c1b1b',
+                    border: '1px solid #2a2a2a',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
+                    flexDirection: 'column',
+                    height: '100%',
+                    transition: 'border-color 0.2s, transform 0.2s',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,86,37,0.4)';
+                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = '#2a2a2a';
+                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
                   }}
                 >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: '48px', color: '#2a2a2a' }}
-                  >
-                    photo_camera
-                  </span>
-
-                  <span
-                    className="card-tag"
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      fontSize: 'var(--fs-tiny)',
-                      fontWeight: 800,
-                      letterSpacing: 'var(--ls-tiny)',
-                      color: '#ff5625',
-                      background: 'rgba(255,86,37,0.1)',
-                      border: '1px solid rgba(255,86,37,0.3)',
-                      padding: '3px 10px',
-                      borderRadius: '999px',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {item.atuacao[0]}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="card-body" style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h3 style={{ fontSize: 'var(--fs-card-title)', fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>
-                    {item.empresa}
-                  </h3>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
-                    {item.produtos.map((prod) => (
-                      <span
-                        key={prod}
-                        style={{
-                          fontSize: 'var(--fs-tiny)',
-                          fontWeight: 500,
-                          color: '#666',
-                          letterSpacing: '0.02em',
-                        }}
-                      >
-                        {prod}{item.produtos.indexOf(prod) < item.produtos.length - 1 ? ' ·' : ''}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div style={{ flex: 1 }} />
+                  {/* Image placeholder */}
                   <div
                     style={{
+                      background: '#0e0e0e',
+                      aspectRatio: '16/9',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px',
-                      color: '#ff5625',
-                      fontSize: 'var(--fs-small)',
-                      fontWeight: 700,
-                      marginTop: '8px',
+                      justifyContent: 'center',
+                      position: 'relative',
                     }}
                   >
-                    Ver detalhes
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '48px', color: '#2a2a2a' }}
+                    >
+                      photo_camera
+                    </span>
+
+                    <span
+                      className="card-tag"
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        fontSize: 'var(--fs-tiny)',
+                        fontWeight: 800,
+                        letterSpacing: 'var(--ls-tiny)',
+                        color: '#ff5625',
+                        background: 'rgba(255,86,37,0.1)',
+                        border: '1px solid rgba(255,86,37,0.3)',
+                        padding: '3px 10px',
+                        borderRadius: '999px',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {item.atuacao[0]}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="card-body" style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ fontSize: 'var(--fs-card-title)', fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>
+                      {item.empresa}
+                    </h3>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
+                      {item.produtos.map((prod) => (
+                        <span
+                          key={prod}
+                          style={{
+                            fontSize: 'var(--fs-tiny)',
+                            fontWeight: 500,
+                            color: '#666',
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {prod}{item.produtos.indexOf(prod) < item.produtos.length - 1 ? ' ·' : ''}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div style={{ flex: 1 }} />
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        color: '#ff5625',
+                        fontSize: 'var(--fs-small)',
+                        fontWeight: 700,
+                        marginTop: '8px',
+                      }}
+                    >
+                      Ver detalhes
+                      <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </FadeIn>
+              </FadeIn>
+            </div>
           ))}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '8px',
-              marginTop: '48px',
-            }}
-          >
-            <PaginationButton
-              icon="chevron_left"
-              disabled={page === 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            />
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  border: p === page ? '1px solid #ff5625' : '1px solid #2a2a2a',
-                  background: p === page ? 'rgba(255,86,37,0.1)' : '#1c1b1b',
-                  color: p === page ? '#ff5625' : '#a8a29e',
-                  fontSize: 'var(--fs-small)',
-                  fontWeight: p === page ? 700 : 400,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {p}
-              </button>
-            ))}
-            <PaginationButton
-              icon="chevron_right"
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            />
-          </div>
-        )}
       </div>
 
       {/* Modal */}
