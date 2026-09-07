@@ -12,6 +12,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
+import WhatsAppFloat from '@/components/WhatsAppFloat';
 
 export const metadata: Metadata = {
   title: 'Tiago Magno - UX Designer Sênior | Product Design',
@@ -56,17 +57,20 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${plusJakartaSans.variable}`} suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-        <meta name="theme-color" content="#131313" />
+        <meta name="theme-color" content="#f9f9f9" />
       </head>
       <body>
         <SmoothScrollProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
-            enableSystem
+            defaultTheme="light"
+            forcedTheme="light"
             disableTransitionOnChange
           >
-            <LangProvider>{children}</LangProvider>
+            <LangProvider>
+              {children}
+              <WhatsAppFloat />
+            </LangProvider>
           </ThemeProvider>
         </SmoothScrollProvider>
       </body>

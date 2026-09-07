@@ -1,81 +1,43 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import FadeIn from './ui/FadeIn';
-import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, type AtuacaoCategory, type PortfolioItem } from '@/data/portfolio';
+import { useLang } from '@/context/LangContext';
+import { PORTFOLIO_ITEMS, slugify } from '@/data/portfolio';
+import { CATEGORY_KEYS } from '@/lib/translations';
+import { SURFACE } from '@/lib/surfaces';
+
+type PreviewFilter = 'all' | 'digital' | 'uxui' | 'brand' | 'social';
+
+const PREVIEW_CASES: { id: number; company: string; image: string; filter: PreviewFilter }[] = [
+  { id: 8, company: 'Brava Sport', image: '/cases/brava-sport.png', filter: 'digital' },
+  { id: 9, company: 'Conergia', image: '/cases/conergia.png', filter: 'digital' },
+  { id: 7, company: 'Aquarium Scuba', image: '/cases/aquarium-scuba.png', filter: 'brand' },
+  { id: 1, company: 'Mr. Temaki', image: '/cases/mr-temaki.png', filter: 'social' },
+  { id: 3, company: 'Alqafiltros', image: '/cases/alqafiltros.png', filter: 'brand' },
+  { id: 6, company: 'Refrisul', image: '/cases/refrisul.png', filter: 'uxui' },
+];
 
 export default function Cases() {
-  const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
-  const [selected, setSelected] = useState<PortfolioItem | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  
-  // Drag states
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const hasDragged = useRef(false);
+  const { t } = useLang();
+  const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
+  const [activeFilter, setActiveFilter] = useState<PreviewFilter>('all');
 
-  const filtered = activeFilter
-    ? PORTFOLIO_ITEMS.filter((item) => item.atuacao.includes(activeFilter))
-    : PORTFOLIO_ITEMS;
+  const filters: { value: PreviewFilter; label: string }[] = [
+    { value: 'all', label: t('cases.filterAll') },
+    { value: 'digital', label: t('cases.filter.digital') },
+    { value: 'uxui', label: t('cases.filter.uxui') },
+    { value: 'brand', label: t('cases.filter.brand') },
+    { value: 'social', label: t('cases.filter.social') },
+  ];
 
-  function handleFilter(cat: AtuacaoCategory | null) {
-    setActiveFilter(cat);
-  }
-
-  // Mouse drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
-    isDragging.current = true;
-    hasDragged.current = false;
-    carouselRef.current.style.cursor = 'grabbing';
-    carouselRef.current.style.scrollSnapType = 'none';
-    startX.current = e.pageX - carouselRef.current.offsetLeft;
-    scrollLeft.current = carouselRef.current.scrollLeft;
-  };
-
-  const handleMouseLeave = () => {
-    isDragging.current = false;
-    if (carouselRef.current) {
-      carouselRef.current.style.cursor = 'grab';
-      carouselRef.current.style.scrollSnapType = 'x mandatory';
-    }
-  };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-    if (carouselRef.current) {
-      carouselRef.current.style.cursor = 'grab';
-      carouselRef.current.style.scrollSnapType = 'x mandatory';
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging.current || !carouselRef.current) return;
-    e.preventDefault();
-    hasDragged.current = true;
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX.current) * 2.5; // Multiplicador maior para movimento mais solto/fluido
-    carouselRef.current.scrollLeft = scrollLeft.current - walk;
-  };
-
-  const handleCardClick = (e: React.MouseEvent, item: PortfolioItem) => {
-    if (hasDragged.current) {
-      e.preventDefault();
-      return;
-    }
-    setSelected(item);
-  };
-
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    document.body.style.overflow = selected ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [selected]);
+  const filtered = activeFilter === 'all' ? PREVIEW_CASES : PREVIEW_CASES.filter((c) => c.filter === activeFilter);
 
   return (
-    <section id="cases" style={{ background: '#131313', padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px' }}>
+    <section id="cases" style={{ background: SURFACE.base, padding: '96px 0' }}>
+      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
         <FadeIn delay={0.1}>
@@ -94,483 +56,173 @@ export default function Cases() {
                 style={{
                   fontSize: 'var(--fs-eyebrow)',
                   fontWeight: 700,
-                  color: '#ff5625',
+                  color: 'var(--color-primary)',
                   letterSpacing: 'var(--ls-eyebrow)',
                   textTransform: 'uppercase',
                   display: 'block',
-                  marginBottom: '12px',
+                  marginBottom: '14px',
                 }}
               >
-                Trabalho selecionado
+                {t('cases.eyebrow')}
               </span>
               <h2
                 style={{
                   fontSize: 'var(--fs-h2)',
                   fontWeight: 900,
-                  color: '#fff',
+                  color: '#1a1a1a',
                   lineHeight: 1.1,
                   margin: 0,
                 }}
               >
-                Impacto real<br />em projetos
+                {t('cases.heading.line1')}
               </h2>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '24px' }}>
-              <span style={{ fontSize: 'var(--fs-small)', color: '#666', marginBottom: '8px' }}>
-                {filtered.length} {filtered.length === 1 ? 'projeto' : 'projetos'}
-              </span>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <PaginationButton
-                  icon="chevron_left"
-                  disabled={false}
-                  onClick={() => carouselRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
-                />
-                <PaginationButton
-                  icon="chevron_right"
-                  disabled={false}
-                  onClick={() => carouselRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
-                />
-              </div>
+            <div className="filters-scroll no-scrollbar" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <style>{`
+                .filter-pill[data-active="false"]:hover {
+                  background: rgba(26,26,26,0.07) !important;
+                  color: rgba(26,26,26,0.85) !important;
+                }
+              `}</style>
+              {filters.map((f) => (
+                <button
+                  key={f.value}
+                  className="filter-pill"
+                  data-active={activeFilter === f.value}
+                  onClick={() => setActiveFilter(f.value)}
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: activeFilter === f.value ? '#fff' : 'rgba(26,26,26,0.6)',
+                    background: activeFilter === f.value ? 'var(--color-primary)' : 'transparent',
+                    border: activeFilter === f.value ? '1px solid var(--color-primary)' : 'none',
+                    padding: '7px 16px',
+                    borderRadius: '100px',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
             </div>
           </div>
         </FadeIn>
 
-        {/* Filters */}
-        <FadeIn delay={0.15}>
-          <div
-            className="filters-scroll no-scrollbar"
-            style={{
-              display: 'flex',
-              gap: '8px',
-              flexWrap: 'wrap',
-              marginBottom: '48px',
-            }}
-          >
-            <FilterButton
-              label="Todos"
-              active={activeFilter === null}
-              onClick={() => handleFilter(null)}
-            />
-            {ATUACAO_CATEGORIES.map((cat) => (
-              <FilterButton
-                key={cat}
-                label={cat}
-                active={activeFilter === cat}
-                onClick={() => handleFilter(cat)}
-              />
-            ))}
-          </div>
-        </FadeIn>
-
-        {/* Carousel Style */}
         <style>{`
-          .cases-carousel {
-            display: flex;
-            gap: 24px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: auto; /* Garante que o CSS global não interfira no arrasto */
-            padding-bottom: 24px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            cursor: grab;
-            user-select: none;
-            -webkit-overflow-scrolling: touch;
-          }
-          .cases-carousel::-webkit-scrollbar {
-            display: none;
-          }
-          .case-card-wrapper {
-            scroll-snap-align: start;
-            flex: 0 0 calc(25% - 18px);
-            min-width: 280px;
-          }
-          @media (max-width: 1200px) {
-            .case-card-wrapper { flex: 0 0 calc(33.333% - 16px); }
+          .cases-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
           }
           @media (max-width: 900px) {
-            .case-card-wrapper { flex: 0 0 calc(50% - 12px); }
+            .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
           }
           @media (max-width: 600px) {
-            .case-card-wrapper { flex: 0 0 100%; }
+            .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
           }
+          .portfolio-card { transition: box-shadow 0.25s, border-color 0.25s; }
+          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); border-color: rgba(26,26,26,0.2); }
+          .portfolio-card img { transition: transform 0.35s ease; }
+          .portfolio-card:hover img { transform: scale(1.06); }
         `}</style>
 
-        {/* Cards Carousel */}
-        <div 
-          className="cases-carousel" 
-          ref={carouselRef}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-        >
-          {filtered.map((item, i) => (
-            <div key={item.id} className="case-card-wrapper">
-              <FadeIn delay={0.05 * Math.min(i, 8)} direction="up" style={{ height: '100%' }}>
-                <div
-                  onClick={(e) => handleCardClick(e, item)}
-                  style={{
-                    background: '#1c1b1b',
-                    border: '1px solid #2a2a2a',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                    transition: 'border-color 0.2s, transform 0.2s',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,86,37,0.4)';
-                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = '#2a2a2a';
-                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-                  }}
-                >
-                  {/* Image placeholder */}
-                  <div
-                    style={{
-                      background: '#0e0e0e',
-                      aspectRatio: '16/9',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: '48px', color: '#2a2a2a' }}
-                    >
-                      photo_camera
-                    </span>
+        <div className="cases-preview-grid">
+          {filtered.map((item, i) => {
+            const fullItem = PORTFOLIO_ITEMS.find((p) => p.id === item.id);
+            const href = fullItem?.caseStudy ? `/portfolio/${slugify(item.company)}` : '/portfolio';
+            return (
+              <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
+                <Link href={href} style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
+                  <div className="portfolio-card" style={{ position: 'relative', aspectRatio: '4 / 3', background: SURFACE.card, border: '1px solid var(--color-border)', overflow: 'hidden', borderRadius: '20px', height: '100%' }}>
+                    <Image src={item.image} alt={item.company} fill sizes="(max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} priority={i === 0} />
 
-                    <span
-                      className="card-tag"
-                      style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        fontSize: 'var(--fs-tiny)',
-                        fontWeight: 800,
-                        letterSpacing: 'var(--ls-tiny)',
-                        color: '#ff5625',
-                        background: 'rgba(255,86,37,0.1)',
-                        border: '1px solid rgba(255,86,37,0.3)',
-                        padding: '3px 10px',
-                        borderRadius: '999px',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {item.atuacao[0]}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="card-body" style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3 style={{ fontSize: 'var(--fs-card-title)', fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>
-                      {item.empresa}
-                    </h3>
-
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
-                      {item.produtos.map((prod) => (
-                        <span
-                          key={prod}
-                          style={{
-                            fontSize: 'var(--fs-tiny)',
-                            fontWeight: 500,
-                            color: '#666',
-                            letterSpacing: '0.02em',
-                          }}
-                        >
-                          {prod}{item.produtos.indexOf(prod) < item.produtos.length - 1 ? ' ·' : ''}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div style={{ flex: 1 }} />
                     <div
                       style={{
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        background: '#ffffff',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        color: '#ff5625',
-                        fontSize: 'var(--fs-small)',
-                        fontWeight: 700,
-                        marginTop: '8px',
+                        justifyContent: 'center',
                       }}
                     >
-                      Ver detalhes
-                      <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                      <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'rgba(26,26,26,0.7)' }}>
+                        north_east
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        padding: '48px 16px 16px',
+                        background: 'linear-gradient(to top, rgba(20,18,16,0.92) 0%, rgba(20,18,16,0.6) 55%, rgba(20,18,16,0) 100%)',
+                      }}
+                    >
+                      {fullItem && (
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                          {fullItem.atuacao.map((cat) => (
+                            <span
+                              key={cat}
+                              style={{
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                color: 'rgba(245,243,240,0.85)',
+                                background: 'rgba(255,255,255,0.12)',
+                                border: '1px solid rgba(245,243,240,0.2)',
+                                padding: '4px 10px',
+                                borderRadius: '100px',
+                              }}
+                            >
+                              {tCategory(cat)}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <h3 style={{ color: '#f5f3f0', fontSize: '16px', fontWeight: 700, margin: 0 }}>
+                        {item.company}
+                      </h3>
                     </div>
                   </div>
-                </div>
+                </Link>
               </FadeIn>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Modal */}
-      {selected && (
-        <PortfolioModal item={selected} onClose={() => setSelected(null)} />
-      )}
-    </section>
-  );
-}
-
-/* ── Portfolio Modal ── */
-function PortfolioModal({ item, onClose }: { item: PortfolioItem; onClose: () => void }) {
-  return (
-    <>
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 300,
-          background: 'rgba(0,0,0,0.75)',
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
-        }}
-      />
-
-      {/* Panel */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 310,
-          width: 'min(92vw, 640px)',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          background: '#1c1b1b',
-          border: '1px solid #2a2a2a',
-          borderRadius: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Image area */}
-        <div
-          style={{
-            background: '#0e0e0e',
-            aspectRatio: '16/7',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-            flexShrink: 0,
-            borderRadius: '20px 20px 0 0',
-            overflow: 'hidden',
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: '64px', color: '#2a2a2a' }}>
-            photo_camera
-          </span>
-
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: 'rgba(0,0,0,0.6)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              padding: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
-          </button>
-
-          {/* Atuação badge */}
-          <span
-            style={{
-              position: 'absolute',
-              bottom: '16px',
-              left: '16px',
-              fontSize: 'var(--fs-tiny)',
-              fontWeight: 800,
-              letterSpacing: 'var(--ls-tiny)',
-              color: '#ff5625',
-              background: 'rgba(255,86,37,0.15)',
-              border: '1px solid rgba(255,86,37,0.4)',
-              padding: '4px 12px',
-              borderRadius: '999px',
-            }}
-          >
-            {item.atuacao[0]}
-          </span>
+            );
+          })}
         </div>
 
-        {/* Content */}
-        <div style={{ padding: '28px 28px 32px' }}>
-          <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#fff', margin: '0 0 12px', lineHeight: 1.1 }}>
-            {item.empresa}
-          </h2>
-
-          {/* All atuações */}
-          {item.atuacao.length > 1 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
-              {item.atuacao.map((a) => (
-                <span
-                  key={a}
-                  style={{
-                    fontSize: 'var(--fs-tiny)',
-                    fontWeight: 700,
-                    color: '#ff5625',
-                    background: 'rgba(255,86,37,0.08)',
-                    border: '1px solid rgba(255,86,37,0.2)',
-                    padding: '3px 10px',
-                    borderRadius: '999px',
-                  }}
-                >
-                  {a}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Produtos */}
-          <div style={{ marginBottom: '28px' }}>
-            <span
+        <FadeIn delay={0.3}>
+          <div style={{ textAlign: 'center', marginTop: '48px' }}>
+            <style>{`
+              .view-all-link { display: inline-flex; align-items: center; gap: 6px; }
+              .view-all-link .view-all-arrow { transition: transform 0.2s; display: inline-block; }
+              .view-all-link:hover .view-all-arrow { transform: translateX(4px); }
+            `}</style>
+            <Link
+              href="/portfolio"
+              className="view-all-link"
               style={{
-                fontSize: 'var(--fs-eyebrow)',
+                fontSize: '14px',
                 fontWeight: 700,
-                color: '#a8a29e',
-                letterSpacing: 'var(--ls-eyebrow)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '12px',
+                color: 'var(--color-primary)',
+                letterSpacing: '0.04em',
+                textDecoration: 'none',
               }}
             >
-              Produtos entregues
-            </span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {item.produtos.map((prod) => (
-                <span
-                  key={prod}
-                  style={{
-                    fontSize: 'var(--fs-small)',
-                    fontWeight: 500,
-                    color: '#e5e2e1',
-                    background: '#2a2a2a',
-                    border: '1px solid #3a3a3a',
-                    padding: '5px 12px',
-                    borderRadius: '8px',
-                  }}
-                >
-                  {prod}
-                </span>
-              ))}
-            </div>
+              {t('cases.viewAll')}
+              <span className="view-all-arrow">→</span>
+            </Link>
           </div>
-
-          {/* Coming soon */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'rgba(255,86,37,0.06)',
-              border: '1px solid rgba(255,86,37,0.15)',
-              borderRadius: '12px',
-              padding: '16px 20px',
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px', flexShrink: 0 }}>
-              hourglass_top
-            </span>
-            <div>
-              <p style={{ fontSize: 'var(--fs-body)', color: '#fff', fontWeight: 600, margin: '0 0 4px' }}>
-                Detalhamento em produção
-              </p>
-              <p style={{ fontSize: 'var(--fs-small)', color: '#a8a29e', margin: 0, lineHeight: 1.5 }}>
-                Em breve este case terá descrição completa, imagens e resultados do projeto.
-              </p>
-            </div>
-          </div>
-        </div>
+        </FadeIn>
       </div>
-    </>
-  );
-}
-
-function FilterButton({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        fontSize: 'var(--fs-small)',
-        fontWeight: active ? 700 : 500,
-        color: active ? '#ff5625' : '#a8a29e',
-        background: active ? 'rgba(255,86,37,0.1)' : '#1c1b1b',
-        border: active ? '1px solid rgba(255,86,37,0.4)' : '1px solid #2a2a2a',
-        padding: '6px 16px',
-        borderRadius: '999px',
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-        whiteSpace: 'nowrap',
-        letterSpacing: '0.04em',
-      }}
-    >
-      {label}
-    </button>
-  );
-}
-
-function PaginationButton({
-  icon,
-  disabled,
-  onClick,
-}: {
-  icon: string;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        width: '36px',
-        height: '36px',
-        borderRadius: '8px',
-        border: '1px solid #2a2a2a',
-        background: '#1c1b1b',
-        color: disabled ? '#3a3a3a' : '#a8a29e',
-        cursor: disabled ? 'default' : 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 0.15s',
-      }}
-    >
-      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{icon}</span>
-    </button>
+    </section>
   );
 }

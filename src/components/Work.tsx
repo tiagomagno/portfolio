@@ -1,172 +1,173 @@
 'use client';
 
+import Link from 'next/link';
+import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
-
-const servicesList = [
-  {
-    category: 'Produtos Digitais',
-    icon: 'web',
-    title: 'Landing Pages',
-    label: 'Sites institucionais e páginas estruturadas para alta conversão.',
-  },
-  {
-    category: 'Produtos Digitais',
-    icon: 'storefront',
-    title: 'E-commerces',
-    label: 'Lojas virtuais, portais e blogs corporativos integrados.',
-  },
-  {
-    category: 'Produtos Digitais',
-    icon: 'dashboard',
-    title: 'Sistemas Web',
-    label: 'Dashboards e painéis administrativos criados sob medida.',
-  },
-
-  {
-    category: 'Produtos Digitais',
-    icon: 'update',
-    title: 'Manutenção',
-    label: 'Evolução de sistemas contínua e desenvolvimento de novas features.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'search_insights',
-    title: 'UX Research',
-    label: 'Diagnóstico e entendimento profundo das necessidades do usuário.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'account_tree',
-    title: 'Arquitetura da Informação',
-    label: 'Criação de wireframes para o alinhamento de fluxos ideais.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'design_services',
-    title: 'Design de Interfaces (UI)',
-    label: 'Telas de altíssima fidelidade prontas para a equipe de programação.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'touch_app',
-    title: 'Protótipos Navegáveis',
-    label: 'Validação ágil e testes de usabilidade práticos de uso.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'code_blocks',
-    title: 'Design Systems',
-    label: 'Criação, governança escalável e documentação técnica.',
-  },
-  {
-    category: 'Consultoria UX/UI',
-    icon: 'monitoring',
-    title: 'Produto & Evolução',
-    label: 'Acompanho a evolução do produto com base em dados, feedback e uso real, refinando continuamente a experiência.',
-  }
-];
+import { SURFACE } from '@/lib/surfaces';
 
 export default function Work() {
+  const { t } = useLang();
+
+  const servicesList = [
+    { title: t('work.svc1.title'), label: t('work.svc1.label') },
+    { title: t('work.svc2.title'), label: t('work.svc2.label') },
+    { title: t('work.svc3.title'), label: t('work.svc3.label') },
+    { title: t('work.svc4.title'), label: t('work.svc4.label') },
+    { title: t('work.svc5.title'), label: t('work.svc5.label') },
+    { title: t('work.svc6.title'), label: t('work.svc6.label') },
+  ];
+
   return (
-    <section id="work" style={{ background: 'var(--color-bg-low)', padding: '120px 0' }}>
-      <div className="work-container" style={{ margin: '0 auto' }}>
+    <section id="work" style={{ background: SURFACE.base, padding: '96px 0' }}>
+      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
-          .work-container {
-            width: 85%;
-            padding: 0;
+          .work-section-grid {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 56px;
+            align-items: start;
+          }
+          .work-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+          }
+          @media (max-width: 900px) {
+            .work-section-grid { grid-template-columns: 1fr; }
+          }
+          @media (max-width: 500px) {
+            .work-cards-grid { grid-template-columns: 1fr; }
+          }
+          .service-card {
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
           }
           .service-card:hover {
-            border-color: var(--color-primary) !important;
-            transform: translateY(-4px);
-          }
-          @media (max-width: 768px) {
-            .work-container {
-              width: 100%;
-              padding: 0 16px;
-            }
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+            border-color: rgba(26,26,26,0.3);
           }
         `}</style>
-        <FadeIn delay={0.1} direction="up">
-          <div style={{ textAlign: 'center', marginBottom: '72px' }}>
-            <span
+
+        <div className="work-section-grid">
+          {/* Left column */}
+          <FadeIn delay={0.1} direction="up">
+            <div
               style={{
-                fontSize: 'var(--fs-eyebrow)',
+                display: 'inline-block',
+                border: '1px solid var(--color-border)',
+                borderRadius: '999px',
+                padding: '6px 16px',
+                fontSize: '11px',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
-                letterSpacing: 'var(--ls-eyebrow)',
+                color: 'rgba(26,26,26,0.7)',
+                letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '16px',
+                marginBottom: '20px',
               }}
             >
-              Como posso ajudar
-            </span>
+              {t('work.eyebrow')}
+            </div>
             <h2
               style={{
                 fontSize: 'var(--fs-h2)',
                 fontWeight: 900,
-                color: 'var(--color-text)',
-                lineHeight: 1.1,
-                margin: '0',
+                color: '#1a1a1a',
+                lineHeight: 1.15,
+                margin: '0 0 16px',
               }}
             >
-              Atuação <span style={{ color: 'var(--color-primary)' }}>Profissional</span>
+              {t('work.title.p1')} <span>{t('work.title.highlight')}</span>
             </h2>
-          </div>
-        </FadeIn>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '420px' }}>
+              {t('work.subtitle')}
+            </p>
+            <a
+              href="/briefing"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'var(--color-primary)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '13px',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                padding: '14px 28px',
+                borderRadius: '10px',
+                textDecoration: 'none',
+              }}
+            >
+              {t('nav.startProject')}
+            </a>
+          </FadeIn>
 
-        <div
-          className="work-services-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-          }}
-        >
-          {servicesList.map((item, i) => (
-            <FadeIn key={item.title} delay={0.2 + i * 0.05} direction="up" style={{ height: '100%' }}>
-              <div
-                className="service-card"
-                style={{
-                  background: 'var(--color-bg-card)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '20px',
-                  padding: '32px',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <div style={{ marginBottom: '16px' }}>
-                  <span
-                    className="material-symbols-outlined service-icon"
-                    style={{ color: 'var(--color-primary)', fontSize: '32px', display: 'block', marginBottom: '16px' }}
+          {/* Right column: cards grid */}
+          <div className="work-cards-grid">
+            {servicesList.map((item, i) => (
+              <FadeIn key={item.title} delay={0.15 + i * 0.05} style={{ height: '100%' }}>
+                <Link href="/briefing" style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
+                  <div
+                    className="service-card"
+                    style={{
+                      position: 'relative',
+                      background: SURFACE.raised,
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '16px',
+                      padding: '28px 24px',
+                      height: '100%',
+                      minHeight: '180px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
                   >
-                    {item.icon}
-                  </span>
-                  <span style={{ 
-                    fontSize: 'var(--fs-tiny)', 
-                    fontWeight: 700, 
-                    textTransform: 'uppercase', 
-                    letterSpacing: 'var(--ls-tiny)',
-                    color: 'var(--color-text-dim)'
-                  }}>
-                    {item.category}
-                  </span>
-                </div>
-                <h4 style={{ color: 'var(--color-text)', fontSize: 'var(--fs-card-title)', fontWeight: 700, margin: '0 0 12px' }}>
-                  {item.title}
-                </h4>
-                <p style={{ color: 'var(--color-text-dim)', fontSize: 'var(--fs-body)', lineHeight: 1.6, margin: 0 }}>
-                  {item.label}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'var(--color-bg-high)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'rgba(26,26,26,0.6)' }}>
+                        north_east
+                      </span>
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '17px',
+                        fontWeight: 700,
+                        color: '#1a1a1a',
+                        margin: '0 8px 8px 0',
+                        paddingRight: '40px',
+                      }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        lineHeight: 1.6,
+                        color: 'rgba(26,26,26,0.62)',
+                        margin: 0,
+                        flex: 1,
+                      }}
+                    >
+                      {item.label}
+                    </p>
+                  </div>
+                </Link>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

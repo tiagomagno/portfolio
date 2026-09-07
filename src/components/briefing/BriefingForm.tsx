@@ -237,7 +237,7 @@ export function BriefingForm() {
 
         {submitStatus === 'error' && (
           <div style={{
-            marginTop: '24px', padding: '16px', borderRadius: '10px',
+            marginTop: '24px', padding: '16px', borderRadius: '14px',
             border: '1px solid #ef4444', background: 'rgba(239,68,68,0.08)', color: '#f87171',
           }}>
             <p style={{ fontWeight: 600, marginBottom: '4px' }}>Erro ao enviar</p>
@@ -256,7 +256,7 @@ export function BriefingForm() {
             disabled={currentStep === 1}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '12px 20px', borderRadius: '10px', fontSize: '15px', fontWeight: 600,
+              padding: '12px 20px', borderRadius: '14px', fontSize: '15px', fontWeight: 600,
               color: currentStep === 1 ? '#3a3a3a' : '#a8a29e',
               background: 'transparent', border: 'none',
               cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
@@ -272,7 +272,7 @@ export function BriefingForm() {
               onClick={goNext}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
-                padding: '12px 28px', borderRadius: '10px', fontSize: '15px', fontWeight: 700,
+                padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,
                 color: '#fff', background: '#ff5625', border: 'none', cursor: 'pointer',
               }}
             >
@@ -285,7 +285,7 @@ export function BriefingForm() {
               disabled={isSubmitting}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
-                padding: '12px 28px', borderRadius: '10px', fontSize: '15px', fontWeight: 700,
+                padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,
                 color: '#fff', background: '#ff5625', border: 'none',
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 opacity: isSubmitting ? 0.7 : 1,

@@ -1,26 +1,29 @@
 'use client';
 
+import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 
-const INSIGHTS = [
-  {
-    tag: 'UX Strategy',
-    readTime: '5 min',
-    title: 'A proximidade entre o Design Sênior e o Design de Crescimento',
-    desc: 'Como o UX está se tornando cada vez mais responsável por métricas de ativação e retenção em produtos digitais.',
-  },
-  {
-    tag: 'Design Systems',
-    readTime: '7 min',
-    title: 'Introdução focada a ascensão do Design de Conteúdo',
-    desc: 'Content Design como disciplina estratégica para produtos que comunicam com clareza e reduzem fricção.',
-  },
-];
-
 export default function Insights() {
+  const { t } = useLang();
+
+  const INSIGHTS = [
+    {
+      tag: t('insights.post1.tag'),
+      readTime: '5 min',
+      title: t('insights.post1.title'),
+      desc: t('insights.post1.desc'),
+    },
+    {
+      tag: t('insights.post2.tag'),
+      readTime: '7 min',
+      title: t('insights.post2.title'),
+      desc: t('insights.post2.desc'),
+    },
+  ];
+
   return (
     <section id="insights" style={{ background: '#0e0e0e', padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
         {/* Header */}
         <FadeIn delay={0.1}>
         <div
@@ -45,7 +48,7 @@ export default function Insights() {
                 marginBottom: '12px',
               }}
             >
-              Reflexões
+              {t('insights.eyebrow')}
             </span>
             <h2
               style={{
@@ -63,7 +66,7 @@ export default function Insights() {
             href="#"
             style={{ fontSize: '14px', fontWeight: 700, color: '#a8a29e', textDecoration: 'none' }}
           >
-            Ver todos →
+            {t('insights.viewAll')}
           </a>
         </div>
         </FadeIn>
@@ -83,7 +86,7 @@ export default function Insights() {
               style={{
                 background: '#1c1b1b',
                 border: '1px solid #2a2a2a',
-                borderRadius: '16px',
+                borderRadius: '20px',
                 padding: '32px',
                 textDecoration: 'none',
                 display: 'flex',
@@ -107,7 +110,7 @@ export default function Insights() {
                 >
                   {post.tag}
                 </span>
-                <span style={{ fontSize: '12px', color: '#a8a29e' }}>{post.readTime} leitura</span>
+                <span style={{ fontSize: '12px', color: '#a8a29e' }}>{post.readTime} {t('insights.readSuffix')}</span>
               </div>
               <h3
                 style={{ fontSize: '20px', fontWeight: 700, color: '#fff', margin: '0 0 12px', lineHeight: 1.4 }}
@@ -127,7 +130,7 @@ export default function Insights() {
                   fontWeight: 700,
                 }}
               >
-                Ler artigo
+                {t('insights.readArticle')}
                 <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
               </div>
             </a>

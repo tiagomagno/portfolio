@@ -23,6 +23,10 @@ export function LangProvider({ children }: { children: ReactNode }) {
         if (saved && translations[saved]) setLangState(saved);
     }, []);
 
+    useEffect(() => {
+        document.documentElement.lang = lang;
+    }, [lang]);
+
     const setLang = (newLang: Lang) => {
         setLangState(newLang);
         localStorage.setItem('preferredLanguage', newLang);

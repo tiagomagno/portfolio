@@ -31,7 +31,7 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
   background: '#131313',
   border: '1px solid #2a2a2a',
-  borderRadius: '8px',
+  borderRadius: '12px',
   padding: '12px 16px',
   color: '#fff',
   fontSize: '14px',

@@ -91,7 +91,7 @@ export default function BriefingPage() {
                 }}
               >
                 Conte-me sobre o seu{' '}
-                <span style={{ color: 'var(--color-primary)' }}>Desafio</span>
+                <span>Desafio</span>
               </h1>
               <p
                 style={{
@@ -115,7 +115,7 @@ export default function BriefingPage() {
               style={{
                 background: 'var(--color-bg-card)',
                 border: '1px solid var(--color-border)',
-                borderRadius: '20px',
+                borderRadius: '24px',
                 boxShadow: '0 24px 64px rgba(0,0,0,0.28)',
               }}
             >

@@ -1,90 +1,22 @@
+'use client';
+
+import Link from 'next/link';
+import { useLang } from '@/context/LangContext';
+import { SURFACE } from '@/lib/surfaces';
+
 export default function Footer() {
+  const { t } = useLang();
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      style={{
-        background: '#0e0e0e',
-        borderTop: '1px solid #1c1b1b',
-        padding: '56px 0 40px',
-      }}
-    >
+    <footer style={{ background: SURFACE.footer, padding: '32px 0' }}>
       <style>{`
-        .footer-link:hover { color: #fff !important; }
-        .footer-back:hover { color: #ff5625 !important; }
+        .footer-link:hover { color: #f5f3f0 !important; }
       `}</style>
 
-      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px' }}>
-        {/* Top row */}
+      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            marginBottom: '48px',
-            flexWrap: 'wrap',
-            gap: '24px',
-          }}
-        >
-          {/* Logo */}
-          <div>
-            <a
-              href="#"
-              className="footer-back"
-              style={{
-                color: '#fff',
-                fontWeight: 900,
-                fontSize: 'var(--fs-card-title)',
-                textDecoration: 'none',
-                letterSpacing: '-0.02em',
-                transition: 'color 0.15s',
-              }}
-            >
-              TM<span style={{ color: '#ff5625' }}>.</span>
-            </a>
-            <span
-              style={{
-                display: 'block',
-                fontSize: 'var(--fs-tiny)',
-                color: '#4a4a4a',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                marginTop: '4px',
-              }}
-            >
-              Digital Product Architect
-            </span>
-          </div>
-
-          {/* Back to top */}
-          <a
-            href="#"
-            className="footer-back"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: '#fff',
-              fontSize: 'var(--fs-eyebrow)',
-              fontWeight: 700,
-              letterSpacing: 'var(--ls-eyebrow)',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              transition: 'color 0.15s',
-            }}
-          >
-            Voltar ao topo
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-              arrow_upward
-            </span>
-          </a>
-        </div>
-
-        {/* Divider */}
-        <div style={{ height: '1px', background: '#1c1b1b', marginBottom: '32px' }} />
-
-        {/* Bottom row */}
-        <div
+          className="footer-row"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -93,42 +25,47 @@ export default function Footer() {
             gap: '16px',
           }}
         >
-          <p style={{ color: '#4a4a4a', fontSize: 'var(--fs-small)', margin: 0 }}>
-            © {year} Tiago Magno. Todos os direitos reservados.
+          <style>{`
+            @media (max-width: 640px) {
+              .footer-row { justify-content: center !important; text-align: center; }
+            }
+          `}</style>
+
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none', opacity: 0.85 }}>
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'rgba(245,243,240,0.9)' }}>
+              Tiago Magno
+            </span>
+          </Link>
+
+          <p style={{ color: 'rgba(245,243,240,0.4)', fontSize: '12px', margin: 0 }}>
+            © {year} Tiago Magno · {t('footer.rights')}
           </p>
 
-          <div style={{ display: 'flex', gap: '32px' }}>
+          <div style={{ display: 'flex', gap: '20px' }}>
             <a
               href="https://www.linkedin.com/in/tiagosmagno/"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: '#666', fontSize: 'var(--fs-small)', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               LinkedIn
-            </a>
-            <a
-              href="mailto:tiagosilvamagno@gmail.com"
-              className="footer-link"
-              style={{ color: '#666', fontSize: 'var(--fs-small)', textDecoration: 'none', transition: 'color 0.15s' }}
-            >
-              Email
             </a>
             <a
               href="https://wa.me/5592981168163"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: '#666', fontSize: 'var(--fs-small)', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               WhatsApp
             </a>
             <a
-              href="https://tiagosmagno.com.br/"
+              href="mailto:tiagosilvamagno@gmail.com"
               className="footer-link"
-              style={{ color: '#666', fontSize: 'var(--fs-small)', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
-              Site
+              E-mail
             </a>
           </div>
         </div>
@@ -136,5 +73,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-

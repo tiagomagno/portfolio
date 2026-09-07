@@ -1,18 +1,12 @@
 'use client';
 
 import { useLang } from '@/context/LangContext';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [scrolled, setScrolled] = useState(false);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -24,11 +18,21 @@ export default function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [drawerOpen]);
 
+  // Header starts transparent; gains a background once the page scrolls.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const navLinks = [
     { href: '/#about', label: t('nav.about') },
-    { href: '/#services', label: t('nav.services') },
-    { href: '/#work', label: t('nav.work') },
-    { href: '/#cases', label: t('nav.cases') },
+    { href: '/#work', label: t('nav.services') },
+    { href: '/portfolio', label: t('nav.cases') },
+    { href: '/#services', label: t('nav.process') },
+    { href: '/#consulting', label: t('nav.consultoria') },
+    { href: '/#contact', label: t('nav.contact') },
   ];
 
   const langs: { value: 'pt-BR' | 'en-US'; label: string }[] = [
@@ -38,6 +42,47 @@ export default function Header() {
 
   return (
     <>
+      {/* ── Floating language switcher — lives on the page edge, not inside the header row ── */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          right: '14px',
+          transform: 'translateY(-50%)',
+          zIndex: 250,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+        }}
+      >
+        {langs.map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => setLang(value)}
+            aria-label={label}
+            aria-pressed={lang === value}
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              background: lang === value ? 'var(--color-primary)' : 'var(--color-bg-card)',
+              border: '1px solid var(--color-border)',
+              color: lang === value ? '#fff' : 'var(--color-text-dim)',
+              fontSize: '9px',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Desktop Nav ── */}
       <nav
         style={{
@@ -46,17 +91,18 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 100,
-          borderBottom: '1px solid var(--color-border)',
-          background: 'var(--color-bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
+          background: scrolled ? 'var(--color-bg)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+          transition: 'background 0.25s, border-color 0.25s',
         }}
         className="hidden-mobile"
       >
         <div
           className="section-container"
           style={{
-            maxWidth: '85vw',
+            maxWidth: 'min(85vw, 1320px)',
             margin: '0 auto',
             padding: '0 24px',
             height: '72px',
@@ -66,22 +112,15 @@ export default function Header() {
           }}
         >
           {/* Logo */}
-          <a
-            href="/"
-            style={{
-              color: 'var(--color-text)',
-              fontWeight: 900,
-              fontSize: '20px',
-              letterSpacing: '-0.02em',
-              textDecoration: 'none',
-            }}
-          >
-            TiagoMagno
+          <a href="/" style={{ display: 'flex', alignItems: 'center', height: '32px', textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '19px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
+              Tiago Magno
+            </span>
           </a>
 
           {/* Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
-            <style>{`.nav-link:hover { color: var(--color-text) !important; } .nav-cta:hover { background: var(--color-primary-hover) !important; }`}</style>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+            <style>{`.nav-link:hover { color: var(--color-text) !important; } .nav-cta:hover { color: var(--color-primary-hover) !important; }`}</style>
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
@@ -89,9 +128,10 @@ export default function Header() {
                 className="nav-link"
                 style={{
                   color: 'var(--color-text-dim)',
-                  fontSize: '14px',
+                  fontSize: '13px',
                   fontWeight: 500,
                   textDecoration: 'none',
+                  letterSpacing: '0.02em',
                   transition: 'color 0.15s',
                 }}
               >
@@ -102,96 +142,20 @@ export default function Header() {
 
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                style={{
-                  background: 'var(--color-bg-card)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text)',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
-                }}
-                aria-label="Toggle Theme"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                </span>
-              </button>
-            )}
-
-            <div
+            <a
+              href="/briefing"
+              className="nav-cta"
               style={{
-                display: 'flex',
-                background: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '999px',
-                padding: '4px',
+                color: 'var(--color-primary)',
+                fontSize: '13px',
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+                textDecoration: 'none',
+                transition: 'color 0.15s',
               }}
             >
-              {langs.map(({ value, label }) => (
-                <button
-                  key={value}
-                  onClick={() => setLang(value)}
-                  style={{
-                    padding: '4px 12px',
-                    borderRadius: '999px',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    border: 'none',
-                    background: lang === value ? 'var(--color-primary)' : 'transparent',
-                    color: lang === value ? '#fff' : 'var(--color-text-dim)',
-                    transition: 'all 0.15s',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <a
-                href="/#contact"
-                className="nav-link"
-                style={{
-                  color: 'var(--color-text)',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  textDecoration: 'none',
-                  border: '1px solid var(--color-border)',
-                  background: 'transparent',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {t('nav.contactCTA')}
-              </a>
-              <a
-                href="/briefing"
-                className="nav-cta"
-                style={{
-                  background: 'var(--color-primary)',
-                  color: '#fff',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  textDecoration: 'none',
-                  transition: 'background 0.15s',
-                }}
-              >
-                {t('nav.startProject')}
-              </a>
-            </div>
+              {t('nav.startProject')}
+            </a>
           </div>
         </div>
       </nav>
@@ -204,15 +168,19 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 200,
-          borderBottom: '1px solid var(--color-border)',
-          background: 'var(--color-bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
+          background: scrolled ? 'var(--color-bg)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+          transition: 'background 0.25s, border-color 0.25s',
         }}
         className="show-mobile"
       >
         <div
           style={{
+            position: 'relative',
+            width: '100%',
+            boxSizing: 'border-box',
             padding: '0 16px',
             height: '60px',
             display: 'flex',
@@ -221,93 +189,51 @@ export default function Header() {
             gap: '12px',
           }}
         >
-          {/* Left: Hamburger + Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              onClick={() => setDrawerOpen((o) => !o)}
-              style={{
-                background: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                color: 'var(--color-text)',
-                width: '36px',
-                height: '36px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-              aria-label={drawerOpen ? 'Fechar menu' : 'Abrir menu'}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                {drawerOpen ? 'close' : 'menu'}
-              </span>
-            </button>
-            <a
-              href="/"
-              style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
-            >
-              TM.
-            </a>
-          </div>
+          {/* Hamburger (far left) */}
+          <button
+            onClick={() => setDrawerOpen((o) => !o)}
+            style={{
+              background: 'var(--color-bg-card)',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text)',
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: 0,
+              flexShrink: 0,
+            }}
+            aria-label={drawerOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+              {drawerOpen ? 'close' : 'menu'}
+            </span>
+          </button>
 
-          {/* Right: Theme + Lang */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                style={{
-                  background: 'var(--color-bg-card)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text)',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
-                aria-label="Toggle Theme"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                </span>
-              </button>
-            )}
-            <div
-              style={{
-                display: 'flex',
-                background: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '999px',
-                padding: '3px',
-              }}
-            >
-              {langs.map(({ value, label }) => (
-                <button
-                  key={value}
-                  onClick={() => setLang(value)}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    border: 'none',
-                    background: lang === value ? 'var(--color-primary)' : 'transparent',
-                    color: lang === value ? '#fff' : 'var(--color-text-dim)',
-                    transition: 'all 0.15s',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Logo (centered) */}
+          <a
+            href="/"
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              alignItems: 'center',
+              height: '22px',
+              textDecoration: 'none',
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
+              Tiago Magno
+            </span>
+          </a>
+
+          {/* spacer to balance the hamburger on the left */}
+          <div style={{ width: '44px', flexShrink: 0 }} />
         </div>
       </nav>
 
@@ -359,22 +285,21 @@ export default function Header() {
             flexShrink: 0,
           }}
         >
-          <a
-            href="/"
-            onClick={() => setDrawerOpen(false)}
-            style={{ color: 'var(--color-text)', fontWeight: 900, fontSize: '18px', textDecoration: 'none' }}
-          >
-            TM.
+          <a href="/" onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
+              Tiago Magno
+            </span>
           </a>
           <button
             onClick={() => setDrawerOpen(false)}
+            aria-label={t('nav.closeMenu')}
             style={{
               background: 'var(--color-bg-card)',
               border: '1px solid var(--color-border)',
               color: 'var(--color-text)',
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -413,27 +338,8 @@ export default function Header() {
           ))}
         </div>
 
-        {/* CTAs */}
-        <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '10px', flexShrink: 0 }}>
-          <a
-            href="/#contact"
-            onClick={() => setDrawerOpen(false)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-text)',
-              fontSize: '14px',
-              fontWeight: 600,
-              padding: '13px 20px',
-              borderRadius: '10px',
-              textDecoration: 'none',
-              border: '1px solid var(--color-border)',
-              background: 'transparent',
-            }}
-          >
-            {t('nav.contactCTA')}
-          </a>
+        {/* CTA */}
+        <div style={{ padding: '16px 20px', flexShrink: 0 }}>
           <a
             href="/briefing"
             onClick={() => setDrawerOpen(false)}
@@ -444,9 +350,11 @@ export default function Header() {
               gap: '8px',
               background: 'var(--color-primary)',
               color: '#fff',
-              fontSize: '14px',
+              fontSize: '13px',
               fontWeight: 700,
-              padding: '13px 20px',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              padding: '14px 20px',
               borderRadius: '10px',
               textDecoration: 'none',
             }}
@@ -472,4 +380,3 @@ export default function Header() {
     </>
   );
 }
-

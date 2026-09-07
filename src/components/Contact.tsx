@@ -1,12 +1,41 @@
 'use client';
 
+import { useState } from 'react';
+import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import { SURFACE } from '@/lib/surfaces';
+
+type SubmitStatus = 'idle' | 'sending' | 'success' | 'error';
 
 export default function Contact() {
+  const { t } = useLang();
+  const [status, setStatus] = useState<SubmitStatus>('idle');
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setStatus('sending');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        setStatus('success');
+        form.reset();
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  }
+
   return (
     <section
       id="contact"
-      style={{ background: '#131313', padding: '96px 0', position: 'relative', overflow: 'hidden' }}
+      style={{ background: SURFACE.footer, padding: '96px 0', position: 'relative', overflow: 'hidden' }}
     >
       {/* Glow */}
       <div
@@ -16,15 +45,15 @@ export default function Contact() {
           right: 0,
           width: '400px',
           height: '400px',
-          background: '#ff5625',
-          opacity: 0.05,
+          background: 'var(--color-primary)',
+          opacity: 0.08,
           filter: 'blur(100px)',
           borderRadius: '50%',
           pointerEvents: 'none',
         }}
       />
 
-      <div className="section-container" style={{ maxWidth: '85vw', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div
           style={{
             display: 'grid',
@@ -40,44 +69,48 @@ export default function Contact() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: '#ff5625',
+                color: 'var(--color-primary)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
                 marginBottom: '16px',
               }}
             >
-              Vamos conversar
+              {t('contact.eyebrow')}
             </span>
             <h2
               style={{
                 fontSize: 'var(--fs-h2)',
                 fontWeight: 900,
-                color: '#fff',
+                color: '#f5f3f0',
                 lineHeight: 1.05,
                 margin: '0 0 24px',
               }}
             >
-              Vamos Construir<br />
-              <span style={{ color: '#ff5625' }}>Algo Melhor</span><br />
-              Juntos?
+              {t('contact.heading.line1')}<br />
+              <span>{t('contact.heading.highlight')}</span>
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: '#a8a29e', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
-              Se você tem um produto com potencial que ainda não chegou onde deveria, este é o
-              momento certo para mudar isso.
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(245,243,240,0.55)', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
+              {t('contact.subtitle')}
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>mail</span>
-                <span style={{ color: '#a8a29e', fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                  E-MAIL
+                </span>
+                <span style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>phone</span>
-                <span style={{ color: '#a8a29e', fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
+              <div>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                  WHATSAPP
+                </span>
+                <span style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className="material-symbols-outlined" style={{ color: '#ff5625', fontSize: '20px' }}>open_in_new</span>
-                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: '#a8a29e', fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
+              <div>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                  LINKEDIN
+                </span>
+                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
               </div>
             </div>
           </div>
@@ -88,36 +121,30 @@ export default function Contact() {
           <div className="contact-form-card">
             <style>{`
               .contact-form-card {
-                background: #1c1b1b;
-                border: 1px solid #2a2a2a;
+                background: #232527;
+                border: 1px solid rgba(245,243,240,0.08);
                 border-radius: 20px;
                 padding: 40px;
               }
               .contact-form-card input,
-              .contact-form-card select,
               .contact-form-card textarea {
                 width: 100%;
                 box-sizing: border-box;
-                background: #131313;
-                border: 1px solid #2a2a2a;
-                border-radius: 8px;
+                background: #1a1c1d;
+                border: 1px solid rgba(245,243,240,0.1);
+                border-radius: 10px;
                 padding: 12px 16px;
-                color: #fff;
+                color: #f5f3f0;
                 font-size: var(--fs-body);
                 font-family: inherit;
                 outline: none;
-              }
-              .contact-form-card select {
-                color: #a8a29e;
-                appearance: none;
-                -webkit-appearance: none;
               }
               .contact-form-card textarea {
                 resize: none;
               }
               .contact-form-card input::placeholder,
               .contact-form-card textarea::placeholder {
-                color: #4a4a4a;
+                color: rgba(245,243,240,0.4);
               }
               @media (max-width: 767px) {
                 .contact-form-card {
@@ -128,74 +155,112 @@ export default function Contact() {
                 }
               }
             `}</style>
-            <form action="https://formsubmit.co/tiagosilvamagno@gmail.com" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_subject" value="Novo Lead via Portfólio!" />
-              <input type="hidden" name="_template" value="box" />
+            {status === 'success' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', padding: '24px 0' }} role="status">
+                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#f5f3f0', margin: 0 }}>
+                  {t('contact.form.success')}
+                </h3>
+                <p style={{ fontSize: '13px', color: 'rgba(245,243,240,0.55)', margin: 0 }}>
+                  {t('contact.form.successDetail')}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStatus('idle')}
+                  style={{
+                    marginTop: '12px',
+                    background: 'transparent',
+                    color: '#f5f3f0',
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(245,243,240,0.15)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('contact.form.submit')}
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#f5f3f0', margin: '0 0 4px' }}>
+                  {t('contact.form.title')}
+                </h3>
+                <p style={{ fontSize: '13px', color: 'rgba(245,243,240,0.4)', margin: '0 0 24px' }}>
+                  {t('contact.form.desc')}
+                </p>
+                <form
+                  action="https://formsubmit.co/tiagosilvamagno@gmail.com"
+                  method="POST"
+                  onSubmit={handleSubmit}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+                >
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_subject" value="Novo Lead via Portfólio!" />
+                  <input type="hidden" name="_template" value="box" />
 
-              {/* Name + Email */}
-              <div className="contact-fields-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                {[
-                  { label: 'Nome', name: 'name', type: 'text', placeholder: 'Seu nome' },
-                  { label: 'E-mail', name: 'email', type: 'email', placeholder: 'seu@email.com' },
-                ].map(({ label, name, type, placeholder }) => (
-                  <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: 'var(--ls-eyebrow)' }}>
-                      {label}
-                    </label>
-                    <input type={type} name={name} placeholder={placeholder} required />
+                  {/* Name + Email */}
+                  <div className="contact-fields-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    {[
+                      { label: t('contact.form.name'), id: 'contact-name', name: 'name', type: 'text', placeholder: t('contact.form.namePlaceholder') },
+                      { label: t('contact.form.email'), id: 'contact-email', name: 'email', type: 'email', placeholder: t('contact.form.emailPlaceholder') },
+                    ].map(({ label, id, name, type, placeholder }) => (
+                      <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label htmlFor={id} style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(245,243,240,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                          {label}
+                        </label>
+                        <input id={id} type={type} name={name} placeholder={placeholder} required disabled={status === 'sending'} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Service */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: 'var(--ls-eyebrow)' }}>
-                  Serviço desejado
-                </label>
-                <select name="service" required>
-                  <option value="">Selecione o serviço</option>
-                  <option value="Produtos Digitais (Sites/Sistemas)">Produtos Digitais (Sites/Sistemas)</option>
-                  <option value="Identidade Visual">Identidade Visual</option>
-                  <option value="Consultoria UX/UI">Consultoria UX/UI</option>
-                  <option value="Redes Sociais">Redes Sociais</option>
-                  <option value="Design Gráfico">Design Gráfico</option>
-                  <option value="Fotografia">Fotografia</option>
-                  <option value="Outros">Outros</option>
-                </select>
-              </div>
+                  {/* Message */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="contact-message" style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(245,243,240,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {t('contact.form.message')}
+                    </label>
+                    <textarea id="contact-message" name="message" rows={4} required placeholder={t('contact.form.messagePlaceholder')} disabled={status === 'sending'} />
+                  </div>
 
-              {/* Message */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: 'var(--ls-eyebrow)' }}>
-                  Mensagem
-                </label>
-                <textarea name="message" rows={4} required placeholder="Descreva seu projeto ou desafio..." />
-              </div>
+                  {status === 'error' && (
+                    <p role="alert" style={{ fontSize: '13px', color: '#ff8a65', margin: 0 }}>
+                      {t('contact.form.error')}
+                    </p>
+                  )}
 
-              {/* Submit */}
-              <button
-                type="submit"
-                style={{
-                  background: '#ff5625',
-                  color: '#fff',
-                  fontWeight: 700,
-                  fontSize: 'var(--fs-btn)',
-                  padding: '16px',
-                  borderRadius: '10px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  width: '100%',
-                }}
-              >
-                Enviar Briefing
-                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>send</span>
-              </button>
-            </form>
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    style={{
+                      background: 'var(--color-primary)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      padding: '16px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      cursor: status === 'sending' ? 'default' : 'pointer',
+                      opacity: status === 'sending' ? 0.7 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      width: '100%',
+                    }}
+                  >
+                    {status === 'sending' ? t('contact.form.sending') : t('contact.form.submit')}
+                    {status !== 'sending' && (
+                      <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>send</span>
+                    )}
+                  </button>
+                </form>
+              </>
+            )}
           </div>
           </FadeIn>
         </div>
@@ -203,5 +268,3 @@ export default function Contact() {
     </section>
   );
 }
-
-

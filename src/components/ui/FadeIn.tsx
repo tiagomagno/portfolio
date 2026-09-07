@@ -1,18 +1,18 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ReactNode } from 'react';
 
-export default function FadeIn({ 
-  children, 
-  delay = 0, 
-  direction = 'up', 
+export default function FadeIn({
+  children,
+  delay = 0,
+  direction = 'up',
   className = '',
   style = {}
-}: { 
-  children: ReactNode, 
-  delay?: number, 
-  direction?: 'up' | 'down' | 'left' | 'right' | 'none', 
+}: {
+  children: ReactNode,
+  delay?: number,
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none',
   className?: string,
   style?: React.CSSProperties
 }) {
@@ -23,6 +23,17 @@ export default function FadeIn({
     right: { x: -50, y: 0 },
     none: { x: 0, y: 0 }
   };
+
+  // Respeita prefers-reduced-motion: entrega o conteúdo já no estado final,
+  // sem blur/translate, em vez de matar a transição no meio do caminho.
+  const prefersReducedMotion = useReducedMotion();
+  if (prefersReducedMotion) {
+    return (
+      <div className={className} style={style}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div

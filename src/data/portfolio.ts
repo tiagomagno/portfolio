@@ -61,6 +61,13 @@ export function slugify(text: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
+/** Resumo curto de um item pra exibir nos cards do portfólio, truncado em `max` caracteres. */
+export function portfolioSummary(item: PortfolioItem, max = 144): string {
+  const text = item.caseStudy?.heroSubtitle ?? item.produtos.join(' · ');
+  if (!text || text === TBD) return item.produtos.join(' · ');
+  return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
+
 const TBD = 'A preencher.';
 
 /**

@@ -40,7 +40,7 @@ export function BriefingStep3({ register, error }: Props) {
                 padding: '14px 16px',
                 background: isSelected ? 'rgba(255,86,37,0.08)' : '#131313',
                 border: `1px solid ${isSelected ? '#ff5625' : '#2a2a2a'}`,
-                borderRadius: '8px',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 fontSize: '14px',
                 color: isSelected ? '#fff' : '#a8a29e',
