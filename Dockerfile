@@ -3,8 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Instala dependências
+# Instala dependências (prisma precisa vir antes do npm ci, que roda "prisma generate" no postinstall)
 COPY package.json package-lock.json ./
+COPY prisma ./prisma
 RUN npm ci
 
 # Copia o restante do source

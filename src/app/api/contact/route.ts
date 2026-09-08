@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
     try {
@@ -7,6 +8,11 @@ export async function POST(req: NextRequest) {
         if (!name || !email || !message) {
             return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 });
         }
+
+        // Persiste no admin pra alimentar o pipeline de leads — falha aqui não deve bloquear o Trello.
+        prisma.lead.create({ data: { source: 'contato', name, email, data: { message } } }).catch((err) => {
+            console.error('Contact lead persist error:', err);
+        });
 
         const apiKey = process.env.TRELLO_API_KEY;
         const token = process.env.TRELLO_TOKEN;

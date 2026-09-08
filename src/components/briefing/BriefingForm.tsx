@@ -142,6 +142,14 @@ export function BriefingForm() {
         _template: 'box',
       };
 
+      // Persiste no admin pra alimentar o pipeline de leads — não bloqueia o envio se falhar.
+      const { _subject, _template, ...leadFields } = emailParams;
+      fetch('/api/briefing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: data.name, email: data.email, ...leadFields }),
+      }).catch(() => {});
+
       const res = await fetch('https://formsubmit.co/ajax/tiagosilvamagno@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },

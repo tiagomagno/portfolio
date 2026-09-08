@@ -4,12 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, slugify, type AtuacaoCategory } from '@/data/portfolio';
+import type { CaseAssetOverrides } from '@/data/caseAssets';
 import { useLang } from '@/context/LangContext';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 
-export default function PortfolioGrid() {
+export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
   const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
@@ -63,6 +64,7 @@ export default function PortfolioGrid() {
 
         <div className="portfolio-full-grid">
           {filtered.map((item, i) => {
+            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
             const card = (
               <div
                 className="portfolio-card"
@@ -77,8 +79,8 @@ export default function PortfolioGrid() {
                   height: '100%',
                 }}
               >
-                {item.image ? (
-                  <Image src={item.image} alt={item.empresa} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
+                {coverImage ? (
+                  <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
                 ) : (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>

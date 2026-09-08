@@ -6,20 +6,26 @@ import PortfolioGrid from '@/components/PortfolioGrid';
 import PortfolioCTA from '@/components/PortfolioCTA';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { SURFACE } from '@/lib/surfaces';
+import { getAllCaseAssetOverrides } from '@/data/caseAssets';
 
 export const metadata: Metadata = {
   title: 'Portfólio - Tiago Magno',
   description: 'Uma seleção de trabalhos em UX/UI, produtos digitais, identidade visual e design systems ao longo de mais de 20 anos de carreira.',
 };
 
-export default function PortfolioPage() {
+// Reflete imagens atualizadas pelo admin (/admin/cases) sem precisar de novo deploy.
+export const revalidate = 60;
+
+export default async function PortfolioPage() {
+  const overrides = await getAllCaseAssetOverrides();
+
   return (
     <>
       <Header />
       <main>
         <PortfolioHero />
         <SectionDivider from={SURFACE.base} to={SURFACE.raised} />
-        <PortfolioGrid />
+        <PortfolioGrid overrides={Object.fromEntries(overrides)} />
         <PortfolioCTA />
         <SectionDivider from={SURFACE.base} to={SURFACE.footer} />
       </main>

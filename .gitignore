@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# uploads do admin (persistidos via volume no Coolify, não fazem parte do repo)
+public/uploads/
+
+# impeccable (cache/metadados local da ferramenta de design)
+/.impeccable/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
