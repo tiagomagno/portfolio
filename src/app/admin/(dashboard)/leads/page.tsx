@@ -21,10 +21,39 @@ const STATUS_LABEL: Record<string, string> = {
   perdido: 'Perdido',
 };
 
+const STATUS_ACCENT: Record<string, string> = {
+  novo: '#6366f1',
+  'em-contato': '#eab308',
+  convertido: '#22c55e',
+  perdido: 'rgba(26,26,26,0.35)',
+};
+
+const FIELD_LABEL: Record<string, string> = {
+  Nome: 'Nome',
+  Email: 'E-mail',
+  WhatsApp: 'WhatsApp',
+  Segmento: 'Segmento',
+  Desafio_Principal: 'Desafio principal',
+  Publico_Alvo: 'Público-alvo',
+  Cliente_Ideal: 'Cliente ideal',
+  Diferencial: 'Diferencial',
+  Funcionalidades: 'Funcionalidades',
+  Prazo: 'Prazo',
+  Dores_RaioX: 'Dores (Raio-X)',
+  Detalhes_Operacao: 'Detalhes da operação',
+  message: 'Mensagem',
+};
+
+function prettifyKey(key: string): string {
+  return FIELD_LABEL[key] ?? key.replace(/_/g, ' ');
+}
+
 export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>('todos');
+  const [selected, setSelected] = useState<Lead | null>(null);
+  const [dragOverStatus, setDragOverStatus] = useState<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/leads')
@@ -35,6 +64,7 @@ export default function AdminLeadsPage() {
 
   async function updateStatus(id: string, status: string) {
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
+    setSelected((prev) => (prev && prev.id === id ? { ...prev, status } : prev));
     await fetch(`/api/admin/leads/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -42,44 +72,130 @@ export default function AdminLeadsPage() {
     });
   }
 
-  const filtered = filter === 'todos' ? leads : leads.filter((l) => l.status === filter);
+  function handleDrop(status: string, e: React.DragEvent) {
+    setDragOverStatus(null);
+    setDraggingId(null);
+    const id = e.dataTransfer.getData('text/plain');
+    if (id) updateStatus(id, status);
+  }
 
   if (loading) return <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)' }}>Carregando...</p>;
 
   return (
     <div>
       <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Leads</h1>
-      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 20px' }}>
-        Envios do formulário de contato e do briefing.
+      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
+        Envios do formulário de contato e do briefing. Arraste um card pra mudar o status, ou clique pra ver os detalhes.
       </p>
 
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {['todos', ...STATUSES].map((s) => (
-          <button
-            key={s}
-            onClick={() => setFilter(s)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '100px',
-              border: '1px solid var(--color-border)',
-              background: filter === s ? 'var(--color-primary)' : '#fff',
-              color: filter === s ? '#fff' : '#1a1a1a',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            {s === 'todos' ? 'Todos' : STATUS_LABEL[s]}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+        {STATUSES.map((status) => {
+          const columnLeads = leads.filter((l) => l.status === status);
+          const isDragOver = dragOverStatus === status;
+
+          return (
+            <div
+              key={status}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOverStatus(status);
+              }}
+              onDragLeave={() => setDragOverStatus((prev) => (prev === status ? null : prev))}
+              onDrop={(e) => {
+                e.preventDefault();
+                handleDrop(status, e);
+              }}
+              style={{
+                flex: '0 0 280px',
+                width: '280px',
+                background: isDragOver ? 'rgba(244,108,28,0.06)' : SURFACE_COLUMN,
+                border: isDragOver ? '1px dashed var(--color-primary)' : '1px solid var(--color-border)',
+                borderRadius: '12px',
+                padding: '12px',
+                minHeight: '200px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', padding: '0 4px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: STATUS_ACCENT[status] }} />
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  {STATUS_LABEL[status]}
+                </span>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(26,26,26,0.4)', marginLeft: 'auto' }}>{columnLeads.length}</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {columnLeads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/plain', lead.id);
+                      e.dataTransfer.effectAllowed = 'move';
+                      setDraggingId(lead.id);
+                    }}
+                    onDragEnd={() => setDraggingId(null)}
+                    onClick={() => setSelected(lead)}
+                    style={{
+                      background: '#fff',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      cursor: 'grab',
+                      opacity: draggingId === lead.id ? 0.4 : 1,
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        color: 'var(--color-primary)',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      {lead.source === 'briefing' ? 'Briefing' : 'Contato'}
+                    </span>
+                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 2px' }}>{lead.name}</p>
+                    <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {lead.email}
+                    </p>
+                    <p style={{ fontSize: '11px', color: 'rgba(26,26,26,0.35)', margin: '8px 0 0' }}>
+                      {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                ))}
+                {columnLeads.length === 0 && (
+                  <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.3)', padding: '8px 4px' }}>Nenhum lead</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {filtered.length === 0 && <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)' }}>Nenhum lead encontrado.</p>}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {filtered.map((lead) => (
-          <div key={lead.id} style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+      {selected && (
+        <>
+          <div
+            onClick={() => setSelected(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              height: '100vh',
+              width: 'min(420px, 100vw)',
+              background: '#fff',
+              boxShadow: '-8px 0 24px rgba(0,0,0,0.12)',
+              zIndex: 41,
+              overflowY: 'auto',
+              padding: '28px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
               <div>
                 <span
                   style={{
@@ -89,38 +205,55 @@ export default function AdminLeadsPage() {
                     textTransform: 'uppercase',
                     letterSpacing: '0.06em',
                     color: 'var(--color-primary)',
-                    marginBottom: '6px',
+                    marginBottom: '8px',
                   }}
                 >
-                  {lead.source === 'briefing' ? 'Briefing' : 'Contato'} · {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
+                  {selected.source === 'briefing' ? 'Briefing' : 'Contato'} · {new Date(selected.createdAt).toLocaleDateString('pt-BR')}
                 </span>
-                <p style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 2px' }}>{lead.name}</p>
-                <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.6)', margin: 0 }}>{lead.email}</p>
+                <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>{selected.name}</h2>
+                <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.6)', margin: 0 }}>{selected.email}</p>
               </div>
-              <select
-                value={lead.status}
-                onChange={(e) => updateStatus(lead.id, e.target.value)}
-                style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '12px', fontWeight: 600 }}
+              <button
+                onClick={() => setSelected(null)}
+                style={{ background: 'none', border: 'none', fontSize: '20px', color: 'rgba(26,26,26,0.4)', cursor: 'pointer', lineHeight: 1, padding: '4px' }}
+                aria-label="Fechar"
               >
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABEL[s]}
-                  </option>
-                ))}
-              </select>
+                ×
+              </button>
             </div>
-            {Object.keys(lead.data ?? {}).length > 0 && (
-              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {Object.entries(lead.data).map(([key, value]) => (
-                  <p key={key} style={{ fontSize: '12px', color: 'rgba(26,26,26,0.65)', margin: 0 }}>
-                    <strong style={{ color: '#1a1a1a' }}>{key}:</strong> {String(value)}
-                  </p>
+
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+              Status
+            </label>
+            <select
+              value={selected.status}
+              onChange={(e) => updateStatus(selected.id, e.target.value)}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '13px', fontWeight: 600, marginBottom: '24px' }}
+            >
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {STATUS_LABEL[s]}
+                </option>
+              ))}
+            </select>
+
+            {Object.keys(selected.data ?? {}).length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {Object.entries(selected.data).map(([key, value]) => (
+                  <div key={key} style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px' }}>
+                    <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '4px' }}>
+                      {prettifyKey(key)}
+                    </span>
+                    <p style={{ fontSize: '13px', color: '#1a1a1a', margin: 0, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{String(value)}</p>
+                  </div>
                 ))}
               </div>
             )}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 }
+
+const SURFACE_COLUMN = 'rgba(26,26,26,0.03)';
