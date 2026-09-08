@@ -48,7 +48,12 @@ export interface PortfolioItem {
   empresa: string;
   atuacao: AtuacaoCategory[];
   produtos: string[];
+  /** Capa: home, listagem do portfólio e card de "próximo case". */
   image?: string;
+  /** Banner de topo da página de detalhamento. Se ausente, cai para `image`. */
+  heroImage?: string;
+  /** Imagens da galeria dentro do case (posts, mockup do site, telas do app...). */
+  gallery?: string[];
   caseStudy?: CaseStudyData;
 }
 
@@ -680,7 +685,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
     empresa: 'Brava Sport',
     atuacao: ['Produtos Digitais', 'Redes Sociais', 'Identidade Visual', 'Design Gráfico'],
     produtos: ['Site Institucional', 'Redes Sociais', 'Identidade Visual', 'Adesivos e Posters'],
-    image: '/cases/brava-sport.png',
+    image: '/cases/brava-sport.jpg',
     caseStudy: pd({
       role: 'Design, Desenvolvimento e Gestão de Redes Sociais',
       heroSubtitle: 'Redesign de site e gestão de redes sociais para uma academia, alinhados à nova identidade visual da marca.',
@@ -1579,6 +1584,15 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
           'Cliente já tinha logo e identidade, mas não tinha um catálogo em PDF para divulgação por e-mail e WhatsApp. Projeto que começou como catálogo de produtos e migrou para catálogo de cursos, com contato direto com os sócios.',
       },
     }),
+  },
+  {
+    // TODO: preencher atuacao/produtos e detalhes do case quando as infos do projeto chegarem.
+    id: 60,
+    empresa: 'Bergamota',
+    atuacao: ['Identidade Visual'],
+    produtos: ['Identidade Visual'],
+    image: '/cases/bergamota.jpg',
+    caseStudy: pd({}),
   },
 ];
 

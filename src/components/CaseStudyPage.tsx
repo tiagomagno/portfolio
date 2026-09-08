@@ -19,18 +19,21 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
   const currentIndex = allCases.findIndex((c) => c.id === item.id);
   const nextCase = allCases.length > 1 ? allCases[(currentIndex + 1) % allCases.length] : null;
 
+  // Banner do topo: usa a imagem de topo dedicada; sem ela, cai pra capa.
+  const bannerImage = item.heroImage ?? item.image;
+
   // Sem imagem, a Hero não tem o scrim escuro por trás — o texto precisa ficar escuro nesse caso.
-  const heroFg = item.image ? '245,243,240' : '26,26,26';
-  const heroSolid = item.image ? '#f5f3f0' : '#1a1a1a';
+  const heroFg = bannerImage ? '245,243,240' : '26,26,26';
+  const heroSolid = bannerImage ? '#f5f3f0' : '#1a1a1a';
 
   return (
     <>
       {/* Hero */}
       <section style={{ position: 'relative', paddingTop: '72px', background: SURFACE.base, overflow: 'hidden' }}>
-        {item.image && (
+        {bannerImage && (
           <>
             <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
-              <Image src={item.image} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
+              <Image src={bannerImage} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
             </div>
             <div
               style={{
@@ -94,7 +97,7 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
         </div>
       </section>
 
-      <SectionDivider from={item.image ? SURFACE.raised : SURFACE.base} to={SURFACE.raised} />
+      <SectionDivider from={bannerImage ? SURFACE.raised : SURFACE.base} to={SURFACE.raised} />
 
       {/* Info strip */}
       <section style={{ background: SURFACE.raised, padding: '0 24px 60px' }}>
@@ -176,6 +179,37 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
       </CaseSection>
 
       <SectionDivider from={SURFACE.base} to={SURFACE.raised} />
+
+      {/* Galeria (opcional) */}
+      {item.gallery && item.gallery.length > 0 && (
+        <section style={{ background: SURFACE.raised, padding: '80px 24px' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <FadeIn delay={0.05}>
+              <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '24px' }}>
+                {t('case.gallery.title')}
+              </span>
+            </FadeIn>
+            <style>{`
+              .case-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+              @media (max-width: 900px) { .case-gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+              @media (max-width: 560px) { .case-gallery-grid { grid-template-columns: 1fr; } }
+            `}</style>
+            <div className="case-gallery-grid">
+              {item.gallery.map((src, i) => (
+                <div key={src} style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: '16px', overflow: 'hidden', background: SURFACE.base }}>
+                  <Image
+                    src={src}
+                    alt={`${item.empresa} — imagem ${i + 1}`}
+                    fill
+                    sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+                    style={{ objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Section 05 */}
       <CaseSection number="05" title={t('case.section5.title')} bg={SURFACE.raised}>
