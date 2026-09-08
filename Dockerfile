@@ -32,10 +32,16 @@ ENV PORT=3000
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
+# CLI do Prisma pra rodar "npx prisma db push"/"npm run db:seed" manualmente no
+# container (a build standalone abaixo não inclui ferramentas de CLI, só o
+# necessário pra rodar o server.js) — versão presa igual ao package.json.
+RUN npm install -g prisma@6.19.3
+
 # Copia apenas o necessário do build
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 USER nextjs
 
