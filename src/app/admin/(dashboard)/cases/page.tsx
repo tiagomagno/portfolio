@@ -36,7 +36,7 @@ export default async function AdminCasesPage() {
               const galleryCount = Array.isArray(asset?.gallery) ? (asset!.gallery as unknown[]).length : 0;
 
               return (
-                <tr key={item.id} style={{ borderBottom: i < items.length - 1 ? '1px solid var(--color-border)' : 'none' }}>
+                <tr key={item.id} style={i < items.length - 1 ? { borderBottom: '1px solid var(--color-border)' } : undefined}>
                   <Td>
                     <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{item.empresa}</span>
                   </Td>
