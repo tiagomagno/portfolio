@@ -40,7 +40,10 @@ RUN adduser -S nextjs -u 1001
 RUN npm install -g prisma@6.19.3 && chown -R nextjs:nodejs /usr/local/lib/node_modules/prisma
 
 # Copia apenas o necessário do build
-COPY --from=builder /app/public ./public
+# --chown é obrigatório aqui: sem ele a pasta public fica com dono root e o
+# usuário "nextjs" (não-root) não consegue escrever em public/uploads/cases,
+# fazendo o upload de imagens do admin falhar silenciosamente em produção.
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
