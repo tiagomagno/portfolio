@@ -88,7 +88,7 @@ export default function AdminLeadsPage() {
         Envios do formulário de contato e do briefing. Arraste um card pra mudar o status, ou clique pra ver os detalhes.
       </p>
 
-      <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '16px', width: '100%' }}>
         {STATUSES.map((status) => {
           const columnLeads = leads.filter((l) => l.status === status);
           const isDragOver = dragOverStatus === status;
@@ -106,8 +106,8 @@ export default function AdminLeadsPage() {
                 handleDrop(status, e);
               }}
               style={{
-                flex: '0 0 280px',
-                width: '280px',
+                flex: '1 1 0',
+                minWidth: 0,
                 background: isDragOver ? 'rgba(244,108,28,0.06)' : SURFACE_COLUMN,
                 border: isDragOver ? '1px dashed var(--color-primary)' : '1px solid var(--color-border)',
                 borderRadius: '12px',
