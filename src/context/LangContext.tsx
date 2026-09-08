@@ -17,6 +17,7 @@ const LangContext = createContext<LangContextType>({
 
 export function LangProvider({ children }: { children: ReactNode }) {
     const [lang, setLangState] = useState<Lang>('pt-BR');
+    const [overrides, setOverrides] = useState<Record<string, { pt: string; en: string }>>({});
 
     useEffect(() => {
         const saved = localStorage.getItem('preferredLanguage') as Lang;
@@ -27,12 +28,23 @@ export function LangProvider({ children }: { children: ReactNode }) {
         document.documentElement.lang = lang;
     }, [lang]);
 
+    // Textos sobrescritos em /admin/textos. Sem overrides (ou banco fora do ar),
+    // o site usa translations.ts normalmente.
+    useEffect(() => {
+        fetch('/api/content')
+            .then((r) => r.json())
+            .then((data) => setOverrides(data.content ?? {}))
+            .catch(() => {});
+    }, []);
+
     const setLang = (newLang: Lang) => {
         setLangState(newLang);
         localStorage.setItem('preferredLanguage', newLang);
     };
 
     const t = (key: string): string => {
+        const override = overrides[key];
+        if (override) return lang === 'en-US' ? override.en : override.pt;
         const dict = translations[lang] as Record<string, string>;
         return dict[key] ?? key;
     };

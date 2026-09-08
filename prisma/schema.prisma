@@ -35,3 +35,31 @@ model Lead {
   data      Json
   createdAt DateTime @default(now())
 }
+
+/// Item do menu de navegação do header. Seedado a partir da lista fixa que existia em Header.tsx.
+model MenuItem {
+  id      String  @id @default(cuid())
+  labelPt String
+  labelEn String
+  href    String
+  order   Int     @default(0)
+  visible Boolean @default(true)
+}
+
+/// Ordem/visibilidade das seções da home (Hero, Sobre, Cases...). O componente de cada
+/// seção continua fixo no código — isso só controla ordem e se aparece ou não.
+model HomeSection {
+  key     String  @id
+  label   String
+  order   Int     @default(0)
+  visible Boolean @default(true)
+}
+
+/// Sobrepõe um texto (chave de src/lib/translations.ts) nos dois idiomas. Sem uma linha
+/// aqui para a chave, o site usa o valor estático de translations.ts normalmente.
+model PageContent {
+  key       String   @id
+  valuePt   String   @db.Text
+  valueEn   String   @db.Text
+  updatedAt DateTime @updatedAt
+}

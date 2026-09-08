@@ -26,7 +26,7 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
+  const defaultNavLinks = [
     { href: '/#about', label: t('nav.about') },
     { href: '/#work', label: t('nav.services') },
     { href: '/portfolio', label: t('nav.cases') },
@@ -34,6 +34,25 @@ export default function Header() {
     { href: '/#consulting', label: t('nav.consultoria') },
     { href: '/#contact', label: t('nav.contact') },
   ];
+
+  // Menu editável pelo admin (/admin/menu). Sem itens no banco (ou banco fora do ar),
+  // cai de volta pra lista fixa acima.
+  const [customNav, setCustomNav] = useState<{ href: string; label: string }[] | null>(null);
+  useEffect(() => {
+    fetch('/api/menu')
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data.items) && data.items.length > 0) {
+          setCustomNav(data.items.map((i: { href: string; labelPt: string; labelEn: string }) => ({
+            href: i.href,
+            label: lang === 'en-US' ? i.labelEn : i.labelPt,
+          })));
+        }
+      })
+      .catch(() => {});
+  }, [lang]);
+
+  const navLinks = customNav ?? defaultNavLinks;
 
   const langs: { value: 'pt-BR' | 'en-US'; label: string }[] = [
     { value: 'pt-BR', label: 'PT' },
