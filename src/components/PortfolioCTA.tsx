@@ -36,6 +36,7 @@ export default function PortfolioCTA() {
             display: 'inline-block',
             background: '#1a1a1a',
             color: '#fff',
+            fontFamily: 'var(--font-headline)',
             fontWeight: 700,
             fontSize: '13px',
             letterSpacing: '0.06em',

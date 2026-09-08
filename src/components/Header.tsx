@@ -369,6 +369,7 @@ export default function Header() {
               gap: '8px',
               background: 'var(--color-primary)',
               color: '#fff',
+              fontFamily: 'var(--font-headline)',
               fontSize: '13px',
               fontWeight: 700,
               letterSpacing: '0.06em',
