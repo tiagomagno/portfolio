@@ -10,6 +10,7 @@ import Consulting from '@/components/Consulting';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import { prisma } from '@/lib/prisma';
+import { getAllCaseAssetOverrides } from '@/data/caseAssets';
 
 const SECTION_COMPONENTS: Record<string, React.ComponentType> = {
   hero: Hero,
@@ -39,13 +40,15 @@ async function getSectionOrder(): Promise<string[]> {
 }
 
 export default async function Home() {
-  const order = await getSectionOrder();
+  const [order, overrides] = await Promise.all([getSectionOrder(), getAllCaseAssetOverrides()]);
+  const overridesBySlug = Object.fromEntries(overrides);
 
   return (
     <>
       <Header />
       <main>
         {order.map((key) => {
+          if (key === 'cases') return <Cases key={key} overrides={overridesBySlug} />;
           const Section = SECTION_COMPONENTS[key];
           return Section ? <Section key={key} /> : null;
         })}

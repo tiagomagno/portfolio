@@ -5,39 +5,29 @@ import Image from 'next/image';
 import Link from 'next/link';
 import FadeIn from './ui/FadeIn';
 import { useLang } from '@/context/LangContext';
-import { PORTFOLIO_ITEMS, slugify } from '@/data/portfolio';
+import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, slugify, type AtuacaoCategory } from '@/data/portfolio';
+import type { CaseAssetOverrides } from '@/data/caseAssets';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
 
-type PreviewFilter = 'all' | 'digital' | 'uxui' | 'brand' | 'social';
+const PREVIEW_LIMIT = 9;
 
-const PREVIEW_CASES: { id: number; company: string; image: string; filter: PreviewFilter }[] = [
-  { id: 8, company: 'Brava Sport', image: '/cases/brava-sport.png', filter: 'digital' },
-  { id: 9, company: 'Conergia', image: '/cases/conergia.png', filter: 'digital' },
-  { id: 7, company: 'Aquarium Scuba', image: '/cases/aquarium-scuba.png', filter: 'brand' },
-  { id: 1, company: 'Mr. Temaki', image: '/cases/mr-temaki.png', filter: 'social' },
-  { id: 3, company: 'Alqafiltros', image: '/cases/alqafiltros.png', filter: 'brand' },
-  { id: 6, company: 'Refrisul', image: '/cases/refrisul.png', filter: 'uxui' },
-];
+// Só cases com case study completo entram no preview da Home — sempre clicáveis,
+// nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
+const FEATURED_CASES = PORTFOLIO_ITEMS.filter((item) => item.caseStudy);
 
-export default function Cases() {
+export default function Cases({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
-  const [activeFilter, setActiveFilter] = useState<PreviewFilter>('all');
+  const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
 
-  const filters: { value: PreviewFilter; label: string }[] = [
-    { value: 'all', label: t('cases.filterAll') },
-    { value: 'digital', label: t('cases.filter.digital') },
-    { value: 'uxui', label: t('cases.filter.uxui') },
-    { value: 'brand', label: t('cases.filter.brand') },
-    { value: 'social', label: t('cases.filter.social') },
-  ];
-
-  const filtered = activeFilter === 'all' ? PREVIEW_CASES : PREVIEW_CASES.filter((c) => c.filter === activeFilter);
+  const filtered = (
+    activeFilter ? FEATURED_CASES.filter((item) => item.atuacao.includes(activeFilter)) : FEATURED_CASES
+  ).slice(0, PREVIEW_LIMIT);
 
   return (
     <section id="cases" style={{ background: SURFACE.base, padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
         <FadeIn delay={0.1}>
@@ -85,27 +75,9 @@ export default function Cases() {
                   color: rgba(26,26,26,0.85) !important;
                 }
               `}</style>
-              {filters.map((f) => (
-                <button
-                  key={f.value}
-                  className="filter-pill"
-                  data-active={activeFilter === f.value}
-                  onClick={() => setActiveFilter(f.value)}
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    color: activeFilter === f.value ? '#fff' : 'rgba(26,26,26,0.6)',
-                    background: activeFilter === f.value ? 'var(--color-primary)' : 'transparent',
-                    border: activeFilter === f.value ? '1px solid var(--color-primary)' : 'none',
-                    padding: '7px 16px',
-                    borderRadius: '100px',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {f.label}
-                </button>
+              <FilterPill label={t('cases.filterAll')} active={activeFilter === null} onClick={() => setActiveFilter(null)} />
+              {ATUACAO_CATEGORIES.map((cat) => (
+                <FilterPill key={cat} label={tCategory(cat)} active={activeFilter === cat} onClick={() => setActiveFilter(cat)} />
               ))}
             </div>
           </div>
@@ -114,14 +86,17 @@ export default function Cases() {
         <style>{`
           .cases-preview-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 32px;
           }
-          @media (max-width: 900px) {
+          @media (max-width: 1100px) {
+            .cases-preview-grid { grid-template-columns: repeat(3, 1fr); }
+          }
+          @media (max-width: 780px) {
             .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
           }
-          @media (max-width: 600px) {
-            .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
+          @media (max-width: 480px) {
+            .cases-preview-grid { grid-template-columns: 1fr; }
           }
           .portfolio-card { transition: box-shadow 0.25s, border-color 0.25s; }
           .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); border-color: rgba(26,26,26,0.2); }
@@ -131,13 +106,20 @@ export default function Cases() {
 
         <div className="cases-preview-grid">
           {filtered.map((item, i) => {
-            const fullItem = PORTFOLIO_ITEMS.find((p) => p.id === item.id);
-            const href = fullItem?.caseStudy ? `/portfolio/${slugify(item.company)}` : '/portfolio';
+            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
             return (
               <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
-                <Link href={href} style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
+                <Link href={`/portfolio/${slugify(item.empresa)}`} style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
                   <div className="portfolio-card" style={{ position: 'relative', aspectRatio: '4 / 3', background: SURFACE.card, border: '1px solid var(--color-border)', overflow: 'hidden', borderRadius: '20px', height: '100%' }}>
-                    <Image src={item.image} alt={item.company} fill sizes="(max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} priority={i === 0} />
+                    {coverImage ? (
+                      <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 780px) 50vw, (max-width: 1100px) 33vw, 25vw" style={{ objectFit: 'cover' }} priority={i === 0} />
+                    ) : (
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>
+                          photo_camera
+                        </span>
+                      </div>
+                    )}
 
                     <div
                       style={{
@@ -168,28 +150,26 @@ export default function Cases() {
                         background: 'linear-gradient(to top, rgba(20,18,16,0.92) 0%, rgba(20,18,16,0.6) 55%, rgba(20,18,16,0) 100%)',
                       }}
                     >
-                      {fullItem && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                          {fullItem.atuacao.map((cat) => (
-                            <span
-                              key={cat}
-                              style={{
-                                fontSize: '11px',
-                                fontWeight: 600,
-                                color: 'rgba(245,243,240,0.85)',
-                                background: 'rgba(255,255,255,0.12)',
-                                border: '1px solid rgba(245,243,240,0.2)',
-                                padding: '4px 10px',
-                                borderRadius: '100px',
-                              }}
-                            >
-                              {tCategory(cat)}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                        {item.atuacao.map((cat) => (
+                          <span
+                            key={cat}
+                            style={{
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              color: 'rgba(245,243,240,0.85)',
+                              background: 'rgba(255,255,255,0.12)',
+                              border: '1px solid rgba(245,243,240,0.2)',
+                              padding: '4px 10px',
+                              borderRadius: '100px',
+                            }}
+                          >
+                            {tCategory(cat)}
+                          </span>
+                        ))}
+                      </div>
                       <h3 style={{ color: '#f5f3f0', fontSize: '16px', fontWeight: 700, margin: 0 }}>
-                        {item.company}
+                        {item.empresa}
                       </h3>
                     </div>
                   </div>
@@ -224,5 +204,29 @@ export default function Cases() {
         </FadeIn>
       </div>
     </section>
+  );
+}
+
+function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      className="filter-pill"
+      data-active={active}
+      onClick={onClick}
+      style={{
+        fontSize: '12px',
+        fontWeight: 600,
+        color: active ? '#fff' : 'rgba(26,26,26,0.6)',
+        background: active ? 'var(--color-primary)' : 'transparent',
+        border: active ? '1px solid var(--color-primary)' : 'none',
+        padding: '7px 16px',
+        borderRadius: '100px',
+        cursor: 'pointer',
+        transition: 'all 0.15s',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </button>
   );
 }
