@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const DEFAULT_MENU_ITEMS = [
   { labelPt: 'Sobre', labelEn: 'About', href: '/#about' },
   { labelPt: 'Serviços', labelEn: 'Services', href: '/#work' },
-  { labelPt: 'Cases', labelEn: 'Cases', href: '/portfolio' },
+  { labelPt: 'Cases', labelEn: 'Cases', href: '/#cases' },
   { labelPt: 'Processo', labelEn: 'Process', href: '/#services' },
   { labelPt: 'Consultoria', labelEn: 'Consulting', href: '/#consulting' },
   { labelPt: 'Contato', labelEn: 'Contact', href: '/#contact' },

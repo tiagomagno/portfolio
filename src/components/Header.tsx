@@ -29,7 +29,7 @@ export default function Header() {
   const defaultNavLinks = [
     { href: '/#about', label: t('nav.about') },
     { href: '/#work', label: t('nav.services') },
-    { href: '/portfolio', label: t('nav.cases') },
+    { href: '/#cases', label: t('nav.cases') },
     { href: '/#services', label: t('nav.process') },
     { href: '/#consulting', label: t('nav.consultoria') },
     { href: '/#contact', label: t('nav.contact') },
@@ -121,7 +121,7 @@ export default function Header() {
         <div
           className="section-container"
           style={{
-            maxWidth: 'min(85vw, 1320px)',
+            maxWidth: 'var(--container-max)',
             margin: '0 auto',
             padding: '0 24px',
             height: '72px',
