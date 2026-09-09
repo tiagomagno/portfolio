@@ -41,7 +41,7 @@ export default function PortfolioHero() {
           </Link>
           <span style={{ fontSize: '10px', color: 'rgba(244,108,28,0.4)' }}>›</span>
           <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-primary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-            {t('portfolioPage.eyebrow')}
+            {t('breadcrumb.portfolio')}
           </span>
         </div>
 
