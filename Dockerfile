@@ -40,13 +40,18 @@ RUN adduser -S nextjs -u 1001
 RUN npm install -g prisma@6.19.3 && chown -R nextjs:nodejs /usr/local/lib/node_modules/prisma
 
 # Copia apenas o necessário do build
-# --chown é obrigatório aqui: sem ele a pasta public fica com dono root e o
-# usuário "nextjs" (não-root) não consegue escrever em public/uploads/cases,
-# fazendo o upload de imagens do admin falhar silenciosamente em produção.
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# O --chown acima nem sempre é suficiente (variação de comportamento do
+# BuildKit ao copiar por cima de diretório recém-criado): sem isso o
+# usuário "nextjs" (não-root) fica sem permissão de escrita em
+# public/uploads/cases, fazendo o upload de imagens do admin falhar em
+# produção com EACCES. O chown -R explícito abaixo, rodando como root
+# antes do USER nextjs, garante a permissão independente desse detalhe.
+RUN mkdir -p ./public/uploads/cases && chown -R nextjs:nodejs ./public
 
 # bcryptjs é usado pelo prisma/seed.mjs, que roda como script Node puro (fora do
 # bundler do Next) — sem esse pacote, "npm run db:seed" falha com MODULE_NOT_FOUND,
