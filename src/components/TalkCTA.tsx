@@ -9,7 +9,7 @@ export default function TalkCTA() {
 
   return (
     <section style={{ background: SURFACE.raised, padding: '48px 0 96px' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .work-cta-grid {
             display: grid;

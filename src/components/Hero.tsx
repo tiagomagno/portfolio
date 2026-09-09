@@ -50,7 +50,7 @@ export default function Hero() {
           style={{
             position: 'relative',
             zIndex: 1,
-            maxWidth: 'min(85vw, 1320px)',
+            maxWidth: 'var(--container-max)',
             margin: '0 auto',
             padding: '140px 24px 80px',
             display: 'flex',

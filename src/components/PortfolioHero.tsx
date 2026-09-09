@@ -33,7 +33,7 @@ export default function PortfolioHero() {
 
       <div
         className="section-container"
-        style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '68px 24px 60px', position: 'relative', zIndex: 1 }}
+        style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '68px 24px 60px', position: 'relative', zIndex: 1 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '40px' }}>
           <Link href="/" style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(26,26,26,0.4)', textDecoration: 'none', letterSpacing: '0.06em', textTransform: 'uppercase' }}>

@@ -18,7 +18,7 @@ export default function Consulting() {
 
   return (
     <section id="consulting" style={{ background: SURFACE.raised, padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1}>
           <span
             style={{

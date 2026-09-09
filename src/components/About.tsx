@@ -27,7 +27,7 @@ export default function About() {
 
   return (
     <section id="about" style={{ background: SURFACE.raised, padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .about-grid {
             display: grid;

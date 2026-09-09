@@ -19,7 +19,7 @@ export default function Work() {
 
   return (
     <section id="work" style={{ background: SURFACE.base, padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .work-section-grid {
             display: grid;

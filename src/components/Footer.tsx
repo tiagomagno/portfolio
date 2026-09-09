@@ -14,7 +14,7 @@ export default function Footer() {
         .footer-link:hover { color: #f5f3f0 !important; }
       `}</style>
 
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <div
           className="footer-row"
           style={{

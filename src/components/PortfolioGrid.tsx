@@ -19,7 +19,7 @@ export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<s
 
   return (
     <section style={{ background: SURFACE.raised, padding: '60px 0 100px' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.05}>
           <div
             className="filters-scroll no-scrollbar"
@@ -47,13 +47,16 @@ export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<s
         <style>{`
           .portfolio-full-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 32px;
           }
-          @media (max-width: 900px) {
+          @media (max-width: 1100px) {
+            .portfolio-full-grid { grid-template-columns: repeat(3, 1fr); }
+          }
+          @media (max-width: 780px) {
             .portfolio-full-grid { grid-template-columns: repeat(2, 1fr); }
           }
-          @media (max-width: 600px) {
+          @media (max-width: 480px) {
             .portfolio-full-grid { grid-template-columns: 1fr; }
           }
           .portfolio-card { transition: box-shadow 0.25s, border-color 0.25s; }
@@ -80,7 +83,7 @@ export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<s
                 }}
               >
                 {coverImage ? (
-                  <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
+                  <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 480px) 100vw, (max-width: 780px) 50vw, (max-width: 1100px) 33vw, 25vw" style={{ objectFit: 'cover' }} />
                 ) : (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>

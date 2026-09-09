@@ -53,7 +53,7 @@ export default function Contact() {
         }}
       />
 
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div
           style={{
             display: 'grid',

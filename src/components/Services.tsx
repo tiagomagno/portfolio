@@ -20,7 +20,7 @@ export default function Services() {
 
   return (
     <section id="services" style={{ background: SURFACE.base, padding: '96px 0' }}>
-      <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '0 24px' }}>
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
         <FadeIn delay={0.1}>

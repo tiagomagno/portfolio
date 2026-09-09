@@ -6,6 +6,10 @@
 :root {
   --font-headline: 'Lufga', system-ui, -apple-system, sans-serif;
 
+  /* Largura máxima do conteúdo, usada por todas as seções do site (section-container).
+     90% da viewport até travar em 1500px nas resoluções muito grandes (4K+). */
+  --container-max: min(90vw, 1500px);
+
   /* ── Typography Scale ── */
   --fs-h1:          clamp(44px, 7vw, 84px);
   --fs-h2:          clamp(28px, 4vw, 44px);
