@@ -11,6 +11,8 @@ interface CaseAssetEditorProps {
 export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditorProps) {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [heroColor, setHeroColor] = useState<string | null>(null);
+  const [heroMode, setHeroMode] = useState<'image' | 'color'>('image');
   const [gallery, setGallery] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -23,10 +25,19 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
       .then((data) => {
         setCoverImage(data.asset?.coverImage ?? null);
         setHeroImage(data.asset?.heroImage ?? null);
+        setHeroColor(data.asset?.heroColor ?? null);
+        setHeroMode(data.asset?.heroColor ? 'color' : 'image');
         setGallery(Array.isArray(data.asset?.gallery) ? data.asset.gallery : []);
       })
       .finally(() => setLoading(false));
   }, [slug]);
+
+  function selectHeroMode(mode: 'image' | 'color') {
+    setHeroMode(mode);
+    // Imagem e cor são mutuamente exclusivas — trocar o modo limpa o campo do outro.
+    if (mode === 'image') setHeroColor(null);
+    else setHeroImage(null);
+  }
 
   async function uploadFile(file: File): Promise<string> {
     const formData = new FormData();
@@ -78,7 +89,7 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
       const res = await fetch(`/api/admin/case-assets/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coverImage, heroImage, gallery }),
+        body: JSON.stringify({ coverImage, heroImage, heroColor, gallery }),
       });
       if (!res.ok) throw new Error();
       setMessage('Salvo com sucesso.');
@@ -103,14 +114,60 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
         onRemove={() => setCoverImage(null)}
       />
 
-      <ImageField
-        label="Imagem de topo"
-        hint="Banner do topo da página de detalhamento. Formato recomendado: 1920×1080px (16:9). Se vazio, usa a capa."
-        value={heroImage}
-        uploading={uploadingField === 'hero'}
-        onUpload={(file) => handleSingleUpload('hero', file)}
-        onRemove={() => setHeroImage(null)}
-      />
+      <div>
+        <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>Imagem de topo</span>
+        <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>
+          Banner do topo da página de detalhamento: imagem (1920×1080px, 16:9) ou uma cor sólida. Se nenhuma for definida, usa a capa.
+        </p>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          {(['image', 'color'] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => selectHeroMode(mode)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '100px',
+                border: heroMode === mode ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
+                background: heroMode === mode ? 'var(--color-primary)' : 'transparent',
+                color: heroMode === mode ? '#fff' : 'rgba(26,26,26,0.6)',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {mode === 'image' ? 'Imagem' : 'Cor'}
+            </button>
+          ))}
+        </div>
+
+        {heroMode === 'image' ? (
+          <ImageField
+            label=""
+            hint=""
+            value={heroImage}
+            uploading={uploadingField === 'hero'}
+            onUpload={(file) => handleSingleUpload('hero', file)}
+            onRemove={() => setHeroImage(null)}
+          />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              type="color"
+              value={heroColor ?? '#1a1a1a'}
+              onChange={(e) => setHeroColor(e.target.value)}
+              style={{ width: '48px', height: '48px', padding: 0, border: '1px solid var(--color-border)', borderRadius: '8px', cursor: 'pointer', background: 'none' }}
+            />
+            <input
+              type="text"
+              value={heroColor ?? ''}
+              onChange={(e) => setHeroColor(e.target.value)}
+              placeholder="#1a1a1a"
+              style={{ width: '120px', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '13px' }}
+            />
+          </div>
+        )}
+      </div>
 
       <div>
         <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>Galeria</span>
@@ -191,8 +248,8 @@ function ImageField({
 
   return (
     <div>
-      <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>{label}</span>
-      <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>{hint}</p>
+      {label && <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>{label}</span>}
+      {hint && <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>{hint}</p>}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         {preview && (
           <div style={{ position: 'relative', width: '160px', aspectRatio: '4 / 3', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0 }}>

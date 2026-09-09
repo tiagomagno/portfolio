@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 export interface CaseAssetOverrides {
   coverImage: string | null;
   heroImage: string | null;
+  heroColor: string | null;
   gallery: string[];
 }
 
@@ -19,6 +20,7 @@ export async function getCaseAssetOverrides(slug: string): Promise<CaseAssetOver
     return {
       coverImage: asset.coverImage,
       heroImage: asset.heroImage,
+      heroColor: asset.heroColor,
       gallery: Array.isArray(asset.gallery) ? (asset.gallery as string[]) : [],
     };
   } catch (err) {
@@ -33,7 +35,12 @@ export async function getAllCaseAssetOverrides(): Promise<Map<string, CaseAssetO
     return new Map(
       assets.map((a) => [
         a.slug,
-        { coverImage: a.coverImage, heroImage: a.heroImage, gallery: Array.isArray(a.gallery) ? (a.gallery as string[]) : [] },
+        {
+          coverImage: a.coverImage,
+          heroImage: a.heroImage,
+          heroColor: a.heroColor,
+          gallery: Array.isArray(a.gallery) ? (a.gallery as string[]) : [],
+        },
       ])
     );
   } catch (err) {

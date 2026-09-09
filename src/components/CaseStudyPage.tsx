@@ -19,12 +19,15 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
   const currentIndex = allCases.findIndex((c) => c.id === item.id);
   const nextCase = allCases.length > 1 ? allCases[(currentIndex + 1) % allCases.length] : null;
 
-  // Banner do topo: usa a imagem de topo dedicada; sem ela, cai pra capa.
-  const bannerImage = item.heroImage ?? item.image;
+  // Banner do topo: cor sólida tem prioridade sobre a imagem de topo dedicada; sem
+  // nenhuma das duas, cai pra capa.
+  const bannerColor = item.heroColor;
+  const bannerImage = bannerColor ? undefined : item.heroImage ?? item.image;
+  const hasBanner = Boolean(bannerColor || bannerImage);
 
-  // Sem imagem, a Hero não tem o scrim escuro por trás — o texto precisa ficar escuro nesse caso.
-  const heroFg = bannerImage ? '245,243,240' : '26,26,26';
-  const heroSolid = bannerImage ? '#f5f3f0' : '#1a1a1a';
+  // Sem banner, a Hero não tem o scrim escuro por trás — o texto precisa ficar escuro nesse caso.
+  const heroFg = hasBanner ? '245,243,240' : '26,26,26';
+  const heroSolid = hasBanner ? '#f5f3f0' : '#1a1a1a';
 
   return (
     <>
@@ -44,8 +47,17 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
             />
           </>
         )}
+        {bannerColor && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: `linear-gradient(to bottom, ${bannerColor} 0%, ${bannerColor} 75%, ${SURFACE.raised} 100%)`,
+            }}
+          />
+        )}
 
-        <div className="section-container" style={{ maxWidth: 'min(85vw, 1320px)', margin: '0 auto', padding: '28px 24px 72px', position: 'relative', zIndex: 1 }}>
+        <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '28px 24px 72px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '110px', flexWrap: 'wrap' }}>
             <Link href="/" style={{ fontSize: '12px', color: `rgba(${heroFg},0.4)`, textDecoration: 'none', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
               {t('breadcrumb.home')}
@@ -97,7 +109,7 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
         </div>
       </section>
 
-      <SectionDivider from={bannerImage ? SURFACE.raised : SURFACE.base} to={SURFACE.raised} />
+      <SectionDivider from={hasBanner ? SURFACE.raised : SURFACE.base} to={SURFACE.raised} />
 
       {/* Info strip */}
       <section style={{ background: SURFACE.raised, padding: '0 24px 60px' }}>
@@ -190,19 +202,27 @@ export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
               </span>
             </FadeIn>
             <style>{`
-              .case-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-              @media (max-width: 900px) { .case-gallery-grid { grid-template-columns: repeat(2, 1fr); } }
-              @media (max-width: 560px) { .case-gallery-grid { grid-template-columns: 1fr; } }
+              .case-gallery-grid { column-count: 3; column-gap: 16px; }
+              .case-gallery-grid > div {
+                break-inside: avoid;
+                margin-bottom: 16px;
+                border-radius: 16px;
+                overflow: hidden;
+                background: ${SURFACE.base};
+              }
+              @media (max-width: 900px) { .case-gallery-grid { column-count: 2; } }
+              @media (max-width: 560px) { .case-gallery-grid { column-count: 1; } }
             `}</style>
             <div className="case-gallery-grid">
               {item.gallery.map((src, i) => (
-                <div key={src} style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: '16px', overflow: 'hidden', background: SURFACE.base }}>
+                <div key={src}>
                   <Image
                     src={src}
                     alt={`${item.empresa} — imagem ${i + 1}`}
-                    fill
+                    width={0}
+                    height={0}
                     sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-                    style={{ objectFit: 'cover' }}
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
                 </div>
               ))}

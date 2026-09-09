@@ -38,6 +38,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
         ...item,
         image: overrides.coverImage ?? item.image,
         heroImage: overrides.heroImage ?? item.heroImage,
+        heroColor: overrides.heroColor ?? item.heroColor,
         gallery: overrides.gallery.length > 0 ? overrides.gallery : item.gallery,
       }
     : item;

@@ -22,6 +22,9 @@ model CaseAsset {
   slug       String   @unique
   coverImage String?  @db.Text
   heroImage  String?  @db.Text
+  /// Cor sólida alternativa ao heroImage no banner de topo do case. Mutuamente exclusiva
+  /// com heroImage — o admin (/admin/cases) sempre limpa uma ao definir a outra.
+  heroColor  String?
   gallery    Json?
   updatedAt  DateTime @updatedAt
 }

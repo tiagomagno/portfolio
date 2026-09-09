@@ -52,6 +52,8 @@ export interface PortfolioItem {
   image?: string;
   /** Banner de topo da página de detalhamento. Se ausente, cai para `image`. */
   heroImage?: string;
+  /** Cor sólida alternativa ao heroImage no banner de topo. Mutuamente exclusiva com heroImage. */
+  heroColor?: string;
   /** Imagens da galeria dentro do case (posts, mockup do site, telas do app...). */
   gallery?: string[];
   caseStudy?: CaseStudyData;
