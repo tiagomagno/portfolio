@@ -1,29 +1,90 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import FadeIn from './ui/FadeIn';
+import PortfolioCard from './PortfolioCard';
 import { useLang } from '@/context/LangContext';
-import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, slugify, type AtuacaoCategory } from '@/data/portfolio';
+import { PORTFOLIO_ITEMS, slugify } from '@/data/portfolio';
 import type { CaseAssetOverrides } from '@/data/caseAssets';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
-
-const PREVIEW_LIMIT = 9;
 
 // Só cases com case study completo entram no preview da Home — sempre clicáveis,
 // nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
 const FEATURED_CASES = PORTFOLIO_ITEMS.filter((item) => item.caseStudy);
 
+function chunk<T>(items: T[], size: number): T[][] {
+  const pages: T[][] = [];
+  for (let i = 0; i < items.length; i += size) pages.push(items.slice(i, i + size));
+  return pages;
+}
+
+function useCarouselColumns() {
+  const [columns, setColumns] = useState(3);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setColumns(w <= 560 ? 1 : w <= 900 ? 2 : 3);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  return columns;
+}
+
 export default function Cases({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
-  const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
 
-  const filtered = (
-    activeFilter ? FEATURED_CASES.filter((item) => item.atuacao.includes(activeFilter)) : FEATURED_CASES
-  ).slice(0, PREVIEW_LIMIT);
+  const columns = useCarouselColumns();
+  const itemsPerPage = columns * 2;
+  const pages = useMemo(() => chunk(FEATURED_CASES, itemsPerPage), [itemsPerPage]);
+  const totalPages = pages.length;
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragStartScroll = useRef(0);
+
+  useEffect(() => {
+    setPageIndex(0);
+    trackRef.current?.scrollTo({ left: 0 });
+  }, [itemsPerPage]);
+
+  const goToPage = (index: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const clamped = Math.max(0, Math.min(totalPages - 1, index));
+    track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' });
+  };
+
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track || track.clientWidth === 0) return;
+    setPageIndex(Math.round(track.scrollLeft / track.clientWidth));
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse' || !trackRef.current) return;
+    isDragging.current = true;
+    dragStartX.current = e.clientX;
+    dragStartScroll.current = trackRef.current.scrollLeft;
+    trackRef.current.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current || !trackRef.current) return;
+    trackRef.current.scrollLeft = dragStartScroll.current - (e.clientX - dragStartX.current);
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    if (!isDragging.current || !trackRef.current) return;
+    isDragging.current = false;
+    trackRef.current.releasePointerCapture(e.pointerId);
+  };
 
   return (
     <section id="cases" style={{ background: SURFACE.base, padding: '96px 0' }}>
@@ -57,7 +118,7 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
               </span>
               <h2
                 style={{
-                  fontSize: 'var(--fs-h2)',
+                  fontSize: 'clamp(32px, 4.5vw, 56px)',
                   fontWeight: 900,
                   color: '#1a1a1a',
                   lineHeight: 1.1,
@@ -68,112 +129,66 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
               </h2>
             </div>
 
-            <div className="filters-scroll no-scrollbar" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <style>{`
-                .filter-pill[data-active="false"]:hover {
-                  background: rgba(26,26,26,0.07) !important;
-                  color: rgba(26,26,26,0.85) !important;
-                }
-              `}</style>
-              <FilterPill label={t('cases.filterAll')} active={activeFilter === null} onClick={() => setActiveFilter(null)} />
-              {ATUACAO_CATEGORIES.map((cat) => (
-                <FilterPill key={cat} label={tCategory(cat)} active={activeFilter === cat} onClick={() => setActiveFilter(cat)} />
-              ))}
-            </div>
+            {totalPages > 1 && (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <CarouselArrow direction="left" disabled={pageIndex === 0} onClick={() => goToPage(pageIndex - 1)} />
+                <CarouselArrow direction="right" disabled={pageIndex >= totalPages - 1} onClick={() => goToPage(pageIndex + 1)} />
+              </div>
+            )}
           </div>
         </FadeIn>
 
         <style>{`
-          .cases-preview-grid {
+          .cases-carousel-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+          }
+          .cases-carousel-track::-webkit-scrollbar { display: none; }
+          .cases-carousel-page {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(${columns}, 1fr);
+            grid-auto-rows: 1fr;
             gap: 16px;
           }
-          @media (max-width: 900px) {
-            .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
+          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
+          .portfolio-card-v2-image img {
+            filter: saturate(0) contrast(1.02);
+            transition: filter 0.5s ease, transform 0.5s ease;
           }
-          @media (max-width: 560px) {
-            .cases-preview-grid { grid-template-columns: 1fr; }
+          .portfolio-card-v2-link:hover .portfolio-card-v2-image img {
+            filter: saturate(1) contrast(1);
+            transform: scale(1.04);
           }
-          .portfolio-card { transition: box-shadow 0.25s; }
-          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); }
-          .portfolio-card img { transition: transform 0.35s ease; }
-          .portfolio-card:hover img { transform: scale(1.06); }
         `}</style>
 
-        <div className="cases-preview-grid">
-          {filtered.map((item, i) => {
-            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
-            return (
-              <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
-                <Link href={`/portfolio/${slugify(item.empresa)}`} style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
-                  <div className="portfolio-card" style={{ position: 'relative', aspectRatio: '4 / 3', background: SURFACE.card, overflow: 'hidden', borderRadius: '20px', height: '100%' }}>
-                    {coverImage ? (
-                      <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover', objectPosition: 'top' }} priority={i === 0} />
-                    ) : (
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>
-                          photo_camera
-                        </span>
-                      </div>
-                    )}
-
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '16px',
-                        right: '16px',
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '50%',
-                        background: '#ffffff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'rgba(26,26,26,0.7)' }}>
-                        north_east
-                      </span>
-                    </div>
-
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        padding: '48px 16px 16px',
-                        background: 'linear-gradient(to top, rgba(20,18,16,0.92) 0%, rgba(20,18,16,0.6) 55%, rgba(20,18,16,0) 100%)',
-                      }}
-                    >
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                        {item.atuacao.map((cat) => (
-                          <span
-                            key={cat}
-                            style={{
-                              fontSize: '11px',
-                              fontWeight: 600,
-                              color: 'rgba(245,243,240,0.85)',
-                              background: 'rgba(255,255,255,0.12)',
-                              border: '1px solid rgba(245,243,240,0.2)',
-                              padding: '4px 10px',
-                              borderRadius: '100px',
-                            }}
-                          >
-                            {tCategory(cat)}
-                          </span>
-                        ))}
-                      </div>
-                      <h3 style={{ color: '#f5f3f0', fontSize: '16px', fontWeight: 700, margin: 0 }}>
-                        {item.empresa}
-                      </h3>
-                    </div>
-                  </div>
-                </Link>
-              </FadeIn>
-            );
-          })}
+        <div
+          ref={trackRef}
+          className="cases-carousel-track"
+          onScroll={handleScroll}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerLeave={endDrag}
+          style={{ cursor: 'grab' }}
+        >
+          {pages.map((pageItems, pageI) => (
+            <div key={pageI} className="cases-carousel-page">
+              {pageItems.map((item, i) => {
+                const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
+                return (
+                  <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
+                    <Link href={`/portfolio/${slugify(item.empresa)}`} className="portfolio-card-v2-link">
+                      <PortfolioCard item={item} coverImage={coverImage} categoryLabel={tCategory} priority={pageI === 0 && i === 0} />
+                    </Link>
+                  </FadeIn>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         <FadeIn delay={0.3}>
@@ -204,26 +219,29 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
   );
 }
 
-function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | 'right'; disabled: boolean; onClick: () => void }) {
   return (
     <button
-      className="filter-pill"
-      data-active={active}
       onClick={onClick}
+      disabled={disabled}
+      aria-label={direction === 'left' ? 'Anterior' : 'Próximo'}
       style={{
-        fontSize: '12px',
-        fontWeight: 600,
-        color: active ? '#fff' : 'rgba(26,26,26,0.6)',
-        background: active ? 'var(--color-primary)' : 'transparent',
-        border: active ? '1px solid var(--color-primary)' : 'none',
-        padding: '7px 16px',
-        borderRadius: '100px',
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-        whiteSpace: 'nowrap',
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '1px solid rgba(26,26,26,0.15)',
+        background: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.35 : 1,
+        transition: 'opacity 0.15s',
       }}
     >
-      {label}
+      <span className="material-symbols-outlined" style={{ fontSize: '20px', color: 'rgba(26,26,26,0.7)' }}>
+        {direction === 'left' ? 'chevron_left' : 'chevron_right'}
+      </span>
     </button>
   );
 }
