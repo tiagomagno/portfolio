@@ -47,20 +47,17 @@ export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<s
         <style>{`
           .portfolio-full-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
           }
-          @media (max-width: 1100px) {
-            .portfolio-full-grid { grid-template-columns: repeat(3, 1fr); }
-          }
-          @media (max-width: 780px) {
+          @media (max-width: 900px) {
             .portfolio-full-grid { grid-template-columns: repeat(2, 1fr); }
           }
-          @media (max-width: 480px) {
+          @media (max-width: 560px) {
             .portfolio-full-grid { grid-template-columns: 1fr; }
           }
-          .portfolio-card { transition: box-shadow 0.25s, border-color 0.25s; }
-          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); border-color: rgba(26,26,26,0.2); }
+          .portfolio-card { transition: box-shadow 0.25s; }
+          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); }
           .portfolio-card img { transition: transform 0.35s ease; }
           .portfolio-card:hover img { transform: scale(1.06); }
         `}</style>
@@ -76,14 +73,13 @@ export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<s
                   aspectRatio: '4 / 3',
                   cursor: item.caseStudy ? 'pointer' : 'default',
                   background: SURFACE.card,
-                  border: '1px solid var(--color-border)',
                   overflow: 'hidden',
                   borderRadius: '20px',
                   height: '100%',
                 }}
               >
                 {coverImage ? (
-                  <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 480px) 100vw, (max-width: 780px) 50vw, (max-width: 1100px) 33vw, 25vw" style={{ objectFit: 'cover' }} />
+                  <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover', objectPosition: 'top' }} />
                 ) : (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>

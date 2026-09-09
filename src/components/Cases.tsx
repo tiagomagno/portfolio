@@ -86,20 +86,17 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
         <style>{`
           .cases-preview-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
           }
-          @media (max-width: 1100px) {
-            .cases-preview-grid { grid-template-columns: repeat(3, 1fr); }
-          }
-          @media (max-width: 780px) {
+          @media (max-width: 900px) {
             .cases-preview-grid { grid-template-columns: repeat(2, 1fr); }
           }
-          @media (max-width: 480px) {
+          @media (max-width: 560px) {
             .cases-preview-grid { grid-template-columns: 1fr; }
           }
-          .portfolio-card { transition: box-shadow 0.25s, border-color 0.25s; }
-          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); border-color: rgba(26,26,26,0.2); }
+          .portfolio-card { transition: box-shadow 0.25s; }
+          .portfolio-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.14); }
           .portfolio-card img { transition: transform 0.35s ease; }
           .portfolio-card:hover img { transform: scale(1.06); }
         `}</style>
@@ -110,9 +107,9 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
             return (
               <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
                 <Link href={`/portfolio/${slugify(item.empresa)}`} style={{ display: 'block', height: '100%', textDecoration: 'none' }}>
-                  <div className="portfolio-card" style={{ position: 'relative', aspectRatio: '4 / 3', background: SURFACE.card, border: '1px solid var(--color-border)', overflow: 'hidden', borderRadius: '20px', height: '100%' }}>
+                  <div className="portfolio-card" style={{ position: 'relative', aspectRatio: '4 / 3', background: SURFACE.card, overflow: 'hidden', borderRadius: '20px', height: '100%' }}>
                     {coverImage ? (
-                      <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 780px) 50vw, (max-width: 1100px) 33vw, 25vw" style={{ objectFit: 'cover' }} priority={i === 0} />
+                      <Image src={coverImage} alt={item.empresa} fill sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover', objectPosition: 'top' }} priority={i === 0} />
                     ) : (
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>
