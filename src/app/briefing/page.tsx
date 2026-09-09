@@ -3,11 +3,17 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import FadeIn from '@/components/ui/FadeIn';
 import { Metadata } from 'next';
+import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
-export const metadata: Metadata = {
+const DEFAULT_METADATA: Metadata = {
   title: 'Briefing - Tiago Magno',
   description: 'Inicie seu projeto com um briefing detalhado e personalizado.',
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const override = await getSeoOverride('briefing');
+  return withSeoOverride(DEFAULT_METADATA, override);
+}
 
 export default function BriefingPage() {
   return (

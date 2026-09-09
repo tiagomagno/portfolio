@@ -66,3 +66,23 @@ model PageContent {
   valueEn   String   @db.Text
   updatedAt DateTime @updatedAt
 }
+
+/// SEO (título, descrição, palavras-chave, imagem de compartilhamento, URL canônica e
+/// indexação) de uma página fixa do site ('home' | 'portfolio' | 'briefing'), editável em
+/// /admin/textos. Sem uma linha aqui, a página usa os defaults do `generateMetadata` no código.
+/// O <html lang> do site é sempre pt-BR no servidor (a troca de idioma é só client-side), então
+/// o título/descrição/keywords em EN não chegam a aparecer no <head> renderizado — servem só
+/// de referência/rascunho até o site ganhar rotas por idioma.
+model SeoMeta {
+  page          String   @id
+  titlePt       String?
+  titleEn       String?
+  descriptionPt String?  @db.Text
+  descriptionEn String?  @db.Text
+  keywordsPt    String?  @db.Text
+  keywordsEn    String?  @db.Text
+  ogImage       String?  @db.Text
+  canonicalUrl  String?
+  noIndex       Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}

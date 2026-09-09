@@ -13,8 +13,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
+import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
-export const metadata: Metadata = {
+const DEFAULT_METADATA: Metadata = {
   title: 'Tiago Magno - UX Designer Sênior | Product Design',
   description:
     'Transformo interações complexas em experiências digitais eficientes, escaláveis e centradas no usuário, conectando estratégia, UX, tecnologia e dados.',
@@ -47,6 +48,11 @@ export const metadata: Metadata = {
     },
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const override = await getSeoOverride('home');
+  return withSeoOverride(DEFAULT_METADATA, override);
+}
 
 export default function RootLayout({
   children,

@@ -7,11 +7,17 @@ import PortfolioCTA from '@/components/PortfolioCTA';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { SURFACE } from '@/lib/surfaces';
 import { getAllCaseAssetOverrides } from '@/data/caseAssets';
+import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
-export const metadata: Metadata = {
+const DEFAULT_METADATA: Metadata = {
   title: 'Portfólio - Tiago Magno',
   description: 'Uma seleção de trabalhos em UX/UI, produtos digitais, identidade visual e design systems ao longo de mais de 20 anos de carreira.',
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const override = await getSeoOverride('portfolio');
+  return withSeoOverride(DEFAULT_METADATA, override);
+}
 
 // Reflete imagens atualizadas pelo admin (/admin/cases) sem precisar de novo deploy.
 export const revalidate = 60;
