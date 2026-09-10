@@ -17,6 +17,7 @@ export default async function AdminCasesPage() {
       empresa: item.empresa,
       slug,
       atuacao: item.atuacao,
+      fallbackImage: item.image,
       hasCover: !!(asset?.coverImage || item.image),
       hasHero: !!asset?.heroImage,
       galleryCount: Array.isArray(asset?.gallery) ? (asset!.gallery as unknown[]).length : 0,
