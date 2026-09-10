@@ -182,6 +182,7 @@ export default function AdminLeadsPage() {
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }}
           />
           <div
+            data-lenis-prevent
             style={{
               position: 'fixed',
               top: 0,
