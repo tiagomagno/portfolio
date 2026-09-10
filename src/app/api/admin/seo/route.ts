@@ -29,7 +29,12 @@ export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
-  const rows = await prisma.seoMeta.findMany();
+  // Se a tabela SeoMeta ainda não existir neste banco (schema desatualizado), cai pros
+  // defaults hardcoded em vez de derrubar a página inteira — só perde os overrides salvos.
+  const rows = await prisma.seoMeta.findMany().catch((err) => {
+    console.error('SeoMeta findMany falhou:', err);
+    return [];
+  });
   const byPage = new Map(rows.map((r) => [r.page, r]));
 
   const pages = Object.entries(SEO_DEFAULTS).map(([page, def]) => {

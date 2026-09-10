@@ -54,11 +54,10 @@ export default function Consulting() {
                 color: '#1a1a1a',
                 lineHeight: 1.1,
                 margin: '0 0 20px',
+                whiteSpace: 'pre-line',
               }}
             >
-              {t('consulting.title.p1')}
-              <br />
-              <span>{t('consulting.title.highlight')}</span>
+              {t('consulting.title')}
             </h2>
             <p
               style={{

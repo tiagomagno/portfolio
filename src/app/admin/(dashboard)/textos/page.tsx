@@ -43,6 +43,7 @@ export default function AdminTextosPage() {
   const [seoEdits, setSeoEdits] = useState<Record<string, SeoPage>>({});
   const [activeSeoPage, setActiveSeoPage] = useState<string>('home');
   const [seoLoading, setSeoLoading] = useState(true);
+  const [seoLoadError, setSeoLoadError] = useState(false);
   const [savingSeo, setSavingSeo] = useState(false);
   const [uploadingOg, setUploadingOg] = useState(false);
   const [seoMessage, setSeoMessage] = useState('');
@@ -63,12 +64,16 @@ export default function AdminTextosPage() {
       .finally(() => setLoading(false));
 
     fetch('/api/admin/seo')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error();
+        return r.json();
+      })
       .then((data) => {
         const loaded: SeoPage[] = data.pages ?? [];
         setSeoPages(loaded);
         setSeoEdits(Object.fromEntries(loaded.map((p) => [p.page, p])));
       })
+      .catch(() => setSeoLoadError(true))
       .finally(() => setSeoLoading(false));
   }, []);
 
@@ -201,6 +206,11 @@ export default function AdminTextosPage() {
       <section style={{ marginBottom: '32px' }}>
         <h2 style={{ fontSize: '15px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 10px' }}>SEO</h2>
         <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '16px' }}>
+          {seoLoadError && (
+            <p style={{ fontSize: '13px', color: '#b91c1c', margin: 0 }}>
+              Não foi possível carregar o SEO — a tabela ainda não existe neste banco (falta rodar a sincronização do schema aqui). Os textos abaixo continuam funcionando normalmente.
+            </p>
+          )}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '16px', flexWrap: 'wrap' }}>
             {seoPages.map((p) => (
               <button

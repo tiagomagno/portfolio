@@ -98,10 +98,10 @@ export default function Contact() {
                 color: '#f5f3f0',
                 lineHeight: 1.05,
                 margin: '0 0 24px',
+                whiteSpace: 'pre-line',
               }}
             >
-              {t('contact.heading.line1')}<br />
-              <span>{t('contact.heading.highlight')}</span>
+              {t('contact.heading')}
             </h2>
             <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(245,243,240,0.55)', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
               {t('contact.subtitle')}

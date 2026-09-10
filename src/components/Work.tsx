@@ -76,7 +76,7 @@ export default function Work() {
                 margin: '0 0 16px',
               }}
             >
-              {t('work.title.p1')} <span>{t('work.title.highlight')}</span>
+              {t('work.title')}
             </h2>
             <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '420px' }}>
               {t('work.subtitle')}

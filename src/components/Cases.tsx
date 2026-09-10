@@ -125,7 +125,7 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
                   margin: 0,
                 }}
               >
-                {t('cases.heading.line1')}
+                {t('cases.heading')}
               </h2>
             </div>
 

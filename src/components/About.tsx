@@ -131,10 +131,10 @@ export default function About() {
                   color: '#1a1a1a',
                   lineHeight: 1.1,
                   margin: '0 0 24px',
+                  whiteSpace: 'pre-line',
                 }}
               >
-                {t('about.heading.line1')}<br />
-                <span>{t('about.heading.line2')}</span>
+                {t('about.heading')}
               </h2>
             </FadeIn>
 

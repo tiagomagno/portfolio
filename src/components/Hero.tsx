@@ -68,11 +68,10 @@ export default function Hero() {
                   letterSpacing: '-0.02em',
                   color: '#1a1a1a',
                   margin: '0 0 16px',
+                  whiteSpace: 'pre-line',
                 }}
               >
-                {t('hero.title.1')}
-                <br />
-                <span>{t('hero.title.2')}.</span>
+                {t('hero.title')}
               </h1>
             </FadeIn>
 

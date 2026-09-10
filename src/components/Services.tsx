@@ -47,7 +47,7 @@ export default function Services() {
                 margin: '0 0 16px',
               }}
             >
-              {t('process.title.p1')} <span>{t('process.title.highlight')}</span>
+              {t('process.title')}
             </h2>
             <p style={{ fontSize: 'var(--fs-body)', color: 'rgba(26,26,26,0.62)', lineHeight: 1.8, maxWidth: '480px', margin: 0 }}>
               {t('process.subtitle2')}

@@ -65,10 +65,10 @@ export default function PortfolioHero() {
                 color: '#1a1a1a',
                 lineHeight: 1.05,
                 margin: 0,
+                whiteSpace: 'pre-line',
               }}
             >
-              {t('portfolioPage.heading.line1')}<br />
-              <span>{t('portfolioPage.heading.line2')}</span>
+              {t('portfolioPage.heading')}
             </h1>
           </div>
           <p style={{ fontSize: '15px', color: 'rgba(26,26,26,0.62)', lineHeight: 1.8, maxWidth: '380px', margin: 0 }}>
