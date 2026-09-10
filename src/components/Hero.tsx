@@ -2,13 +2,12 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
-import { SURFACE } from '@/lib/surfaces';
 
 export default function Hero() {
   const { t } = useLang();
 
   return (
-    <section id="hero" style={{ background: SURFACE.base }}>
+    <section id="hero">
       <div style={{ position: 'relative', overflow: 'hidden' }}>
         {/* Glow */}
         <div

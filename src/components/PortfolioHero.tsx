@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
-import { SURFACE } from '@/lib/surfaces';
 
 export default function PortfolioHero() {
   const { t } = useLang();
@@ -10,7 +9,6 @@ export default function PortfolioHero() {
   return (
     <section
       style={{
-        background: SURFACE.base,
         position: 'relative',
         overflow: 'hidden',
         paddingTop: '72px',

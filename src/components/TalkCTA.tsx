@@ -32,7 +32,6 @@ export default function TalkCTA() {
             className="work-cta-grid"
             style={{
               background: SURFACE.card,
-              border: '1px solid var(--color-border)',
               borderRadius: '28px',
               padding: '48px 56px',
             }}
@@ -77,40 +76,56 @@ export default function TalkCTA() {
             </div>
 
             <div className="work-cta-visual" style={{ display: 'flex' }}>
-              <div
-                className="work-cta-bleed"
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '4 / 3',
-                  borderRadius: '16px',
-                  border: '1.5px dashed rgba(26,26,26,0.2)',
-                  background: SURFACE.raised,
-                  boxShadow: '0 24px 48px rgba(0,0,0,0.1)',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
+              <div className="work-cta-bleed" style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3' }}>
+                {/* Camada de vazamento: quando uma foto real entrar aqui (Image fill, object-fit
+                    cover), ela aparece deslocada atrás da moldura, criando profundidade. Vazia,
+                    fica só como uma sombra sutil por trás do mockup. */}
+                <div
+                  className="work-cta-leak"
+                  style={{
+                    position: 'absolute',
+                    inset: '18px -22px -22px 22px',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 24px 48px rgba(0,0,0,0.12)',
+                    zIndex: 0,
+                  }}
+                />
+
                 <div
                   style={{
-                    height: '26px',
-                    flexShrink: 0,
+                    position: 'relative',
+                    zIndex: 1,
+                    height: '100%',
+                    borderRadius: '16px',
+                    border: '1.5px dashed rgba(26,26,26,0.2)',
+                    background: SURFACE.raised,
+                    boxShadow: '0 24px 48px rgba(0,0,0,0.1)',
+                    overflow: 'hidden',
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    padding: '0 12px',
-                    borderBottom: '1px solid rgba(26,26,26,0.1)',
+                    flexDirection: 'column',
                   }}
                 >
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
-                </div>
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '36px', color: 'rgba(26,26,26,0.18)' }}>
-                    image
-                  </span>
+                  <div
+                    style={{
+                      height: '26px',
+                      flexShrink: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '0 12px',
+                      borderBottom: '1px solid rgba(26,26,26,0.1)',
+                    }}
+                  >
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'rgba(26,26,26,0.15)' }} />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '36px', color: 'rgba(26,26,26,0.18)' }}>
+                      image
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
