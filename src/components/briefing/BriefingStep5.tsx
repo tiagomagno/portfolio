@@ -15,17 +15,17 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 700,
   textTransform: 'uppercase',
   letterSpacing: '0.12em',
-  color: '#a8a29e',
+  color: 'var(--color-text-muted)',
 };
 
 const textareaStyle: React.CSSProperties = {
   width: '100%',
   boxSizing: 'border-box',
-  background: '#131313',
-  border: '1px solid #2a2a2a',
+  background: 'var(--color-bg-high)',
+  border: '1px solid var(--color-border)',
   borderRadius: '12px',
   padding: '12px 16px',
-  color: '#fff',
+  color: 'var(--color-text)',
   fontSize: '14px',
   fontFamily: 'inherit',
   outline: 'none',
@@ -48,7 +48,7 @@ export function BriefingStep5({ register, errors }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
-      <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.2 }}>
+      <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
         Sobre o Seu Negócio
       </h3>
 
@@ -66,13 +66,13 @@ export function BriefingStep5({ register, errors }: Props) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '12px 16px',
-                  background: isSelected ? 'rgba(255,86,37,0.08)' : '#131313',
-                  border: `1px solid ${isSelected ? '#ff5625' : '#2a2a2a'}`,
+                  background: isSelected ? 'rgba(255,86,37,0.08)' : 'var(--color-bg-high)',
+                  border: `1px solid ${isSelected ? '#ff5625' : 'var(--color-border)'}`,
                   borderRadius: '12px',
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: isSelected ? 600 : 400,
-                  color: isSelected ? '#ff5625' : '#a8a29e',
+                  color: isSelected ? '#ff5625' : 'var(--color-text-muted)',
                   transition: 'all 0.15s',
                   textAlign: 'center',
                 }}

@@ -14,7 +14,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <div className="w-full">
                 <label
                     htmlFor={inputId}
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-[#a8a29e]"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"
                 >
                     {label}
                     {props.required && <span className="text-red-400 ml-1">*</span>}
@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                     id={inputId}
                     className={cn(
                         'h-[46px] w-full rounded-[8px] border px-4 text-sm transition-all',
-                        'border-[#2a2a2a] bg-[#131313] text-white',
+                        'border-[var(--color-border)] bg-[var(--color-bg-high)] text-[var(--color-text)]',
                         'placeholder:text-[var(--color-text-dim)]',
                         'focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20',
                         'disabled:cursor-not-allowed disabled:opacity-60',

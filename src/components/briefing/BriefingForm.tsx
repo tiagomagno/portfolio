@@ -181,10 +181,10 @@ export function BriefingForm() {
         }}>
           <CheckCircle size={36} />
         </div>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#fff', marginBottom: '12px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '12px' }}>
           Obrigado! Recebemos seu briefing.
         </h2>
-        <p style={{ fontSize: '14px', color: '#a8a29e', lineHeight: 1.7, marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
+        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
           Em breve entraremos em contato para alinhar os próximos passos do seu projeto.
         </p>
         <Link
@@ -208,11 +208,11 @@ export function BriefingForm() {
 
         {/* Progress bar */}
         <div style={{ marginBottom: '32px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#a8a29e', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '8px' }}>
             <span>Etapa {currentStep} de {totalSteps}</span>
             <span>{Math.round(progressPercent)}%</span>
           </div>
-          <div style={{ height: '4px', borderRadius: '100px', background: '#2a2a2a', overflow: 'hidden' }}>
+          <div style={{ height: '4px', borderRadius: '100px', background: 'var(--color-border)', overflow: 'hidden' }}>
             <div style={{
               height: '100%', borderRadius: '100px', background: '#ff5625',
               width: `${progressPercent}%`, transition: 'width 0.3s ease-out',
@@ -256,7 +256,7 @@ export function BriefingForm() {
         {/* Navigation */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: '16px', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #2a2a2a',
+          gap: '16px', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--color-border)',
         }}>
           <button
             type="button"
@@ -265,7 +265,7 @@ export function BriefingForm() {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
               padding: '12px 20px', borderRadius: '14px', fontSize: '15px', fontWeight: 600,
-              color: currentStep === 1 ? '#3a3a3a' : '#a8a29e',
+              color: currentStep === 1 ? 'var(--color-border-subtle)' : 'var(--color-text-muted)',
               background: 'transparent', border: 'none',
               cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
             }}

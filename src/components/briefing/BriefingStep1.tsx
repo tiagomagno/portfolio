@@ -65,12 +65,12 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
 
   return (
     <div className="mt-2 flex flex-col gap-5">
-      <h3 className="text-xl md:text-2xl font-bold text-heading-light dark:text-heading-dark">
+      <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
         Qual o segmento da sua empresa?
       </h3>
 
       <div className="flex flex-col gap-3">
-        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#a8a29e' }}>
+        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
           Segmento
         </label>
 
@@ -86,8 +86,8 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
               justifyContent: 'space-between',
               gap: '8px',
               padding: '12px 16px',
-              background: '#1c1c1c',
-              border: `1px solid ${error ? '#ef4444' : '#2e2e2e'}`,
+              background: 'var(--color-bg-high)',
+              border: `1px solid ${error ? '#ef4444' : 'var(--color-border)'}`,
               borderRadius: '12px',
               cursor: 'pointer',
               outline: 'none',
@@ -95,14 +95,14 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
               boxSizing: 'border-box',
             }}
           >
-            <span style={{ fontSize: '14px', color: selectedLabel ? '#fff' : '#5a5a5a' }}>
+            <span style={{ fontSize: '14px', color: selectedLabel ? 'var(--color-text)' : 'var(--color-text-muted)' }}>
               {selectedLabel ?? 'Selecione o segmento…'}
             </span>
             <ChevronDown
               size={16}
               style={{
                 flexShrink: 0,
-                color: '#5a5a5a',
+                color: 'var(--color-text-muted)',
                 transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
                 transition: 'transform 0.2s',
               }}
@@ -111,28 +111,29 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
 
           {open && (
             <div
+              data-lenis-prevent
               style={{
                 position: 'absolute',
                 top: 'calc(100% + 6px)',
                 left: 0,
                 right: 0,
                 zIndex: 100,
-                background: '#1c1c1c',
-                border: '1px solid #2e2e2e',
+                background: 'var(--color-bg-card)',
+                border: '1px solid var(--color-border)',
                 borderRadius: '16px',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
                 maxHeight: '320px',
                 overflowY: 'auto',
                 padding: '8px',
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#333 transparent',
+                scrollbarColor: 'var(--color-border-subtle) transparent',
               }}
             >
               {groups.map(({ title, options }, groupIndex) => (
                 <div key={title} style={{ marginTop: groupIndex === 0 ? 0 : '4px' }}>
                   {/* Group header */}
                   {groupIndex > 0 && (
-                    <div style={{ height: '1px', background: '#252525', margin: '8px 4px' }} />
+                    <div style={{ height: '1px', background: 'var(--color-border)', margin: '8px 4px' }} />
                   )}
                   <div
                     style={{
@@ -141,7 +142,7 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
                       fontWeight: 700,
                       textTransform: 'uppercase',
                       letterSpacing: '0.14em',
-                      color: '#4a4a4a',
+                      color: 'var(--color-text-dim)',
                     }}
                   >
                     {title}
@@ -170,7 +171,7 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
                           fontSize: '14px',
                           textAlign: 'left',
                           background: isSelected ? 'rgba(255,86,37,0.12)' : 'transparent',
-                          color: isSelected ? '#ff5625' : '#ccc',
+                          color: isSelected ? '#ff5625' : 'var(--color-text)',
                           fontWeight: isSelected ? 600 : 400,
                           border: 'none',
                           cursor: 'pointer',
@@ -178,7 +179,7 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
                           gap: '8px',
                         }}
                         onMouseEnter={(e) => {
-                          if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = '#252525';
+                          if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-bg-high)';
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
@@ -195,7 +196,7 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
           )}
         </div>
 
-        <p style={{ fontSize: '12px', color: '#555', margin: 0 }}>
+        <p style={{ fontSize: '12px', color: 'var(--color-text-dim)', margin: 0 }}>
           Escolha o que melhor descreve seu negócio. Se não encontrar, use &quot;Outro segmento&quot;.
         </p>
       </div>
