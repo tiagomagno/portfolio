@@ -65,7 +65,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           Sair
         </button>
       </header>
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px' }}>{children}</main>
+      <main style={{ padding: '32px 24px' }}>{children}</main>
     </div>
   );
 }
