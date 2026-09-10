@@ -20,6 +20,15 @@ function chunk<T>(items: T[], size: number): T[][] {
   return pages;
 }
 
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function useCarouselColumns() {
   const [columns, setColumns] = useState(3);
   useEffect(() => {
@@ -38,9 +47,17 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
 
+  // Ordem embaralhada a cada carregamento da página. Começa com a ordem original
+  // (idêntica no server e no client) e só embaralha depois de montar, pra não gerar
+  // um HTML diferente do que o React espera na hidratação.
+  const [shuffledCases, setShuffledCases] = useState(FEATURED_CASES);
+  useEffect(() => {
+    setShuffledCases(shuffle(FEATURED_CASES));
+  }, []);
+
   const columns = useCarouselColumns();
   const itemsPerPage = columns * 2;
-  const pages = useMemo(() => chunk(FEATURED_CASES, itemsPerPage), [itemsPerPage]);
+  const pages = useMemo(() => chunk(shuffledCases, itemsPerPage), [shuffledCases, itemsPerPage]);
   const totalPages = pages.length;
 
   const trackRef = useRef<HTMLDivElement>(null);
