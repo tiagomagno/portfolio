@@ -15,10 +15,23 @@ export default function Contact() {
     e.preventDefault();
     const form = e.currentTarget;
     setStatus('sending');
+
+    const formData = new FormData(form);
+    // Persiste no admin pra alimentar o pipeline de leads — não bloqueia o envio se falhar.
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+      }),
+    }).catch(() => {});
+
     try {
       const res = await fetch(form.action, {
         method: 'POST',
-        body: new FormData(form),
+        body: formData,
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {
