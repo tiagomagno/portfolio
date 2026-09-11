@@ -5,7 +5,7 @@
  */
 export const SURFACE = {
   /** Alternating section tone (Hero, Processo, Portfólio preview, CTA banners...) */
-  base: '#f9f9f9',
+  base: '#ffffff',
   /** Alternating section tone (Sobre, Soluções, grade do Portfólio, Contato...) */
   raised: '#ffffff',
   /** Image/input card tone sitting on a `raised` section */

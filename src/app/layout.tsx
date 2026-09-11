@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans, Manrope } from 'next/font/google';
 import './globals.css';
 import { LangProvider } from '@/context/LangContext';
 
@@ -8,6 +8,13 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
   display: 'swap',
   variable: '--font-body',
+});
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-headline',
 });
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -60,10 +67,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={`${plusJakartaSans.variable}`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${plusJakartaSans.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-        <meta name="theme-color" content="#f9f9f9" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
       <body>
         <SmoothScrollProvider>

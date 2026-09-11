@@ -9,9 +9,9 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer style={{ background: SURFACE.footer, padding: '32px 0' }}>
+    <footer style={{ background: SURFACE.raised, borderTop: '1px solid var(--color-border)', padding: '32px 0' }}>
       <style>{`
-        .footer-link:hover { color: #f5f3f0 !important; }
+        .footer-link:hover { color: #1a1a1a !important; }
       `}</style>
 
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
@@ -31,13 +31,13 @@ export default function Footer() {
             }
           `}</style>
 
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none', opacity: 0.85 }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'rgba(245,243,240,0.9)' }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'rgba(26,26,26,0.9)' }}>
               Tiago Magno
             </span>
           </Link>
 
-          <p style={{ color: 'rgba(245,243,240,0.4)', fontSize: '12px', margin: 0 }}>
+          <p style={{ color: 'rgba(26,26,26,0.45)', fontSize: '12px', margin: 0 }}>
             © {year} Tiago Magno · {t('footer.rights')}
           </p>
 
@@ -47,7 +47,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               LinkedIn
             </a>
@@ -56,14 +56,14 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               WhatsApp
             </a>
             <a
               href="mailto:tiagosilvamagno@gmail.com"
               className="footer-link"
-              style={{ color: 'rgba(245,243,240,0.5)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               E-mail
             </a>

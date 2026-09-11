@@ -28,10 +28,8 @@ export default function Header() {
 
   const defaultNavLinks = [
     { href: '/#about', label: t('nav.about') },
-    { href: '/#work', label: t('nav.services') },
     { href: '/#cases', label: t('nav.cases') },
-    { href: '/#services', label: t('nav.process') },
-    { href: '/#consulting', label: t('nav.consultoria') },
+    { href: '/consultoria', label: t('nav.consultoria') },
     { href: '/#contact', label: t('nav.contact') },
   ];
 
@@ -62,7 +60,16 @@ export default function Header() {
   return (
     <>
       {/* ── Floating language switcher — lives on the page edge, not inside the header row ── */}
+      <style>{`
+        @media (max-width: 767px) {
+          .lang-switcher {
+            top: 72px !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
       <div
+        className="lang-switcher"
         style={{
           position: 'fixed',
           top: '50%',
@@ -125,28 +132,22 @@ export default function Header() {
             margin: '0 auto',
             padding: '0 24px',
             height: '72px',
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            gap: '24px',
           }}
         >
-          {/* Logo */}
-          <a href="/" style={{ display: 'flex', alignItems: 'center', height: '32px', textDecoration: 'none' }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '19px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
-              Tiago Magno
-            </span>
-          </a>
-
           {/* Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-            <style>{`.nav-link:hover { color: var(--color-text) !important; } .nav-cta:hover { color: var(--color-primary-hover) !important; }`}</style>
+            <style>{`.nav-link:hover { color: var(--color-primary) !important; } .nav-cta:hover { color: var(--color-primary-hover) !important; }`}</style>
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
                 href={href}
                 className="nav-link"
                 style={{
-                  color: 'var(--color-text-dim)',
+                  color: 'var(--color-text)',
                   fontSize: '13px',
                   fontWeight: 500,
                   textDecoration: 'none',
@@ -159,12 +160,22 @@ export default function Header() {
             ))}
           </div>
 
+          {/* Logo (centro) */}
+          <a href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '32px', textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '19px', letterSpacing: '-0.01em', color: 'var(--color-text)', whiteSpace: 'nowrap' }}>
+              Tiago Magno
+            </span>
+          </a>
+
           {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '16px' }}>
             <a
               href="/briefing"
               className="nav-cta"
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
                 color: 'var(--color-primary)',
                 fontSize: '13px',
                 fontWeight: 700,
@@ -174,6 +185,7 @@ export default function Header() {
               }}
             >
               {t('nav.startProject')}
+              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>arrow_forward</span>
             </a>
           </div>
         </div>
@@ -212,8 +224,8 @@ export default function Header() {
           <button
             onClick={() => setDrawerOpen((o) => !o)}
             style={{
-              background: 'var(--color-bg-card)',
-              border: '1px solid var(--color-border)',
+              background: 'transparent',
+              border: 'none',
               color: 'var(--color-text)',
               width: '44px',
               height: '44px',

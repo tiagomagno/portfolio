@@ -4,8 +4,6 @@
    CSS CUSTOM PROPERTIES (Design Tokens)
    ============================================ */
 :root {
-  --font-headline: 'Lufga', system-ui, -apple-system, sans-serif;
-
   /* Largura máxima do conteúdo, usada por todas as seções do site (section-container).
      90% da viewport até travar em 1500px nas resoluções muito grandes (4K+). */
   --container-max: min(90vw, 1500px);
@@ -29,7 +27,7 @@
   --color-primary: #ff5625;
   --color-primary-hover: #e84e20;
   --color-accent: #ffb5a0;
-  --color-bg: #f9f9f9;
+  --color-bg: #ffffff;
   --color-bg-low: #ffffff;
   --color-bg-card: #ffffff;
   --color-bg-high: #f0f0f0;
@@ -102,10 +100,10 @@ section[id] {
 /* Mobile typography scale overrides */
 @media (max-width: 767px) {
   :root {
-    --fs-h1:         clamp(36px, 10vw, 52px);
+    --fs-h1:         clamp(40px, 13vw, 60px);
     --fs-h2:         clamp(24px, 7vw, 32px);
     --fs-card-title: 15px;
-    --fs-body-lg:    15px;
+    --fs-body-lg:    14px;
     --fs-body:       13px;
     --fs-small:      11px;
   }
