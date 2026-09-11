@@ -29,18 +29,22 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
-function useCarouselColumns() {
-  const [columns, setColumns] = useState(3);
+// No mobile a página do carrossel é 2 colunas x 1 linha (swipe mais suave, sem
+// precisar rolar um par empilhado verticalmente); tablet/desktop seguem 2 linhas.
+function useCarouselLayout() {
+  const [layout, setLayout] = useState({ columns: 3, rows: 2 });
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      setColumns(w <= 560 ? 1 : w <= 900 ? 2 : 3);
+      if (w <= 560) setLayout({ columns: 2, rows: 1 });
+      else if (w <= 900) setLayout({ columns: 2, rows: 2 });
+      else setLayout({ columns: 3, rows: 2 });
     };
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-  return columns;
+  return layout;
 }
 
 export default function Cases({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
@@ -55,8 +59,8 @@ export default function Cases({ overrides = {} }: { overrides?: Record<string, C
     setShuffledCases(shuffle(FEATURED_CASES));
   }, []);
 
-  const columns = useCarouselColumns();
-  const itemsPerPage = columns * 2;
+  const { columns, rows } = useCarouselLayout();
+  const itemsPerPage = columns * rows;
   const pages = useMemo(() => chunk(shuffledCases, itemsPerPage), [shuffledCases, itemsPerPage]);
   const totalPages = pages.length;
 

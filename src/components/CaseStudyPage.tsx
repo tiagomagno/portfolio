@@ -423,7 +423,7 @@ function MetricGrid({ items }: { items: { value: string; label: string }[] }) {
           }}
         >
           <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary)' }}>{m.value}</div>
-          <div style={{ fontSize: '12px', color: 'rgba(26,26,26,0.62)', marginTop: '6px' }}>{m.label}</div>
+          <div style={{ fontSize: '12px', color: 'rgba(26,26,26,1)', marginTop: '6px' }}>{m.label}</div>
         </div>
       ))}
     </div>

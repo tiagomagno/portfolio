@@ -26,7 +26,7 @@ export default function PortfolioCTA() {
         <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.1, margin: '0 0 20px', whiteSpace: 'pre-line' }}>
           {t('portfolioPage.cta.heading')}
         </h2>
-        <p style={{ fontSize: '15px', color: 'rgba(26,26,26,0.64)', lineHeight: 1.7, margin: '0 0 36px' }}>
+        <p style={{ fontSize: '15px', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 36px' }}>
           {t('portfolioPage.cta.text')}
         </p>
         <Link

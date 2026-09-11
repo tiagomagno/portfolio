@@ -71,7 +71,7 @@ export default function PortfolioHero() {
               {t('portfolioPage.heading')}
             </h1>
           </div>
-          <p style={{ fontSize: '15px', color: 'rgba(26,26,26,0.62)', lineHeight: 1.8, maxWidth: '380px', margin: 0 }}>
+          <p style={{ fontSize: '15px', color: 'rgba(26,26,26,1)', lineHeight: 1.8, maxWidth: '380px', margin: 0 }}>
             {t('portfolioPage.subtitle')}
           </p>
         </div>
