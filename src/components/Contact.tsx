@@ -48,7 +48,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      style={{ background: SURFACE.footer, padding: '96px 0', position: 'relative', overflow: 'hidden' }}
+      style={{ background: SURFACE.raised, padding: '96px 0', position: 'relative', overflow: 'hidden' }}
     >
       {/* Glow */}
       <div
@@ -59,7 +59,7 @@ export default function Contact() {
           width: '400px',
           height: '400px',
           background: 'var(--color-primary)',
-          opacity: 0.08,
+          opacity: 0.06,
           filter: 'blur(100px)',
           borderRadius: '50%',
           pointerEvents: 'none',
@@ -95,7 +95,7 @@ export default function Contact() {
               style={{
                 fontSize: 'var(--fs-h2)',
                 fontWeight: 900,
-                color: '#f5f3f0',
+                color: '#1a1a1a',
                 lineHeight: 1.05,
                 margin: '0 0 24px',
                 whiteSpace: 'pre-line',
@@ -103,7 +103,7 @@ export default function Contact() {
             >
               {t('contact.heading')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(245,243,240,0.55)', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
               {t('contact.subtitle')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -111,19 +111,19 @@ export default function Contact() {
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   E-MAIL
                 </span>
-                <span style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
+                <span style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
               </div>
               <div>
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   WHATSAPP
                 </span>
-                <span style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
+                <span style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
               </div>
               <div>
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   LINKEDIN
                 </span>
-                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(245,243,240,0.65)', fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
+                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
               </div>
             </div>
           </div>
@@ -134,8 +134,8 @@ export default function Contact() {
           <div className="contact-form-card">
             <style>{`
               .contact-form-card {
-                background: #232527;
-                border: 1px solid rgba(245,243,240,0.08);
+                background: transparent;
+                border: 1px solid var(--color-border);
                 border-radius: 20px;
                 padding: 40px;
               }
@@ -143,11 +143,11 @@ export default function Contact() {
               .contact-form-card textarea {
                 width: 100%;
                 box-sizing: border-box;
-                background: #1a1c1d;
-                border: 1px solid rgba(245,243,240,0.1);
+                background: #ffffff;
+                border: 1px solid var(--color-border);
                 border-radius: 10px;
                 padding: 12px 16px;
-                color: #f5f3f0;
+                color: #1a1a1a;
                 font-size: var(--fs-body);
                 font-family: inherit;
                 outline: none;
@@ -157,7 +157,7 @@ export default function Contact() {
               }
               .contact-form-card input::placeholder,
               .contact-form-card textarea::placeholder {
-                color: rgba(245,243,240,0.4);
+                color: rgba(26,26,26,0.4);
               }
               @media (max-width: 767px) {
                 .contact-form-card {
@@ -170,10 +170,10 @@ export default function Contact() {
             `}</style>
             {status === 'success' ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', padding: '24px 0' }} role="status">
-                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#f5f3f0', margin: 0 }}>
+                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
                   {t('contact.form.success')}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'rgba(245,243,240,0.55)', margin: 0 }}>
+                <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', margin: 0 }}>
                   {t('contact.form.successDetail')}
                 </p>
                 <button
@@ -182,14 +182,14 @@ export default function Contact() {
                   style={{
                     marginTop: '12px',
                     background: 'transparent',
-                    color: '#f5f3f0',
+                    color: '#1a1a1a',
                     fontWeight: 600,
                     fontSize: '12px',
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase',
                     padding: '10px 18px',
                     borderRadius: '10px',
-                    border: '1px solid rgba(245,243,240,0.15)',
+                    border: '1px solid var(--color-border)',
                     cursor: 'pointer',
                   }}
                 >
@@ -198,10 +198,10 @@ export default function Contact() {
               </div>
             ) : (
               <>
-                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#f5f3f0', margin: '0 0 4px' }}>
+                <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 4px' }}>
                   {t('contact.form.title')}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'rgba(245,243,240,0.4)', margin: '0 0 24px' }}>
+                <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.6)', margin: '0 0 24px' }}>
                   {t('contact.form.desc')}
                 </p>
                 <form
@@ -221,7 +221,7 @@ export default function Contact() {
                       { label: t('contact.form.email'), id: 'contact-email', name: 'email', type: 'email', placeholder: t('contact.form.emailPlaceholder') },
                     ].map(({ label, id, name, type, placeholder }) => (
                       <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label htmlFor={id} style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(245,243,240,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        <label htmlFor={id} style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                           {label}
                         </label>
                         <input id={id} type={type} name={name} placeholder={placeholder} required disabled={status === 'sending'} />
@@ -231,14 +231,14 @@ export default function Contact() {
 
                   {/* Message */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label htmlFor="contact-message" style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(245,243,240,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <label htmlFor="contact-message" style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {t('contact.form.message')}
                     </label>
                     <textarea id="contact-message" name="message" rows={4} required placeholder={t('contact.form.messagePlaceholder')} disabled={status === 'sending'} />
                   </div>
 
                   {status === 'error' && (
-                    <p role="alert" style={{ fontSize: '13px', color: '#ff8a65', margin: 0 }}>
+                    <p role="alert" style={{ fontSize: '13px', color: '#c0392b', margin: 0 }}>
                       {t('contact.form.error')}
                     </p>
                   )}
