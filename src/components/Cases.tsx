@@ -85,6 +85,8 @@ export default function Cases({
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragStartScroll = useRef(0);
+  const dragDistance = useRef(0);
+  const activePointerId = useRef<number | null>(null);
 
   useEffect(() => {
     setPageIndex(0);
@@ -107,20 +109,43 @@ export default function Cases({
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse' || !trackRef.current) return;
     isDragging.current = true;
+    dragDistance.current = 0;
     dragStartX.current = e.clientX;
     dragStartScroll.current = trackRef.current.scrollLeft;
-    trackRef.current.setPointerCapture(e.pointerId);
+    activePointerId.current = e.pointerId;
+    // Não captura o ponteiro aqui ainda: setPointerCapture logo no pointerdown faz o clique
+    // (mesmo parado, sem arrastar nada) mirar o track em vez do link do card por baixo do dedo/
+    // cursor — só captura de fato depois que handlePointerMove confirma que é um arrasto real.
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging.current || !trackRef.current) return;
-    trackRef.current.scrollLeft = dragStartScroll.current - (e.clientX - dragStartX.current);
+    const delta = e.clientX - dragStartX.current;
+    dragDistance.current = Math.abs(delta);
+    if (dragDistance.current > 6 && activePointerId.current !== null && !trackRef.current.hasPointerCapture(activePointerId.current)) {
+      trackRef.current.setPointerCapture(activePointerId.current);
+    }
+    trackRef.current.scrollLeft = dragStartScroll.current - delta;
   };
 
   const endDrag = (e: React.PointerEvent) => {
     if (!isDragging.current || !trackRef.current) return;
     isDragging.current = false;
-    trackRef.current.releasePointerCapture(e.pointerId);
+    if (trackRef.current.hasPointerCapture(e.pointerId)) {
+      trackRef.current.releasePointerCapture(e.pointerId);
+    }
+    activePointerId.current = null;
+  };
+
+  // O arrasto do carrossel usa o mesmo ponteiro do clique nos cards — sem isso, qualquer
+  // pointerdown/up (mesmo um clique parado, com o mínimo de jitter do mouse) podia disparar
+  // o click sintético do <Link> só depois de já ter "arrastado" alguns pixels, fazendo o
+  // card parecer não-clicável. Só suprime o click quando o arrasto foi real.
+  const handleTrackClickCapture = (e: React.MouseEvent) => {
+    if (dragDistance.current > 6) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   return (
@@ -210,6 +235,7 @@ export default function Cases({
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
           onPointerLeave={endDrag}
+          onClickCapture={handleTrackClickCapture}
           style={{ cursor: 'grab' }}
         >
           {pages.map((pageItems, pageI) => (
