@@ -77,16 +77,24 @@ export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }
   }
 
   async function handleSingleUpload(field: 'cover' | 'hero', file: File) {
+    // Preview local instantâneo (blob: do próprio arquivo escolhido) — não depende do
+    // servidor nem do otimizador de imagem, então mostra a thumb imediatamente ao
+    // escolher o arquivo, antes mesmo do upload terminar.
+    const setImage = field === 'cover' ? setCoverImage : setHeroImage;
+    const previous = field === 'cover' ? coverImage : heroImage;
+    const localUrl = URL.createObjectURL(file);
+    setImage(localUrl);
     setUploadingField(field);
     setMessage('');
     try {
       const url = await uploadFile(file);
-      if (field === 'cover') setCoverImage(url);
-      else setHeroImage(url);
+      setImage(url);
     } catch {
+      setImage(previous);
       setMessage('Erro ao enviar imagem.');
     } finally {
       setUploadingField(null);
+      URL.revokeObjectURL(localUrl);
     }
   }
 
@@ -95,11 +103,16 @@ export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }
     setMessage('');
     let hadError = false;
     for (const file of Array.from(files)) {
+      const localUrl = URL.createObjectURL(file);
+      setGallery((prev) => [...prev, { url: localUrl, active: true }]);
       try {
         const url = await uploadFile(file);
-        setGallery((prev) => [...prev, { url, active: true }]);
+        setGallery((prev) => prev.map((item) => (item.url === localUrl ? { ...item, url } : item)));
       } catch {
         hadError = true;
+        setGallery((prev) => prev.filter((item) => item.url !== localUrl));
+      } finally {
+        URL.revokeObjectURL(localUrl);
       }
     }
     if (hadError) setMessage('Erro ao enviar uma ou mais imagens da galeria.');
@@ -174,7 +187,7 @@ export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }
         placeholderImage={fallbackImage}
         uploading={uploadingField === 'cover'}
         onUpload={(file) => handleSingleUpload('cover', file)}
-        onRemove={() => setCoverImage(null)}
+        onRemove={() => setCoverImage('')}
       />
 
       <div>
@@ -211,7 +224,7 @@ export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }
             value={heroImage}
             uploading={uploadingField === 'hero'}
             onUpload={(file) => handleSingleUpload('hero', file)}
-            onRemove={() => setHeroImage(null)}
+            onRemove={() => setHeroImage('')}
           />
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -320,8 +333,8 @@ export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={handleSave}
-          disabled={saving}
-          style={{ padding: '12px 24px', borderRadius: '8px', border: 'none', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
+          disabled={saving || uploadingField !== null}
+          style={{ padding: '12px 24px', borderRadius: '8px', border: 'none', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: saving || uploadingField !== null ? 'default' : 'pointer', opacity: saving || uploadingField !== null ? 0.7 : 1 }}
         >
           {saving ? 'Salvando...' : 'Salvar'}
         </button>
@@ -383,7 +396,7 @@ function ImageField({
               disabled={uploading}
             />
           </label>
-          {value && (
+          {preview && (
             <button
               onClick={onRemove}
               type="button"
