@@ -115,18 +115,9 @@ export default function BriefingPage() {
             </div>
           </FadeIn>
 
-          {/* Form card */}
+          {/* Form: sem card — flui direto no corpo da página */}
           <FadeIn delay={0.25}>
-            <div
-              style={{
-                background: 'var(--color-bg-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '24px',
-                boxShadow: '0 24px 64px rgba(0,0,0,0.28)',
-              }}
-            >
-              <BriefingForm />
-            </div>
+            <BriefingForm />
           </FadeIn>
         </div>
       </main>
