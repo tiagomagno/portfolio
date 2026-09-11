@@ -4,6 +4,15 @@ import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 
+// Ícone ilustrativo por item (exibido só no desktop, ao lado do texto) — um por
+// fase/posição, sem depender de tradução pra não precisar duplicar por idioma.
+const ITEM_ICONS: Record<string, [string, string, string]> = {
+  discover: ['groups', 'travel_explore', 'checklist'],
+  design: ['account_tree', 'wysiwyg', 'palette'],
+  develop: ['handshake', 'support_agent', 'fact_check'],
+  deploy: ['bug_report', 'rocket_launch', 'monitoring'],
+};
+
 export default function Services() {
   const { t } = useLang();
 
@@ -84,6 +93,26 @@ export default function Services() {
             flex: 1;
             min-width: 0;
           }
+          .process-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+          }
+          .process-item-visual {
+            display: none;
+            flex-shrink: 0;
+            width: 96px;
+            height: 72px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-high);
+            align-items: center;
+            justify-content: center;
+          }
+          @media (min-width: 901px) {
+            .process-item-visual { display: flex; }
+          }
           @media (max-width: 600px) {
             .process-timeline-row { gap: 16px; }
             .process-node-circle { width: 44px; height: 44px; }
@@ -119,31 +148,39 @@ export default function Services() {
                         {[1, 2, 3].map((n) => (
                           <div
                             key={n}
+                            className="process-item-row"
                             style={{
                               padding: '14px 0',
                               borderBottom: n < 3 ? '1px solid var(--color-border)' : 'none',
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                              <span
-                                style={{
-                                  fontSize: '11px',
-                                  fontWeight: 800,
-                                  color: 'var(--color-primary)',
-                                  letterSpacing: '0.06em',
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                {t(`process.${card.phase}.item${n}.tag`)}
-                              </span>
-                              <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.3)' }}>•</span>
-                              <span style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a' }}>
-                                {t(`process.${card.phase}.item${n}.title`)}
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                <span
+                                  style={{
+                                    fontSize: '11px',
+                                    fontWeight: 800,
+                                    color: 'var(--color-primary)',
+                                    letterSpacing: '0.06em',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {t(`process.${card.phase}.item${n}.tag`)}
+                                </span>
+                                <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.3)' }}>•</span>
+                                <span style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a' }}>
+                                  {t(`process.${card.phase}.item${n}.title`)}
+                                </span>
+                              </div>
+                              <p style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5, margin: 0 }}>
+                                {t(`process.${card.phase}.item${n}.desc`)}
+                              </p>
+                            </div>
+                            <div className="process-item-visual">
+                              <span className="material-symbols-outlined" style={{ fontSize: '28px', color: 'var(--color-primary)' }}>
+                                {ITEM_ICONS[card.phase][n - 1]}
                               </span>
                             </div>
-                            <p style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5, margin: 0 }}>
-                              {t(`process.${card.phase}.item${n}.desc`)}
-                            </p>
                           </div>
                         ))}
                       </div>
