@@ -1,4 +1,4 @@
-import { ATUACAO_CATEGORIES, getCaseStudyItems, slugify } from '@/data/portfolio';
+import { ATUACAO_CATEGORIES, getCaseStudyItems, parseAtuacaoList, slugify } from '@/data/portfolio';
 import { prisma } from '@/lib/prisma';
 import { getPortfolioVisibilityMap } from '@/data/portfolioVisibility';
 import CasesTable, { type CaseRow } from './CasesTable';
@@ -18,7 +18,7 @@ export default async function AdminCasesPage() {
       id: item.id,
       empresa: item.empresa,
       slug,
-      atuacao: item.atuacao,
+      atuacao: parseAtuacaoList(asset?.atuacao) ?? item.atuacao,
       fallbackImage: item.image,
       hasCover: !!(asset?.coverImage || item.image),
       hasHero: !!asset?.heroImage,

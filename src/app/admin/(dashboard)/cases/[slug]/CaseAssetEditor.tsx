@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { ATUACAO_CATEGORIES, parseAtuacaoList, type AtuacaoCategory } from '@/data/portfolio';
 
 interface CaseAssetEditorProps {
   slug: string;
   fallbackImage?: string;
+  fallbackAtuacao: AtuacaoCategory[];
 }
 
 interface GalleryItem {
@@ -28,12 +30,13 @@ function normalizeGallery(raw: unknown): GalleryItem[] {
     .filter((item): item is GalleryItem => item !== null);
 }
 
-export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditorProps) {
+export default function CaseAssetEditor({ slug, fallbackImage, fallbackAtuacao }: CaseAssetEditorProps) {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<string | null>(null);
   const [heroColor, setHeroColor] = useState<string | null>(null);
   const [heroMode, setHeroMode] = useState<'image' | 'color'>('image');
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [atuacao, setAtuacao] = useState<AtuacaoCategory[]>(fallbackAtuacao);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
@@ -48,9 +51,14 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
         setHeroColor(data.asset?.heroColor ?? null);
         setHeroMode(data.asset?.heroColor ? 'color' : 'image');
         setGallery(normalizeGallery(data.asset?.gallery));
+        setAtuacao(parseAtuacaoList(data.asset?.atuacao) ?? fallbackAtuacao);
       })
       .finally(() => setLoading(false));
   }, [slug]);
+
+  function toggleAtuacao(cat: AtuacaoCategory) {
+    setAtuacao((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
+  }
 
   function selectHeroMode(mode: 'image' | 'color') {
     setHeroMode(mode);
@@ -113,7 +121,7 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
       const res = await fetch(`/api/admin/case-assets/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coverImage, heroImage, heroColor, gallery }),
+        body: JSON.stringify({ coverImage, heroImage, heroColor, gallery, atuacao }),
       });
       if (!res.ok) throw new Error();
       setMessage('Salvo com sucesso.');
@@ -128,6 +136,37 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '720px' }}>
+      <div>
+        <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>Categorias</span>
+        <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>
+          Usadas no filtro do portfólio e exibidas no card do case. Escolha uma ou mais.
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {ATUACAO_CATEGORIES.map((cat) => {
+            const active = atuacao.includes(cat);
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => toggleAtuacao(cat)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '100px',
+                  border: active ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
+                  background: active ? 'var(--color-primary)' : 'transparent',
+                  color: active ? '#fff' : 'rgba(26,26,26,0.6)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <ImageField
         label="Capa"
         hint="Home, listagem do portfólio e card de próximo case. Formato recomendado: 1600×1200px (4:3)."

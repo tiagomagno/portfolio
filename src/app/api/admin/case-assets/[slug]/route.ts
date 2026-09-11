@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { unlink } from 'fs/promises';
 import path from 'path';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { parseAtuacaoList } from '@/data/portfolio';
 
 interface GalleryItem {
   url: string;
@@ -58,13 +59,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const heroColor = typeof body.heroColor === 'string' ? body.heroColor : null;
   const gallery = normalizeGallery(body.gallery);
   const galleryJson = gallery as unknown as Prisma.InputJsonValue;
+  // Categorias não enviadas/ inválidas voltam a usar as fixas de src/data/portfolio.ts (JsonNull = sem override).
+  const atuacaoOverride = parseAtuacaoList(body.atuacao);
+  const atuacaoJson = (atuacaoOverride ?? Prisma.JsonNull) as Prisma.InputJsonValue;
 
   const previous = await prisma.caseAsset.findUnique({ where: { slug } });
 
   const asset = await prisma.caseAsset.upsert({
     where: { slug },
-    update: { coverImage, heroImage, heroColor, gallery: galleryJson },
-    create: { slug, coverImage, heroImage, heroColor, gallery: galleryJson },
+    update: { coverImage, heroImage, heroColor, gallery: galleryJson, atuacao: atuacaoJson },
+    create: { slug, coverImage, heroImage, heroColor, gallery: galleryJson, atuacao: atuacaoJson },
   });
 
   if (previous) {

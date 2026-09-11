@@ -15,8 +15,8 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
-/// Sobrepõe as imagens (capa/topo/galeria) de um case do portfólio, gerenciadas pelo admin.
-/// O texto do case continua vindo de src/data/portfolio.ts — aqui só ficam as imagens.
+/// Sobrepõe as imagens (capa/topo/galeria) e as categorias de um case do portfólio,
+/// geridas pelo admin. O texto do case continua vindo de src/data/portfolio.ts.
 model CaseAsset {
   id         String   @id @default(cuid())
   slug       String   @unique
@@ -26,6 +26,9 @@ model CaseAsset {
   /// com heroImage — o admin (/admin/cases) sempre limpa uma ao definir a outra.
   heroColor  String?
   gallery    Json?
+  /// Categorias (AtuacaoCategory[]) que sobrescrevem as fixas em src/data/portfolio.ts.
+  /// null = sem override, usa as categorias estáticas do case.
+  atuacao    Json?
   updatedAt  DateTime @updatedAt
 }
 

@@ -59,8 +59,12 @@ export default function Cases({
 
   const hidden = new Set(hiddenSlugs);
   const visibleFeaturedCases = useMemo(
-    () => FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa))),
-    [hiddenSlugs]
+    () =>
+      FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa))).map((item) => {
+        const override = overrides[slugify(item.empresa)]?.atuacao;
+        return override ? { ...item, atuacao: override } : item;
+      }),
+    [hiddenSlugs, overrides]
   );
 
   // Ordem embaralhada a cada carregamento da página. Começa com a ordem original

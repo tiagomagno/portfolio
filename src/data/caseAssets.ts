@@ -1,10 +1,12 @@
 import { prisma } from '@/lib/prisma';
+import { parseAtuacaoList, type AtuacaoCategory } from '@/data/portfolio';
 
 export interface CaseAssetOverrides {
   coverImage: string | null;
   heroImage: string | null;
   heroColor: string | null;
   gallery: string[];
+  atuacao: AtuacaoCategory[] | null;
 }
 
 /**
@@ -42,6 +44,7 @@ export async function getCaseAssetOverrides(slug: string): Promise<CaseAssetOver
       heroImage: asset.heroImage,
       heroColor: asset.heroColor,
       gallery: activeGalleryUrls(asset.gallery),
+      atuacao: parseAtuacaoList(asset.atuacao),
     };
   } catch (err) {
     console.error(`getCaseAssetOverrides(${slug}) falhou:`, err);
@@ -60,6 +63,7 @@ export async function getAllCaseAssetOverrides(): Promise<Map<string, CaseAssetO
           heroImage: a.heroImage,
           heroColor: a.heroColor,
           gallery: activeGalleryUrls(a.gallery),
+          atuacao: parseAtuacaoList(a.atuacao),
         },
       ])
     );

@@ -22,7 +22,10 @@ export default function PortfolioGrid({
   const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
 
   const hidden = new Set(hiddenSlugs);
-  const visibleItems = PORTFOLIO_ITEMS.filter((item) => !hidden.has(slugify(item.empresa)));
+  const visibleItems = PORTFOLIO_ITEMS.filter((item) => !hidden.has(slugify(item.empresa))).map((item) => {
+    const override = overrides[slugify(item.empresa)]?.atuacao;
+    return override ? { ...item, atuacao: override } : item;
+  });
   const filtered = activeFilter ? visibleItems.filter((item) => item.atuacao.includes(activeFilter)) : visibleItems;
 
   return (

@@ -226,7 +226,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                 ×
               </button>
             </div>
-            <CaseAssetEditor slug={selected.slug} fallbackImage={selected.fallbackImage} />
+            <CaseAssetEditor slug={selected.slug} fallbackImage={selected.fallbackImage} fallbackAtuacao={selected.atuacao} />
           </div>
         </>
       )}

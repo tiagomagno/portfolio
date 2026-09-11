@@ -14,7 +14,7 @@ export default async function AdminCaseEditPage({ params }: { params: Promise<{ 
         ← Voltar
       </Link>
       <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '8px 0 24px' }}>{item.empresa}</h1>
-      <CaseAssetEditor slug={slug} fallbackImage={item.image} />
+      <CaseAssetEditor slug={slug} fallbackImage={item.image} fallbackAtuacao={item.atuacao} />
     </div>
   );
 }

@@ -1608,6 +1608,16 @@ export const ATUACAO_CATEGORIES: AtuacaoCategory[] = [
   'Fotografia',
 ];
 
+/**
+ * Valida um valor vindo de fora (ex.: override de categorias salvo pelo admin) contra as
+ * categorias conhecidas, descartando qualquer entrada inválida. `null`/não-array = sem
+ * override (quem chama decide o fallback); array (mesmo vazio) = override explícito.
+ */
+export function parseAtuacaoList(raw: unknown): AtuacaoCategory[] | null {
+  if (!Array.isArray(raw)) return null;
+  return raw.filter((v): v is AtuacaoCategory => ATUACAO_CATEGORIES.includes(v as AtuacaoCategory));
+}
+
 export function getPortfolioItemBySlug(slug: string): PortfolioItem | undefined {
   return PORTFOLIO_ITEMS.find((item) => slugify(item.empresa) === slug);
 }
