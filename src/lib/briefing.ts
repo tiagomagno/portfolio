@@ -180,6 +180,24 @@ export const MAIN_CHALLENGES = [
   'audiovisual',
 ] as const;
 
+export const MAIN_CHALLENGE_OPTIONS: { value: (typeof MAIN_CHALLENGES)[number]; label: string }[] = [
+  { value: 'branding', label: 'Criar / Modernizar minha Identidade Visual' },
+  { value: 'website', label: 'Desenvolver um Novo Site, Loja ou Sistema' },
+  { value: 'social', label: 'Profissionalizar minhas Redes Sociais' },
+  { value: 'growth', label: 'Atrair mais Clientes e Aumentar Vendas com Anúncios' },
+  { value: 'uxui', label: 'Melhorar a experiência / Design de um App ou Software' },
+  { value: 'audiovisual', label: 'Realizar produção de Fotos ou Vídeos institucionais' },
+];
+
+const MAIN_CHALLENGE_LABEL_BY_VALUE: Record<string, string> = Object.fromEntries(
+  MAIN_CHALLENGE_OPTIONS.map((o) => [o.value, o.label])
+);
+
+export function formatMainChallenges(values: string[] | undefined): string {
+  if (!values?.length) return '';
+  return values.map((v) => MAIN_CHALLENGE_LABEL_BY_VALUE[v] ?? v).join('; ');
+}
+
 export const TARGET_AUDIENCE = ['pf', 'pj', 'ambos'] as const;
 
 // Constantes de Enums para Segmentos
@@ -252,10 +270,8 @@ export const briefingSchema = z
     genericRaioXPainPoints: z.array(z.string()).optional(),
     outro_operationDetails: z.string().optional(),
 
-    // Step 3 - Desafio Central
-    mainChallenge: z.enum(MAIN_CHALLENGES, {
-      error: 'Selecione a sua necessidade principal',
-    }),
+    // Step 3 - Desafio Central (múltipla escolha)
+    mainChallenge: z.array(z.enum(MAIN_CHALLENGES)).min(1, 'Selecione pelo menos uma opção'),
 
     // Step 4 - Detalhes/Funcionalidades (Dinâmico)
     features: z.array(z.string()).min(1, 'Selecione pelo menos um item'),

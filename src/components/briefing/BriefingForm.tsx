@@ -10,6 +10,7 @@ import {
   type BriefingFormData,
   getBusinessSegmentLabel,
   formatGenericRaioXPainPoints,
+  formatMainChallenges,
   SPECIALIZED_BRIEFING_SEGMENTS,
   GENERIC_RAIOX_PAIN_OPTIONS,
 } from '@/lib/briefing';
@@ -41,6 +42,7 @@ export function BriefingForm() {
     defaultValues: {
       idealCustomer: '',
       differential: '',
+      mainChallenge: [],
       features: [],
       name: '',
       email: '',
@@ -130,7 +132,7 @@ export function BriefingForm() {
         Email: data.email,
         WhatsApp: data.whatsapp,
         Segmento: resolvedSegment,
-        Desafio_Principal: data.mainChallenge,
+        Desafio_Principal: formatMainChallenges(data.mainChallenge),
         Publico_Alvo: data.targetAudience,
         Cliente_Ideal: data.idealCustomer,
         Diferencial: data.differential,
@@ -227,7 +229,7 @@ export function BriefingForm() {
           )}
           {currentStepKey === 'step2' && <BriefingStep2 />}
           {currentStepKey === 'step3' && (
-            <BriefingStep3 register={register} error={errors.mainChallenge} />
+            <BriefingStep3 register={register} error={errors.mainChallenge as any} />
           )}
           {currentStepKey === 'step4' && (
             <BriefingStep4 register={register} watch={watch} error={errors.features as any} />

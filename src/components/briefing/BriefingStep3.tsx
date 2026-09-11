@@ -1,16 +1,7 @@
 'use client';
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
-import { BriefingFormData } from '@/lib/briefing';
-
-const OPTIONS = [
-  { value: 'branding', label: 'Criar / Modernizar minha Identidade Visual' },
-  { value: 'website', label: 'Desenvolver um Novo Site, Loja ou Sistema' },
-  { value: 'social', label: 'Profissionalizar minhas Redes Sociais' },
-  { value: 'growth', label: 'Atrair mais Clientes e Aumentar Vendas com Anúncios' },
-  { value: 'uxui', label: 'Melhorar a experiência / Design de um App ou Software' },
-  { value: 'audiovisual', label: 'Realizar produção de Fotos ou Vídeos institucionais' },
-];
+import { BriefingFormData, MAIN_CHALLENGE_OPTIONS } from '@/lib/briefing';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -19,17 +10,22 @@ interface Props {
 
 export function BriefingStep3({ register, error }: Props) {
   const { watch } = useFormContext<BriefingFormData>();
-  const selected = watch('mainChallenge');
+  const selected = watch('mainChallenge') ?? [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
-      <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Em qual área você precisa de mais ajuda hoje?
-      </h3>
+      <div>
+        <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px', lineHeight: 1.2 }}>
+          Em qual área você precisa de mais ajuda hoje?
+        </h3>
+        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', margin: 0 }}>
+          Selecione todos que se aplicam.
+        </p>
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {OPTIONS.map((opt) => {
-          const isSelected = selected === opt.value;
+        {MAIN_CHALLENGE_OPTIONS.map((opt) => {
+          const isSelected = selected.includes(opt.value);
           return (
             <label
               key={opt.value}
@@ -48,7 +44,7 @@ export function BriefingStep3({ register, error }: Props) {
               }}
             >
               <input
-                type="radio"
+                type="checkbox"
                 value={opt.value}
                 {...register('mainChallenge')}
                 style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}

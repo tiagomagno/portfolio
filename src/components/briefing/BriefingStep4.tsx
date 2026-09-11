@@ -53,9 +53,14 @@ interface Props {
 }
 
 export function BriefingStep4({ register, watch, error }: Props) {
-  const challenge = watch('mainChallenge');
+  const challenges = watch('mainChallenge') ?? [];
   const selectedFeatures = watch('features') ?? [];
-  const options = challenge ? DYNAMIC_FEATURES[challenge] : DYNAMIC_FEATURES.website;
+  // Com múltiplos desafios selecionados no passo anterior, junta (sem repetir) as opções de
+  // cada um — em vez de mostrar só a lista de um único desafio.
+  const options =
+    challenges.length > 0
+      ? Array.from(new Map(challenges.flatMap((c) => DYNAMIC_FEATURES[c]).map((opt) => [opt.value, opt])).values())
+      : DYNAMIC_FEATURES.website;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
