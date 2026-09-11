@@ -29,8 +29,13 @@ export default function Hero() {
         <style>{`
           @media (max-width: 767px) {
             .hero-content {
-              padding: 90px 20px 48px !important;
-              min-height: 80vh !important;
+              padding: 24px 20px 64px !important;
+              min-height: 100vh !important;
+              min-height: 100dvh !important;
+              justify-content: flex-end !important;
+            }
+            .hero-inner {
+              text-align: center !important;
             }
             .hero-cta-group {
               width: 100%;
@@ -55,10 +60,10 @@ export default function Hero() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            minHeight: '80vh',
+            minHeight: '100vh',
           }}
         >
-          <div style={{ maxWidth: '640px' }}>
+          <div className="hero-inner" style={{ maxWidth: '640px' }}>
             <FadeIn delay={0.1}>
               <h1
                 style={{
@@ -95,7 +100,7 @@ export default function Hero() {
                 style={{
                   fontSize: 'var(--fs-body-lg)',
                   lineHeight: 1.7,
-                  color: 'rgba(26,26,26,0.6)',
+                  color: 'rgba(26,26,26,1)',
                   maxWidth: '480px',
                   margin: '0 0 40px',
                 }}
@@ -126,6 +131,7 @@ export default function Hero() {
                   }}
                 >
                   {t('hero.cta.primary')}
+                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
                 </a>
                 <a
                   href="#cases"

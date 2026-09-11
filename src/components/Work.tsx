@@ -33,10 +33,12 @@ export default function Work() {
             gap: 20px;
           }
           @media (max-width: 900px) {
-            .work-section-grid { grid-template-columns: 1fr; }
+            .work-section-grid { grid-template-columns: 1fr; gap: 32px; }
           }
           @media (max-width: 500px) {
             .work-cards-grid { grid-template-columns: 1fr; }
+            .service-card { min-height: 0 !important; }
+            .work-cta-button { width: 100% !important; justify-content: center !important; }
           }
           .service-card {
             transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
@@ -51,22 +53,19 @@ export default function Work() {
         <div className="work-section-grid">
           {/* Left column */}
           <FadeIn delay={0.1} direction="up">
-            <div
+            <span
               style={{
-                display: 'inline-block',
-                border: '1px solid var(--color-border)',
-                borderRadius: '999px',
-                padding: '6px 16px',
-                fontSize: '11px',
+                fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'rgba(26,26,26,0.7)',
-                letterSpacing: '0.08em',
+                color: 'var(--color-primary)',
+                letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
-                marginBottom: '20px',
+                display: 'block',
+                marginBottom: '14px',
               }}
             >
               {t('work.eyebrow')}
-            </div>
+            </span>
             <h2
               style={{
                 fontSize: 'var(--fs-h2)',
@@ -78,14 +77,16 @@ export default function Work() {
             >
               {t('work.title')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '420px' }}>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '420px' }}>
               {t('work.subtitle')}
             </p>
             <a
               href="/briefing"
+              className="work-cta-button"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
                 background: 'var(--color-primary)',
                 color: '#fff',
@@ -99,6 +100,7 @@ export default function Work() {
               }}
             >
               {t('nav.startProject')}
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
             </a>
           </FadeIn>
 
@@ -121,31 +123,12 @@ export default function Work() {
                       flexDirection: 'column',
                     }}
                   >
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '20px',
-                        right: '20px',
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'var(--color-bg-high)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'rgba(26,26,26,0.6)' }}>
-                        north_east
-                      </span>
-                    </div>
                     <h3
                       style={{
                         fontSize: '17px',
                         fontWeight: 700,
                         color: '#1a1a1a',
                         margin: '0 8px 8px 0',
-                        paddingRight: '40px',
                       }}
                     >
                       {item.title}
