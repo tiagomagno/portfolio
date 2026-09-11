@@ -8,12 +8,32 @@ interface CaseAssetEditorProps {
   fallbackImage?: string;
 }
 
+interface GalleryItem {
+  url: string;
+  active: boolean;
+}
+
+/** Aceita tanto o formato novo ({ url, active }) quanto o antigo (string[]) vindo do banco. */
+function normalizeGallery(raw: unknown): GalleryItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item): GalleryItem | null => {
+      if (typeof item === 'string') return { url: item, active: true };
+      if (item && typeof item === 'object' && typeof (item as { url?: unknown }).url === 'string') {
+        const obj = item as { url: string; active?: unknown };
+        return { url: obj.url, active: obj.active !== false };
+      }
+      return null;
+    })
+    .filter((item): item is GalleryItem => item !== null);
+}
+
 export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditorProps) {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<string | null>(null);
   const [heroColor, setHeroColor] = useState<string | null>(null);
   const [heroMode, setHeroMode] = useState<'image' | 'color'>('image');
-  const [gallery, setGallery] = useState<string[]>([]);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
@@ -27,7 +47,7 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
         setHeroImage(data.asset?.heroImage ?? null);
         setHeroColor(data.asset?.heroColor ?? null);
         setHeroMode(data.asset?.heroColor ? 'color' : 'image');
-        setGallery(Array.isArray(data.asset?.gallery) ? data.asset.gallery : []);
+        setGallery(normalizeGallery(data.asset?.gallery));
       })
       .finally(() => setLoading(false));
   }, [slug]);
@@ -65,17 +85,21 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
   async function handleGalleryUpload(files: FileList) {
     setUploadingField('gallery');
     setMessage('');
-    try {
-      const urls: string[] = [];
-      for (const file of Array.from(files)) {
-        urls.push(await uploadFile(file));
+    let hadError = false;
+    for (const file of Array.from(files)) {
+      try {
+        const url = await uploadFile(file);
+        setGallery((prev) => [...prev, { url, active: true }]);
+      } catch {
+        hadError = true;
       }
-      setGallery((prev) => [...prev, ...urls]);
-    } catch {
-      setMessage('Erro ao enviar uma ou mais imagens da galeria.');
-    } finally {
-      setUploadingField(null);
     }
+    if (hadError) setMessage('Erro ao enviar uma ou mais imagens da galeria.');
+    setUploadingField(null);
+  }
+
+  function toggleGalleryImage(index: number) {
+    setGallery((prev) => prev.map((item, i) => (i === index ? { ...item, active: !item.active } : item)));
   }
 
   function removeGalleryImage(index: number) {
@@ -175,17 +199,56 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
           Posts, mockup do site, telas do app etc. Formato recomendado: 1200×900px (4:3) por imagem.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px', marginBottom: '12px' }}>
-          {gallery.map((src, i) => (
-            <div key={src + i} style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-              <Image src={src} alt={`Galeria ${i + 1}`} fill sizes="140px" style={{ objectFit: 'cover' }} />
-              <button
-                onClick={() => removeGalleryImage(i)}
-                type="button"
-                style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.65)', color: '#fff', cursor: 'pointer', fontSize: '12px', lineHeight: 1 }}
-                aria-label="Remover"
-              >
-                ×
-              </button>
+          {gallery.map((item, i) => (
+            <div
+              key={item.url + i}
+              style={{
+                position: 'relative',
+                aspectRatio: '4 / 3',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                border: '1px solid var(--color-border)',
+                opacity: item.active ? 1 : 0.4,
+              }}
+            >
+              <Image src={item.url} alt={`Galeria ${i + 1}`} fill sizes="140px" style={{ objectFit: 'cover' }} />
+              {!item.active && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: '4px',
+                    left: '4px',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    background: 'rgba(0,0,0,0.65)',
+                    color: '#fff',
+                    fontSize: '10px',
+                    fontWeight: 700,
+                  }}
+                >
+                  Desativada
+                </span>
+              )}
+              <div style={{ position: 'absolute', top: '4px', right: '4px', display: 'flex', gap: '4px' }}>
+                <button
+                  onClick={() => toggleGalleryImage(i)}
+                  type="button"
+                  title={item.active ? 'Desativar (esconde do site sem excluir)' : 'Ativar'}
+                  style={{ width: '22px', height: '22px', borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.65)', color: '#fff', cursor: 'pointer', fontSize: '12px', lineHeight: 1 }}
+                  aria-label={item.active ? 'Desativar' : 'Ativar'}
+                >
+                  {item.active ? '◐' : '○'}
+                </button>
+                <button
+                  onClick={() => removeGalleryImage(i)}
+                  type="button"
+                  title="Excluir definitivamente"
+                  style={{ width: '22px', height: '22px', borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.65)', color: '#fff', cursor: 'pointer', fontSize: '12px', lineHeight: 1 }}
+                  aria-label="Excluir"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/*": ["./node_modules/.prisma/client/**/*"],
   },
+  // sharp tem binários nativos por plataforma (@img/sharp-*) resolvidos via require
+  // condicional em runtime — o file tracing automático do build standalone perde essas
+  // variantes. Marcar como pacote externo faz o Next rastrear a pasta inteira do pacote
+  // (em vez de tentar empacotá-lo), o que é o que faz o upload/thumbnail funcionar em
+  // produção — sem isso, a conversão pra WebP e a otimização do next/image quebram.
+  serverExternalPackages: ["sharp"],
   images: {
     remotePatterns: [
       {

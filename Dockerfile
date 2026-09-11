@@ -59,6 +59,14 @@ RUN mkdir -p ./public/uploads/cases && chown -R nextjs:nodejs ./public
 # como pacote separado.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
+# sharp (usado no upload/thumbnail de imagens do admin) tem binário nativo por
+# plataforma resolvido via require condicional (@img/sharp-linuxmusl-x64 nesta imagem
+# Alpine) — o file tracing automático do build standalone historicamente perde esse
+# tipo de dependência (mesmo motivo do bcryptjs acima). Copiado manualmente para não
+# quebrar silenciosamente a geração de thumbnail em produção.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@img ./node_modules/@img
+
 USER nextjs
 
 EXPOSE 3000
