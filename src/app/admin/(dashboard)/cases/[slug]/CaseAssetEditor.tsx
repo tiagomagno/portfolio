@@ -198,6 +198,8 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
         <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>
           Posts, mockup do site, telas do app etc. Formato recomendado: 1200×900px (4:3) por imagem.
         </p>
+        {/* unoptimized: a thumb some acabou de subir e não passou pelo otimizador do Next ainda —
+            pedir a versão otimizada nesse instante dava ícone quebrado até a página recarregar. */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px', marginBottom: '12px' }}>
           {gallery.map((item, i) => (
             <div
@@ -211,7 +213,7 @@ export default function CaseAssetEditor({ slug, fallbackImage }: CaseAssetEditor
                 opacity: item.active ? 1 : 0.4,
               }}
             >
-              <Image src={item.url} alt={`Galeria ${i + 1}`} fill sizes="140px" style={{ objectFit: 'cover' }} />
+              <Image src={item.url} alt={`Galeria ${i + 1}`} fill sizes="140px" style={{ objectFit: 'cover' }} unoptimized />
               {!item.active && (
                 <span
                   style={{
@@ -316,7 +318,7 @@ function ImageField({
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         {preview && (
           <div style={{ position: 'relative', width: '160px', aspectRatio: '4 / 3', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0 }}>
-            <Image src={preview} alt={label} fill sizes="160px" style={{ objectFit: 'cover' }} />
+            <Image src={preview} alt={label} fill sizes="160px" style={{ objectFit: 'cover' }} unoptimized />
           </div>
         )}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
