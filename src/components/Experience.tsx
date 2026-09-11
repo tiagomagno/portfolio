@@ -1,8 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+
+// Agrupamento por período pra visão em colunas no desktop. Os índices referem-se
+// a `items` (item1..item7 = mais recente -> mais antigo).
+const COLUMNS = [
+  { range: '2003 ~ 2010', indices: [6, 5] },
+  { range: '2011 ~ 2016', indices: [4, 3] },
+  { range: '2016 ~ 2025', indices: [2, 1, 0] },
+];
 
 export default function Experience() {
   const { t } = useLang();
@@ -15,6 +24,52 @@ export default function Experience() {
     desc: t(`experience.item${n}.desc`),
   }));
 
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+  const toggle = (i: number) => setExpanded((prev) => ({ ...prev, [i]: !prev[i] }));
+
+  const renderRow = (i: number, isLast: boolean) => {
+    const item = items[i];
+    const isOpen = !!expanded[i];
+    return (
+      <div
+        className="experience-row"
+        onClick={() => toggle(i)}
+        style={{
+          cursor: 'pointer',
+          padding: '26px 0',
+          borderBottom: isLast ? 'none' : '1px solid var(--color-border)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
+            {item.role} <span style={{ color: 'rgba(26,26,26,1)', fontWeight: 500 }}>— {item.company}</span>
+          </h3>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              fontSize: '18px',
+              color: 'rgba(26,26,26,0.4)',
+              flexShrink: 0,
+              transform: isOpen ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s',
+            }}
+          >
+            expand_more
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
+          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)' }}>{item.period}</span>
+          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)' }}>{item.location}</span>
+        </div>
+        {isOpen && (
+          <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: '10px 0 0' }}>
+            {item.desc}
+          </p>
+        )}
+      </div>
+    );
+  };
+
   return (
     <section id="experience" style={{ background: SURFACE.raised, padding: '96px 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
@@ -25,70 +80,63 @@ export default function Experience() {
             align-items: flex-end;
             gap: 24px;
             flex-wrap: wrap;
-            margin-bottom: 48px;
+            margin-bottom: 72px;
           }
-          .experience-row { transition: background 0.15s; }
-          .experience-row:hover { background: rgba(26,26,26,0.04); }
-          @media (max-width: 700px) {
-            .experience-row { grid-template-columns: 1fr !important; }
-            .experience-row > div:last-child { text-align: left !important; margin-top: 12px; }
+          .experience-columns { display: none; }
+          .experience-flat { display: block; }
+          @media (min-width: 701px) {
+            .experience-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+            .experience-flat { display: none; }
           }
         `}</style>
 
         <div className="experience-header">
           <div>
-            <div
+            <span
               style={{
-                display: 'inline-block',
-                border: '1px solid var(--color-border)',
-                borderRadius: '999px',
-                padding: '6px 16px',
-                fontSize: '11px',
+                fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'rgba(26,26,26,0.7)',
-                letterSpacing: '0.08em',
+                color: 'var(--color-primary)',
+                letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
-                marginBottom: '20px',
+                display: 'block',
+                marginBottom: '14px',
               }}
             >
               {t('experience.eyebrow')}
-            </div>
+            </span>
             <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: 0, maxWidth: '480px' }}>
               {t('experience.title')}
             </h2>
           </div>
-          <p style={{ fontSize: 'var(--fs-body)', color: 'rgba(26,26,26,0.64)', lineHeight: 1.7, maxWidth: '320px', margin: 0 }}>
+          <p style={{ fontSize: 'var(--fs-body)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, maxWidth: '320px', margin: 0 }}>
             {t('experience.subtitle')}
           </p>
         </div>
 
-        <div>
-          {items.map((item, i) => (
-            <FadeIn key={i} delay={0.03 * i}>
-              <div
-                className="experience-row"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto',
-                  gap: '24px',
-                  alignItems: 'center',
-                  padding: '24px 20px',
-                  borderBottom: i < items.length - 1 ? '1px solid var(--color-border)' : 'none',
-                }}
-              >
-                <div>
-                  <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>
-                    {item.role} <span style={{ color: 'rgba(26,26,26,0.62)', fontWeight: 500 }}>— {item.company}</span>
-                  </h3>
-                  <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.64)', lineHeight: 1.65, margin: 0, maxWidth: '720px' }}>
-                    {item.desc}
-                  </p>
-                </div>
-                <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary)' }}>{item.period}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(26,26,26,0.45)' }}>{item.location}</div>
-                </div>
+        {/* Desktop: 3 colunas agrupadas por período */}
+        <div className="experience-columns">
+          {COLUMNS.map((col) => (
+            <div key={col.range}>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(26,26,26,0.5)', marginBottom: '4px' }}>
+                {col.range}
               </div>
+              <div style={{ borderTop: '1px solid var(--color-border)' }}>
+                {col.indices.map((idx, j) => (
+                  <FadeIn key={idx} delay={0.03 * j}>
+                    {renderRow(idx, j === col.indices.length - 1)}
+                  </FadeIn>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile: lista única, igual ao formato atual */}
+        <div className="experience-flat">
+          {items.map((_, i) => (
+            <FadeIn key={i} delay={0.03 * i}>
+              {renderRow(i, i === items.length - 1)}
             </FadeIn>
           ))}
         </div>
