@@ -54,6 +54,9 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
 
   return (
     <div>
+      <style>{`
+        .admin-icon-action:hover:not(:disabled) { background: rgba(26,26,26,0.06); }
+      `}</style>
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'center' }}>
         <FilterPill label="Todas" active={activeFilter === null} onClick={() => setActiveFilter(null)} />
         {categories.map((cat) => (
@@ -141,40 +144,27 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                   </span>
                 </Td>
                 <Td align="right">
-                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '14px', justifyContent: 'flex-end' }}>
                     {row.removedAt ? (
-                      <ActionButton
+                      <IconAction
+                        icon="restore"
                         label="Restaurar"
                         disabled={updatingSlug === row.slug}
                         onClick={() => updateVisibility(row.slug, true, false)}
                       />
                     ) : (
                       <>
-                        <button
-                          onClick={() => setSelected(row)}
-                          style={{
-                            display: 'inline-block',
-                            padding: '6px 14px',
-                            borderRadius: '8px',
-                            border: '1px solid var(--color-border)',
-                            background: '#fff',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#1a1a1a',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          Editar
-                        </button>
-                        <ActionButton
+                        <IconAction icon="edit" label="Editar" onClick={() => setSelected(row)} />
+                        <IconAction
+                          icon={row.visible ? 'visibility_off' : 'visibility'}
                           label={row.visible ? 'Desativar' : 'Ativar'}
                           disabled={updatingSlug === row.slug}
                           onClick={() => updateVisibility(row.slug, !row.visible, false)}
                         />
-                        <ActionButton
+                        <IconAction
+                          icon="delete"
                           label="Excluir"
-                          danger
+                          tone="danger"
                           disabled={updatingSlug === row.slug}
                           onClick={() => {
                             if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois em "Excluídos".`)) {
@@ -301,37 +291,47 @@ function StatusBadge({ visible, removed }: { visible: boolean; removed: boolean 
   );
 }
 
-function ActionButton({
+function IconAction({
+  icon,
   label,
   onClick,
   disabled,
-  danger,
+  tone = 'default',
 }: {
+  icon: string;
   label: string;
   onClick: () => void;
   disabled?: boolean;
-  danger?: boolean;
+  tone?: 'default' | 'danger';
 }) {
+  const color = tone === 'danger' ? '#b91c1c' : '#1a1a1a';
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       type="button"
+      title={label}
+      aria-label={label}
+      className="admin-icon-action"
       style={{
-        display: 'inline-block',
-        padding: '6px 14px',
-        borderRadius: '8px',
-        border: danger ? '1px solid rgba(185,28,28,0.3)' : '1px solid var(--color-border)',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        border: tone === 'danger' ? '1px solid rgba(185,28,28,0.25)' : '1px solid var(--color-border)',
         background: '#fff',
-        fontSize: '12px',
-        fontWeight: 600,
-        color: danger ? '#b91c1c' : '#1a1a1a',
+        color,
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.5 : 1,
-        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        transition: 'background 0.15s',
       }}
     >
-      {label}
+      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+        {icon}
+      </span>
     </button>
   );
 }
