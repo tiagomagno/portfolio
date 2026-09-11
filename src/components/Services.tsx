@@ -1,15 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 
 export default function Services() {
   const { t } = useLang();
-  const [expanded, setExpanded] = useState<Record<number, boolean>>({ 0: false, 1: false, 2: false, 3: false });
-
-  const toggle = (i: number) => setExpanded((prev) => ({ ...prev, [i]: !prev[i] }));
 
   const CARDS = [
     { phase: 'discover', title: t('process.phases.discover.label'), subtitle: t('process.phases.discover.subtitle'), tagline: t('process.phases.discover.tagline') },
@@ -49,108 +45,114 @@ export default function Services() {
             >
               {t('process.title')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body)', color: 'rgba(26,26,26,0.62)', lineHeight: 1.8, maxWidth: '480px', margin: 0 }}>
+            <p style={{ fontSize: 'var(--fs-body)', color: 'rgba(26,26,26,1)', lineHeight: 1.8, maxWidth: '480px', margin: 0 }}>
               {t('process.subtitle2')}
             </p>
           </div>
         </FadeIn>
 
         <style>{`
-          .process-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
+          .process-timeline-row {
+            display: flex;
+            gap: 24px;
           }
-          @media (max-width: 900px) {
-            .process-grid { grid-template-columns: 1fr 1fr; }
+          .process-node-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+          }
+          .process-node-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+          }
+          .process-node-line {
+            width: 2px;
+            flex: 1;
+            min-height: 24px;
+            background: var(--color-border);
+            margin: 8px 0;
+          }
+          .process-content {
+            flex: 1;
+            min-width: 0;
           }
           @media (max-width: 600px) {
-            .process-grid { grid-template-columns: 1fr; }
+            .process-timeline-row { gap: 16px; }
+            .process-node-circle { width: 44px; height: 44px; }
           }
         `}</style>
 
-        <div className="process-grid">
-          {CARDS.map((card, i) => (
-            <FadeIn key={card.phase} delay={0.15 + i * 0.05} style={{ height: '100%' }}>
-              <div style={{ background: SURFACE.processCard, border: '1px solid var(--color-border)', borderRadius: '16px', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div
-                    style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '50%',
-                      background: '#ffffff',
-                      border: '1px solid var(--color-border)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary)' }}>0{i + 1}</span>
+        <div>
+          {CARDS.map((card, i) => {
+            const isLast = i === CARDS.length - 1;
+            return (
+              <FadeIn key={card.phase} delay={0.1 + i * 0.05}>
+                <div className="process-timeline-row">
+                  <div className="process-node-col">
+                    <div className="process-node-circle">
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary)' }}>0{i + 1}</span>
+                    </div>
+                    {!isLast && <div className="process-node-line" />}
                   </div>
-                  <div>
-                    <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>{card.title}</h3>
-                    <span style={{ fontSize: '12px', color: 'rgba(26,26,26,0.62)' }}>{card.subtitle}</span>
-                  </div>
-                  <p style={{ fontSize: '12px', fontStyle: 'italic', color: 'rgba(26,26,26,0.62)', lineHeight: 1.65, margin: 0 }}>
-                    {card.tagline}
-                  </p>
-                  <button
-                    onClick={() => toggle(i)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      alignSelf: 'flex-start',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      color: 'var(--color-primary)',
-                      letterSpacing: '0.06em',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expanded[i] ? `— ${t('process.close')}` : `+ ${t('process.open')}`}
-                  </button>
-                </div>
 
-                {expanded[i] && (
-                  <div style={{ padding: '0 16px 24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {[1, 2, 3].map((n) => (
-                      <div
-                        key={n}
-                        style={{
-                          background: 'rgba(244,108,28,0.06)',
-                          borderLeft: '2px solid var(--color-primary)',
-                          borderRadius: '0 10px 10px 0',
-                          padding: '12px 14px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: '9px',
-                            fontWeight: 700,
-                            color: 'var(--color-primary)',
-                            letterSpacing: '0.08em',
-                            display: 'block',
-                            marginBottom: '3px',
-                          }}
-                        >
-                          {t(`process.${card.phase}.item${n}.tag`)}
-                        </span>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a1a', display: 'block' }}>
-                          {t(`process.${card.phase}.item${n}.title`)}
-                        </span>
-                        <span style={{ fontSize: '12px', color: 'rgba(26,26,26,0.62)', lineHeight: 1.5, display: 'block', marginTop: '2px' }}>
-                          {t(`process.${card.phase}.item${n}.desc`)}
-                        </span>
+                  <div className="process-content" style={{ paddingBottom: isLast ? 0 : '32px' }}>
+                    <div>
+                      <div style={{ padding: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div>
+                          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>{card.title}</h3>
+                          <span style={{ fontSize: '12px', color: 'rgba(26,26,26,1)' }}>{card.subtitle}</span>
+                        </div>
+                        <p style={{ fontSize: '12px', fontStyle: 'italic', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: 0 }}>
+                          {card.tagline}
+                        </p>
                       </div>
-                    ))}
+
+                      <div style={{ borderTop: '1px solid var(--color-border)', padding: '4px 0' }}>
+                        {[1, 2, 3].map((n) => (
+                          <div
+                            key={n}
+                            style={{
+                              padding: '14px 0',
+                              borderBottom: n < 3 ? '1px solid var(--color-border)' : 'none',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 800,
+                                  color: 'var(--color-primary)',
+                                  letterSpacing: '0.06em',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {t(`process.${card.phase}.item${n}.tag`)}
+                              </span>
+                              <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.3)' }}>•</span>
+                              <span style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a' }}>
+                                {t(`process.${card.phase}.item${n}.title`)}
+                              </span>
+                            </div>
+                            <p style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5, margin: 0 }}>
+                              {t(`process.${card.phase}.item${n}.desc`)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-            </FadeIn>
-          ))}
+                </div>
+              </FadeIn>
+            );
+          })}
         </div>
       </div>
     </section>

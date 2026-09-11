@@ -8,19 +8,20 @@ const DEFAULT_MENU_ITEMS = [
   { labelPt: 'Serviços', labelEn: 'Services', href: '/#work' },
   { labelPt: 'Cases', labelEn: 'Cases', href: '/#cases' },
   { labelPt: 'Processo', labelEn: 'Process', href: '/#services' },
-  { labelPt: 'Consultoria', labelEn: 'Consulting', href: '/#consulting' },
+  { labelPt: 'Consultoria', labelEn: 'Consulting', href: '/consultoria' },
   { labelPt: 'Contato', labelEn: 'Contact', href: '/#contact' },
 ];
 
 const DEFAULT_HOME_SECTIONS = [
   { key: 'hero', label: 'Hero (topo)' },
   { key: 'about', label: 'Sobre' },
+  { key: 'stats', label: 'Números' },
   { key: 'work', label: 'Atuação Profissional' },
   { key: 'experience', label: 'Experiência' },
   { key: 'cases', label: 'Cases em Destaque' },
-  { key: 'talkCta', label: 'CTA — Vamos Conversar' },
+  { key: 'skills', label: 'Competências' },
   { key: 'services', label: 'Processo' },
-  { key: 'consulting', label: 'Consultoria' },
+  { key: 'talkCta', label: 'CTA — Vamos Conversar' },
   { key: 'contact', label: 'Contato' },
 ];
 
