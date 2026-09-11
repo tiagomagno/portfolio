@@ -1,15 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 
 type SubmitStatus = 'idle' | 'sending' | 'success' | 'error';
 
+const SUCCESS_AUTO_RETURN_SECONDS = 5;
+
 export default function Contact() {
   const { t } = useLang();
   const [status, setStatus] = useState<SubmitStatus>('idle');
+  const [secondsLeft, setSecondsLeft] = useState(SUCCESS_AUTO_RETURN_SECONDS);
+
+  // Depois de enviar, volta sozinho pro formulário em alguns segundos — o botão
+  // "Enviar outra mensagem" continua disponível pra quem não quiser esperar.
+  useEffect(() => {
+    if (status !== 'success') return;
+    setSecondsLeft(SUCCESS_AUTO_RETURN_SECONDS);
+    const interval = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(interval);
+          setStatus('idle');
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [status]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -170,17 +191,51 @@ export default function Contact() {
             `}</style>
             {status === 'success' ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', padding: '24px 0' }} role="status">
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'rgba(22,163,74,0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '4px',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '22px', color: '#16a34a' }}>
+                    check
+                  </span>
+                </div>
                 <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
                   {t('contact.form.success')}
                 </h3>
                 <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', margin: 0 }}>
                   {t('contact.form.successDetail')}
                 </p>
+
+                <div style={{ width: '100%', marginTop: '16px' }}>
+                  <div style={{ height: '3px', width: '100%', background: 'rgba(26,26,26,0.08)', borderRadius: '100px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${(secondsLeft / SUCCESS_AUTO_RETURN_SECONDS) * 100}%`,
+                        background: 'var(--color-primary)',
+                        borderRadius: '100px',
+                        transition: 'width 1s linear',
+                      }}
+                    />
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)', margin: '8px 0 0' }}>
+                    {t('contact.form.successCountdown').replace('{n}', String(secondsLeft))}
+                  </p>
+                </div>
+
                 <button
                   type="button"
                   onClick={() => setStatus('idle')}
                   style={{
-                    marginTop: '12px',
+                    marginTop: '4px',
                     background: 'transparent',
                     color: '#1a1a1a',
                     fontWeight: 600,
@@ -193,7 +248,7 @@ export default function Contact() {
                     cursor: 'pointer',
                   }}
                 >
-                  {t('contact.form.submit')}
+                  {t('contact.form.newMessage')}
                 </button>
               </div>
             ) : (
