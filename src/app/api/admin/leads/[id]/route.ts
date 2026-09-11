@@ -9,12 +9,28 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
   const { id } = await params;
-  const { status } = await request.json();
+  const body = await request.json();
+  const data: { status?: string; archivedAt?: Date | null } = {};
 
-  if (typeof status !== 'string' || !VALID_STATUSES.has(status)) {
-    return NextResponse.json({ error: 'Status inválido' }, { status: 400 });
+  if (body.status !== undefined) {
+    if (typeof body.status !== 'string' || !VALID_STATUSES.has(body.status)) {
+      return NextResponse.json({ error: 'Status inválido' }, { status: 400 });
+    }
+    data.status = body.status;
+  }
+  if (typeof body.archived === 'boolean') {
+    data.archivedAt = body.archived ? new Date() : null;
   }
 
-  const lead = await prisma.lead.update({ where: { id }, data: { status } });
+  const lead = await prisma.lead.update({ where: { id }, data });
   return NextResponse.json({ lead });
+}
+
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+
+  const { id } = await params;
+  await prisma.lead.delete({ where: { id } });
+  return NextResponse.json({ ok: true });
 }

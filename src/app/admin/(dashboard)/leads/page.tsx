@@ -10,6 +10,7 @@ interface Lead {
   email: string;
   data: Record<string, unknown>;
   createdAt: string;
+  archivedAt: string | null;
 }
 
 const STATUSES = ['novo', 'em-contato', 'convertido', 'perdido'];
@@ -54,6 +55,7 @@ export default function AdminLeadsPage() {
   const [selected, setSelected] = useState<Lead | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/leads')
@@ -72,6 +74,23 @@ export default function AdminLeadsPage() {
     });
   }
 
+  async function setArchived(id: string, archived: boolean) {
+    const archivedAt = archived ? new Date().toISOString() : null;
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, archivedAt } : l)));
+    setSelected((prev) => (prev && prev.id === id ? { ...prev, archivedAt } : prev));
+    await fetch(`/api/admin/leads/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ archived }),
+    });
+  }
+
+  async function deleteLead(id: string) {
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    setSelected((prev) => (prev && prev.id === id ? null : prev));
+    await fetch(`/api/admin/leads/${id}`, { method: 'DELETE' });
+  }
+
   function handleDrop(status: string, e: React.DragEvent) {
     setDragOverStatus(null);
     setDraggingId(null);
@@ -81,16 +100,77 @@ export default function AdminLeadsPage() {
 
   if (loading) return <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)' }}>Carregando...</p>;
 
+  const archivedLeads = leads.filter((l) => l.archivedAt);
+
   return (
     <div>
-      <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Leads</h1>
-      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
-        Envios do formulário de contato e do briefing. Arraste um card pra mudar o status, ou clique pra ver os detalhes.
-      </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+        <div>
+          <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Leads</h1>
+          <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
+            Envios do formulário de contato e do briefing. Arraste um card pra mudar o status, ou clique pra ver os detalhes.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowArchived((v) => !v)}
+          style={{
+            fontSize: '12px',
+            fontWeight: 600,
+            color: showArchived ? '#fff' : 'rgba(26,26,26,0.55)',
+            background: showArchived ? '#b91c1c' : 'transparent',
+            border: showArchived ? '1px solid #b91c1c' : '1px solid var(--color-border)',
+            padding: '7px 16px',
+            borderRadius: '100px',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          {showArchived ? 'Voltar ao board' : `Arquivados (${archivedLeads.length})`}
+        </button>
+      </div>
 
+      {showArchived ? (
+        <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
+          {archivedLeads.length === 0 && (
+            <p style={{ padding: '16px', fontSize: '13px', color: 'rgba(26,26,26,0.4)' }}>Nenhum lead arquivado.</p>
+          )}
+          {archivedLeads.map((lead, i) => (
+            <div
+              key={lead.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                borderBottom: i < archivedLeads.length - 1 ? '1px solid var(--color-border)' : 'none',
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 2px' }}>{lead.name}</p>
+                <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: 0 }}>{lead.email}</p>
+              </div>
+              <button
+                onClick={() => setArchived(lead.id, false)}
+                style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid var(--color-border)', background: '#fff', fontSize: '12px', fontWeight: 600, color: '#1a1a1a', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Restaurar
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm(`Excluir o lead de "${lead.name}" definitivamente?`)) deleteLead(lead.id);
+                }}
+                style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid rgba(185,28,28,0.3)', background: '#fff', fontSize: '12px', fontWeight: 600, color: '#b91c1c', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Excluir
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
       <div style={{ display: 'flex', gap: '16px', width: '100%' }}>
         {STATUSES.map((status) => {
-          const columnLeads = leads.filter((l) => l.status === status);
+          const columnLeads = leads.filter((l) => l.status === status && !l.archivedAt);
           const isDragOver = dragOverStatus === status;
 
           return (
@@ -174,6 +254,7 @@ export default function AdminLeadsPage() {
           );
         })}
       </div>
+      )}
 
       {selected && (
         <>
@@ -220,6 +301,23 @@ export default function AdminLeadsPage() {
                 aria-label="Fechar"
               >
                 ×
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+              <button
+                onClick={() => setArchived(selected.id, !selected.archivedAt)}
+                style={{ flex: 1, padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--color-border)', background: '#fff', fontSize: '12px', fontWeight: 600, color: '#1a1a1a', cursor: 'pointer' }}
+              >
+                {selected.archivedAt ? 'Restaurar' : 'Arquivar'}
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm(`Excluir o lead de "${selected.name}" definitivamente?`)) deleteLead(selected.id);
+                }}
+                style={{ flex: 1, padding: '8px 14px', borderRadius: '8px', border: '1px solid rgba(185,28,28,0.3)', background: '#fff', fontSize: '12px', fontWeight: 600, color: '#b91c1c', cursor: 'pointer' }}
+              >
+                Excluir
               </button>
             </div>
 

@@ -46,13 +46,16 @@ model PortfolioItemVisibility {
 }
 
 model Lead {
-  id        String   @id @default(cuid())
-  source    String
-  status    String   @default("novo")
-  name      String
-  email     String
-  data      Json
-  createdAt DateTime @default(now())
+  id         String    @id @default(cuid())
+  source     String
+  status     String    @default("novo")
+  name       String
+  email      String
+  data       Json
+  createdAt  DateTime  @default(now())
+  /// Arquivado: some do board padrão em /admin/leads, mas continua no banco (reversível).
+  /// Excluir de fato é um DELETE — sem campo aqui, é permanente.
+  archivedAt DateTime?
 }
 
 /// Item do menu de navegação do header. Seedado a partir da lista fixa que existia em Header.tsx.
