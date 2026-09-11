@@ -13,6 +13,7 @@ import Footer from '@/components/Footer';
 import Divider from '@/components/Divider';
 import { prisma } from '@/lib/prisma';
 import { getAllCaseAssetOverrides } from '@/data/caseAssets';
+import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
 
 const SECTION_COMPONENTS: Record<string, React.ComponentType> = {
   hero: Hero,
@@ -43,7 +44,11 @@ async function getSectionOrder(): Promise<string[]> {
 }
 
 export default async function Home() {
-  const [order, overrides] = await Promise.all([getSectionOrder(), getAllCaseAssetOverrides()]);
+  const [order, overrides, hiddenSlugs] = await Promise.all([
+    getSectionOrder(),
+    getAllCaseAssetOverrides(),
+    getHiddenPortfolioSlugs(),
+  ]);
   const overridesBySlug = Object.fromEntries(overrides);
 
   return (
@@ -52,7 +57,7 @@ export default async function Home() {
       <main>
         {order.map((key, i) => {
           const section = key === 'cases'
-            ? <Cases key={key} overrides={overridesBySlug} />
+            ? <Cases key={key} overrides={overridesBySlug} hiddenSlugs={[...hiddenSlugs]} />
             : (() => {
                 const Section = SECTION_COMPONENTS[key];
                 return Section ? <Section key={key} /> : null;

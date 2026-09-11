@@ -10,12 +10,20 @@ import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 import PortfolioCard from './PortfolioCard';
 
-export default function PortfolioGrid({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
+export default function PortfolioGrid({
+  overrides = {},
+  hiddenSlugs = [],
+}: {
+  overrides?: Record<string, CaseAssetOverrides>;
+  hiddenSlugs?: string[];
+}) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
   const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
 
-  const filtered = activeFilter ? PORTFOLIO_ITEMS.filter((item) => item.atuacao.includes(activeFilter)) : PORTFOLIO_ITEMS;
+  const hidden = new Set(hiddenSlugs);
+  const visibleItems = PORTFOLIO_ITEMS.filter((item) => !hidden.has(slugify(item.empresa)));
+  const filtered = activeFilter ? visibleItems.filter((item) => item.atuacao.includes(activeFilter)) : visibleItems;
 
   return (
     <section style={{ background: SURFACE.raised, padding: '60px 0 100px' }}>

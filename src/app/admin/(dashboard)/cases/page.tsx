@@ -1,17 +1,19 @@
 import { ATUACAO_CATEGORIES, getCaseStudyItems, slugify } from '@/data/portfolio';
 import { prisma } from '@/lib/prisma';
+import { getPortfolioVisibilityMap } from '@/data/portfolioVisibility';
 import CasesTable, { type CaseRow } from './CasesTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminCasesPage() {
   const items = getCaseStudyItems();
-  const assets = await prisma.caseAsset.findMany();
+  const [assets, visibilityMap] = await Promise.all([prisma.caseAsset.findMany(), getPortfolioVisibilityMap()]);
   const assetBySlug = new Map(assets.map((a) => [a.slug, a]));
 
   const rows: CaseRow[] = items.map((item) => {
     const slug = slugify(item.empresa);
     const asset = assetBySlug.get(slug);
+    const visibility = visibilityMap.get(slug);
     return {
       id: item.id,
       empresa: item.empresa,
@@ -21,6 +23,8 @@ export default async function AdminCasesPage() {
       hasCover: !!(asset?.coverImage || item.image),
       hasHero: !!asset?.heroImage,
       galleryCount: Array.isArray(asset?.gallery) ? (asset!.gallery as unknown[]).length : 0,
+      visible: visibility?.visible ?? true,
+      removedAt: visibility?.removedAt ? visibility.removedAt.toISOString() : null,
     };
   });
 

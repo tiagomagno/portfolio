@@ -29,6 +29,19 @@ model CaseAsset {
   updatedAt  DateTime @updatedAt
 }
 
+/// Visibilidade de um case do portfólio no site (a lista completa e o texto continuam
+/// fixos em src/data/portfolio.ts — não é possível remover a entrada de lá em runtime,
+/// então isso controla apenas se ele aparece ou não). Sem uma linha aqui para um slug,
+/// o case é exibido normalmente. "Desativado" e "excluído" têm o mesmo efeito no site
+/// (não aparece); removedAt só serve para tirar o case da lista principal do admin,
+/// mantendo a opção de restaurar.
+model PortfolioItemVisibility {
+  slug      String    @id
+  visible   Boolean   @default(true)
+  removedAt DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
 model Lead {
   id        String   @id @default(cuid())
   source    String

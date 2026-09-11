@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import CaseStudyPage from '@/components/CaseStudyPage';
 import { getCaseStudyItems, getPortfolioItemBySlug, slugify } from '@/data/portfolio';
 import { getCaseAssetOverrides } from '@/data/caseAssets';
+import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
 
 // Reflete imagens atualizadas pelo admin (/admin/cases) sem precisar de novo deploy.
 export const revalidate = 60;
@@ -32,7 +33,13 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
-  const overrides = await getCaseAssetOverrides(slug);
+  const [overrides, hiddenSlugs] = await Promise.all([getCaseAssetOverrides(slug), getHiddenPortfolioSlugs()]);
+
+  // Case desativado/excluído no admin (/admin/cases) — não deve mais ser acessível, mesmo por link direto.
+  if (hiddenSlugs.has(slug)) {
+    notFound();
+  }
+
   const resolvedItem = overrides
     ? {
         ...item,
@@ -47,7 +54,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
     <>
       <Header />
       <main>
-        <CaseStudyPage item={resolvedItem} />
+        <CaseStudyPage item={resolvedItem} hiddenSlugs={[...hiddenSlugs]} />
       </main>
       <Footer />
     </>

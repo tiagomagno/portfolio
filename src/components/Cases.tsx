@@ -47,17 +47,29 @@ function useCarouselLayout() {
   return layout;
 }
 
-export default function Cases({ overrides = {} }: { overrides?: Record<string, CaseAssetOverrides> }) {
+export default function Cases({
+  overrides = {},
+  hiddenSlugs = [],
+}: {
+  overrides?: Record<string, CaseAssetOverrides>;
+  hiddenSlugs?: string[];
+}) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
+
+  const hidden = new Set(hiddenSlugs);
+  const visibleFeaturedCases = useMemo(
+    () => FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa))),
+    [hiddenSlugs]
+  );
 
   // Ordem embaralhada a cada carregamento da página. Começa com a ordem original
   // (idêntica no server e no client) e só embaralha depois de montar, pra não gerar
   // um HTML diferente do que o React espera na hidratação.
-  const [shuffledCases, setShuffledCases] = useState(FEATURED_CASES);
+  const [shuffledCases, setShuffledCases] = useState(visibleFeaturedCases);
   useEffect(() => {
-    setShuffledCases(shuffle(FEATURED_CASES));
-  }, []);
+    setShuffledCases(shuffle(visibleFeaturedCases));
+  }, [visibleFeaturedCases]);
 
   const { columns, rows } = useCarouselLayout();
   const itemsPerPage = columns * rows;

@@ -9,13 +9,14 @@ import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 import SectionDivider from './ui/SectionDivider';
 
-export default function CaseStudyPage({ item }: { item: PortfolioItem }) {
+export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: PortfolioItem; hiddenSlugs?: string[] }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
   const cs = item.caseStudy!;
   const category = tCategory(item.atuacao[0]);
 
-  const allCases = getCaseStudyItems();
+  const hidden = new Set(hiddenSlugs);
+  const allCases = getCaseStudyItems().filter((c) => !hidden.has(slugify(c.empresa)));
   const currentIndex = allCases.findIndex((c) => c.id === item.id);
   const nextCase = allCases.length > 1 ? allCases[(currentIndex + 1) % allCases.length] : null;
 
