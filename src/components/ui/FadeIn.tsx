@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
 export default function FadeIn({
@@ -24,19 +24,14 @@ export default function FadeIn({
     none: { x: 0, y: 0 }
   };
 
-  // Respeita prefers-reduced-motion: entrega o conteúdo já no estado final,
-  // sem blur/translate, em vez de matar a transição no meio do caminho.
-  const prefersReducedMotion = useReducedMotion();
-  if (prefersReducedMotion) {
-    return (
-      <div className={className} style={style}>
-        {children}
-      </div>
-    );
-  }
-
+  // Sempre renderiza a mesma árvore (motion.div) no servidor e no cliente:
+  // ramificar em prefers-reduced-motion aqui causava um mismatch de hidratação
+  // que o React não corrige (o conteúdo ficava preso em opacity:0 pra sempre).
+  // O respeito ao reduced-motion é feito via CSS global (data-fade-in em globals.css),
+  // que roda fora do ciclo de hidratação do React.
   return (
     <motion.div
+      data-fade-in
       initial={{ opacity: 0, filter: 'blur(10px)', ...directions[direction] }}
       whileInView={{ opacity: 1, filter: 'blur(0px)', x: 0, y: 0 }}
       viewport={{ once: true, margin: '-10%' }}

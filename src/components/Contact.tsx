@@ -178,7 +178,7 @@ export default function Contact() {
               }
               .contact-form-card input::placeholder,
               .contact-form-card textarea::placeholder {
-                color: rgba(26,26,26,0.4);
+                color: var(--color-text-muted);
               }
               @media (max-width: 767px) {
                 .contact-form-card {
@@ -226,7 +226,7 @@ export default function Contact() {
                       }}
                     />
                   </div>
-                  <p style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)', margin: '8px 0 0' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '8px 0 0' }}>
                     {t('contact.form.successCountdown').replace('{n}', String(secondsLeft))}
                   </p>
                 </div>
@@ -276,17 +276,17 @@ export default function Contact() {
                       { label: t('contact.form.email'), id: 'contact-email', name: 'email', type: 'email', placeholder: t('contact.form.emailPlaceholder') },
                     ].map(({ label, id, name, type, placeholder }) => (
                       <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label htmlFor={id} style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        <label htmlFor={id} style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                           {label}
                         </label>
-                        <input id={id} type={type} name={name} placeholder={placeholder} required disabled={status === 'sending'} />
+                        <input id={id} type={type} name={name} autoComplete={name === 'name' ? 'name' : 'email'} placeholder={placeholder} required disabled={status === 'sending'} />
                       </div>
                     ))}
                   </div>
 
                   {/* Message */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label htmlFor="contact-message" style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <label htmlFor="contact-message" style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {t('contact.form.message')}
                     </label>
                     <textarea id="contact-message" name="message" rows={4} required placeholder={t('contact.form.messagePlaceholder')} disabled={status === 'sending'} />

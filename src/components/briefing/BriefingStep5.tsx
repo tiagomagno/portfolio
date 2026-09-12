@@ -55,12 +55,18 @@ export function BriefingStep5({ register, errors }: Props) {
       {/* Target audience pills */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <label style={labelStyle}>Quem é o seu público-alvo principal?</label>
+        <style>{`
+          .audience-pill:focus-within {
+            box-shadow: 0 0 0 2px var(--color-primary);
+          }
+        `}</style>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
           {AUDIENCE_OPTIONS.map((opt) => {
             const isSelected = selected === opt.value;
             return (
               <label
                 key={opt.value}
+                className="audience-pill"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -81,7 +87,7 @@ export function BriefingStep5({ register, errors }: Props) {
                   type="radio"
                   value={opt.value}
                   {...register('targetAudience')}
-                  style={{ display: 'none' }}
+                  className="sr-only-input"
                 />
                 {opt.label}
               </label>

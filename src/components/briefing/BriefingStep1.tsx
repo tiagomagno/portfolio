@@ -30,6 +30,8 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
     }
   }, [selectedSegment, clearErrors]);
 
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!open) return;
     function handleClick(e: MouseEvent) {
@@ -37,8 +39,18 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
         setOpen(false);
       }
     }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [open]);
 
   const groups = useMemo(() => {
@@ -70,15 +82,20 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
       </h3>
 
       <div className="flex flex-col gap-3">
-        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
+        <label id="briefing-segment-label" style={{ display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-text-muted)' }}>
           Segmento
         </label>
 
         {/* Custom dropdown */}
         <div ref={dropdownRef} style={{ position: 'relative' }}>
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setOpen((v) => !v)}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            aria-controls="briefing-segment-listbox"
+            aria-labelledby="briefing-segment-label"
             style={{
               width: '100%',
               display: 'flex',
@@ -90,7 +107,6 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
               border: `1px solid ${error ? '#ef4444' : 'var(--color-border)'}`,
               borderRadius: '12px',
               cursor: 'pointer',
-              outline: 'none',
               transition: 'border-color 0.15s',
               boxSizing: 'border-box',
             }}
@@ -111,6 +127,9 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
 
           {open && (
             <div
+              id="briefing-segment-listbox"
+              role="listbox"
+              aria-labelledby="briefing-segment-label"
               data-lenis-prevent
               style={{
                 position: 'absolute',
@@ -155,11 +174,14 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
                       <button
                         key={opt.value}
                         type="button"
+                        role="option"
+                        aria-selected={isSelected}
                         onClick={() => {
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           setValue('businessSegment', opt.value as any);
                           clearErrors('businessSegment');
                           setOpen(false);
+                          triggerRef.current?.focus();
                         }}
                         style={{
                           display: 'flex',

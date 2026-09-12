@@ -69,9 +69,9 @@ export function BriefingStep6({ register, errors }: Props) {
     err(field) ? '#ef4444' : 'var(--color-border)';
 
   const simpleFields = [
-    { id: 'name' as const,     label: 'Seu Nome / Empresa',    placeholder: 'João Silva',              type: 'text',  reg: register('name') },
-    { id: 'email' as const,    label: 'E-mail Profissional',   placeholder: 'joao@empresa.com',        type: 'email', reg: register('email') },
-    { id: 'deadline' as const, label: 'Prazo Desejado',        placeholder: 'Ex: 30 dias, Próximo mês',type: 'text',  reg: register('deadline') },
+    { id: 'name' as const,     label: 'Seu Nome / Empresa',    placeholder: 'João Silva',              type: 'text',  autoComplete: 'name',  reg: register('name') },
+    { id: 'email' as const,    label: 'E-mail Profissional',   placeholder: 'joao@empresa.com',        type: 'email', autoComplete: 'email', reg: register('email') },
+    { id: 'deadline' as const, label: 'Prazo Desejado',        placeholder: 'Ex: 30 dias, Próximo mês',type: 'text',  autoComplete: 'off',    reg: register('deadline') },
   ];
 
   return (
@@ -81,12 +81,13 @@ export function BriefingStep6({ register, errors }: Props) {
       </h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-        {simpleFields.map(({ id, label, placeholder, type, reg }) => (
+        {simpleFields.map(({ id, label, placeholder, type, autoComplete, reg }) => (
           <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <label htmlFor={id} style={labelStyle}>{label}</label>
             <input
               id={id}
               type={type}
+              autoComplete={autoComplete}
               placeholder={placeholder}
               style={{ ...inputStyle, borderColor: borderFor(id) }}
               {...reg}
@@ -105,6 +106,7 @@ export function BriefingStep6({ register, errors }: Props) {
             id="whatsapp"
             type="tel"
             inputMode="numeric"
+            autoComplete="tel"
             placeholder="(11) 99999-9999"
             style={{ ...inputStyle, borderColor: borderFor('whatsapp') }}
             {...whatsappReg}

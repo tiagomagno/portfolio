@@ -59,6 +59,11 @@ export default function Header() {
 
   return (
     <>
+      {/* ── Skip link — invisível até receber foco por teclado (WCAG 2.4.1) ── */}
+      <a href="#main-content" className="skip-link">
+        {t('nav.skipToContent')}
+      </a>
+
       {/* ── Floating language switcher — lives on the page edge, not inside the header row ── */}
       <style>{`
         @media (max-width: 767px) {

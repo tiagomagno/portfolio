@@ -88,6 +88,58 @@ section[id] {
 }
 
 /* ============================================
+   FOCO VISÍVEL (WCAG 2.4.7 — AA)
+   ============================================ */
+/* Regra global e com !important porque vários componentes desativam o outline
+   nativo (outline:none) via inline style, que tem prioridade sobre CSS comum.
+   Sem isso, quem navega por teclado não enxerga onde está o foco nos formulários. */
+:focus-visible {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ============================================
+   SKIP LINK (WCAG 2.4.1 — A)
+   ============================================ */
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 8px;
+  z-index: 1000;
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.15s;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+/* ============================================
+   VISUALMENTE OCULTO, MAS ACESSÍVEL (WCAG 4.1.2 / 2.1.1)
+   ============================================ */
+/* Para inputs nativos (radio/checkbox) escondidos atrás de um label estilizado.
+   Diferente de display:none, mantém o elemento focável por teclado e visível
+   para leitores de tela. */
+.sr-only-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================
    MATERIAL SYMBOLS CONFIG
    ============================================ */
 .material-symbols-outlined {
@@ -225,6 +277,21 @@ section[id] {
 
 .text-glow {
   text-shadow: 0 0 24px rgba(255, 86, 37, 0.35);
+}
+
+/* ============================================
+   ACESSIBILIDADE — PREFERS-REDUCED-MOTION
+   ============================================ */
+/* Garante o estado final visível para quem usa reduced-motion, via CSS puro
+   (fora do ciclo de hidratação do React/framer-motion). Sem isso, o conteúdo
+   animado por FadeIn podia ficar preso em opacity:0 (site "em branco"). */
+@media (prefers-reduced-motion: reduce) {
+  [data-fade-in] {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 /* ============================================
