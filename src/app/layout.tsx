@@ -18,7 +18,6 @@ const manrope = Manrope({
 });
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
@@ -101,19 +100,17 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <SmoothScrollProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            forcedTheme="light"
-            disableTransitionOnChange
-          >
-            <LangProvider>
-              {children}
-              <WhatsAppFloat />
-            </LangProvider>
-          </ThemeProvider>
-        </SmoothScrollProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          forcedTheme="light"
+          disableTransitionOnChange
+        >
+          <LangProvider>
+            {children}
+            <WhatsAppFloat />
+          </LangProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

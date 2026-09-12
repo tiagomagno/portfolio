@@ -291,7 +291,6 @@ export default function Header() {
       {/* ── Mobile Drawer ── */}
       <div
         className="show-mobile"
-        data-lenis-prevent
         style={{
           position: 'fixed',
           top: 0,

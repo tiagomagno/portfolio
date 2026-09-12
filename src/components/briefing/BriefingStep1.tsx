@@ -130,7 +130,6 @@ export function BriefingStep1({ register, watch, error, otherError }: Props) {
               id="briefing-segment-listbox"
               role="listbox"
               aria-labelledby="briefing-segment-label"
-              data-lenis-prevent
               style={{
                 position: 'absolute',
                 top: 'calc(100% + 6px)',
