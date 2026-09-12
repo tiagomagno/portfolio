@@ -26,6 +26,11 @@
   /* Light Theme as default / fallback */
   --color-primary: #ff5625;
   --color-primary-hover: #e84e20;
+  /* Variante escura do laranja da marca (contraste ~4.9:1 em fundo branco), usada
+     onde ele carrega texto ou fica atrás de texto branco (botões). O --color-primary
+     puro (~3.2:1) reprova WCAG AA para texto — só é seguro em usos decorativos
+     (glows, bordas, hovers), que continuam com a cor vibrante original. */
+  --color-primary-text: #c9431a;
   --color-accent: #ffb5a0;
   --color-bg: #ffffff;
   --color-bg-low: #ffffff;
@@ -41,6 +46,8 @@
 .dark {
   --color-primary: #ff5625;
   --color-primary-hover: #e84e20;
+  /* No tema escuro o laranja original já passa em AA (~5.9:1 sobre #131313) */
+  --color-primary-text: #ff5625;
   --color-accent: #ffb5a0;
   --color-bg: #131313;
   --color-bg-low: #0e0e0e;

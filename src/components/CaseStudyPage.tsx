@@ -68,7 +68,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
               {t('nav.cases')}
             </Link>
             <span style={{ fontSize: '10px', color: 'rgba(244,108,28,0.4)' }}>›</span>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-primary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-primary-text)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
               {item.empresa}
             </span>
           </div>
@@ -78,7 +78,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
               style={{
                 background: 'rgba(244,108,28,0.15)',
                 border: '1px solid rgba(244,108,28,0.3)',
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 fontSize: '11px',
                 fontWeight: 700,
                 letterSpacing: '0.06em',
@@ -133,7 +133,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
               { label: t('case.info.category'), value: category },
             ].map((f) => (
               <div key={f.label} style={{ background: SURFACE.base, border: '1px solid var(--color-border)', borderBottom: '3px solid rgba(244,108,28,0.2)', borderRadius: '12px', padding: '28px 24px' }}>
-                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
                   {f.label}
                 </span>
                 <span style={{ fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>{f.value}</span>
@@ -198,7 +198,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
         <section style={{ background: SURFACE.raised, padding: '80px 24px' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <FadeIn delay={0.05}>
-              <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '24px' }}>
+              <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '24px' }}>
                 {t('case.gallery.title')}
               </span>
             </FadeIn>
@@ -235,7 +235,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
       {/* Section 05 */}
       <CaseSection number="05" title={t('case.section5.title')} bg={SURFACE.raised}>
         <div style={{ marginBottom: '32px' }}>
-          <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
+          <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
             {t('case.section5.quantitative')}
           </span>
           <MetricGrid items={cs.impact.metrics} />
@@ -261,7 +261,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
               }}
             >
               <div>
-                <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
+                <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
                   {t('case.nextCase')}
                 </span>
                 <h3 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#1a1a1a', margin: 0, letterSpacing: '-0.02em' }}>
@@ -276,7 +276,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
             </Link>
           ) : (
             <div style={{ borderTop: '1px solid rgba(26,26,26,0.1)', padding: '48px 0', textAlign: 'center' }}>
-              <Link href="/portfolio" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-primary)', textDecoration: 'none' }}>
+              <Link href="/portfolio" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-primary-text)', textDecoration: 'none' }}>
                 {t('case.backToPortfolio')}
               </Link>
             </div>
@@ -297,7 +297,7 @@ function CaseSection({ number, title, bg, children }: { number: string; title: s
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
         <FadeIn delay={0.05}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px' }}>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.08em' }}>{number}</span>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.08em' }}>{number}</span>
             <div style={{ flex: 1, height: '1px', background: 'rgba(244,108,28,0.2)' }} />
           </div>
           <h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: 800, color: '#1a1a1a', letterSpacing: '-0.02em', margin: '4px 0 40px' }}>
@@ -323,7 +323,7 @@ function InfoRow({ label, children, noBorder }: { label: string; children: React
         }}
         className="case-info-row"
       >
-        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', paddingTop: '2px' }}>
+        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.1em', textTransform: 'uppercase', paddingTop: '2px' }}>
           {label}
         </span>
         <div style={{ fontSize: '15px', color: 'rgba(26,26,26,0.75)', lineHeight: 1.7 }}>{children}</div>
@@ -342,7 +342,7 @@ function BulletList({ items }: { items: string[] }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-          <span style={{ color: 'var(--color-primary)', fontSize: '15px', lineHeight: '25.5px' }}>◆</span>
+          <span style={{ color: 'var(--color-primary-text)', fontSize: '15px', lineHeight: '25.5px' }}>◆</span>
           <span>{it}</span>
         </div>
       ))}
@@ -402,7 +402,7 @@ function AlternativesGrid({ items }: { items: { title: string; reason: string }[
             <span style={{ color: 'rgba(244,108,28,0.5)', fontSize: '13px', fontWeight: 600 }}>✗</span>
             <span style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(26,26,26,0.85)' }}>{it.title}</span>
           </div>
-          <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.45)', lineHeight: 1.6, margin: 0 }}>{it.reason}</p>
+          <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.65)', lineHeight: 1.6, margin: 0 }}>{it.reason}</p>
         </div>
       ))}
     </div>
@@ -423,7 +423,7 @@ function MetricGrid({ items }: { items: { value: string; label: string }[] }) {
             padding: '24px 20px',
           }}
         >
-          <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary)' }}>{m.value}</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary-text)' }}>{m.value}</div>
           <div style={{ fontSize: '12px', color: 'rgba(26,26,26,1)', marginTop: '6px' }}>{m.label}</div>
         </div>
       ))}
@@ -435,7 +435,7 @@ function PostMortem({ label, children }: { label: string; children: React.ReactN
   return (
     <div style={{ position: 'relative', background: SURFACE.base, border: '1px solid rgba(26,26,26,0.08)', borderRadius: '12px', overflow: 'hidden', padding: '32px 36px', marginTop: '40px' }}>
       <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px', background: 'var(--color-primary)' }} />
-      <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>
+      <span style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>
         {label}
       </span>
       <p style={{ fontSize: '15px', color: 'rgba(26,26,26,0.7)', lineHeight: 1.8, margin: 0 }}>{children}</p>

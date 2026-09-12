@@ -117,7 +117,7 @@ export default function Hero() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
-                    background: 'var(--color-primary)',
+                    background: 'var(--color-primary-text)',
                     color: '#fff',
                     fontFamily: 'var(--font-headline)',
                     fontWeight: 700,

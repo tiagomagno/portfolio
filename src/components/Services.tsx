@@ -25,7 +25,7 @@ export default function Services() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
@@ -123,7 +123,7 @@ export default function Services() {
                 <div className="process-timeline-row">
                   <div className="process-node-col">
                     <div className="process-node-circle">
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary)' }}>0{i + 1}</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary-text)' }}>0{i + 1}</span>
                     </div>
                     {!isLast && <div className="process-node-line" />}
                   </div>
@@ -148,14 +148,14 @@ export default function Services() {
                                 style={{
                                   fontSize: '11px',
                                   fontWeight: 800,
-                                  color: 'var(--color-primary)',
+                                  color: 'var(--color-primary-text)',
                                   letterSpacing: '0.06em',
                                   textTransform: 'uppercase',
                                 }}
                               >
                                 {t(`process.${card.phase}.item${n}.tag`)}
                               </span>
-                              <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.3)' }}>•</span>
+                              <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>•</span>
                               <span style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a' }}>
                                 {t(`process.${card.phase}.item${n}.title`)}
                               </span>

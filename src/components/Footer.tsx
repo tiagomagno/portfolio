@@ -37,7 +37,7 @@ export default function Footer() {
             </span>
           </Link>
 
-          <p style={{ color: 'rgba(26,26,26,0.45)', fontSize: '12px', margin: 0 }}>
+          <p style={{ color: 'rgba(26,26,26,0.65)', fontSize: '12px', margin: 0 }}>
             © {year} Tiago Magno · {t('footer.rights')}
           </p>
 
@@ -47,7 +47,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.65)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               LinkedIn
             </a>
@@ -56,14 +56,14 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link"
-              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.65)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               WhatsApp
             </a>
             <a
               href="mailto:tiagosilvamagno@gmail.com"
               className="footer-link"
-              style={{ color: 'rgba(26,26,26,0.55)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
+              style={{ color: 'rgba(26,26,26,0.65)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.15s' }}
             >
               E-mail
             </a>

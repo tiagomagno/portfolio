@@ -103,7 +103,7 @@ export default function Contact() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
@@ -129,19 +129,19 @@ export default function Contact() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary-text)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   E-MAIL
                 </span>
                 <span style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
               </div>
               <div>
-                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary-text)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   WHATSAPP
                 </span>
                 <span style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
               </div>
               <div>
-                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary-text)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   LINKEDIN
                 </span>
                 <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(26,26,26,1)', fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
@@ -303,7 +303,7 @@ export default function Contact() {
                     type="submit"
                     disabled={status === 'sending'}
                     style={{
-                      background: 'var(--color-primary)',
+                      background: 'var(--color-primary-text)',
                       color: '#fff',
                       fontWeight: 700,
                       fontSize: '13px',

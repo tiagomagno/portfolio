@@ -59,7 +59,7 @@ export default function PortfolioCard({
       </div>
 
       <div style={{ marginTop: '14px' }}>
-        <span style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(26,26,26,0.45)', marginBottom: '4px' }}>
+        <span style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(26,26,26,0.65)', marginBottom: '4px' }}>
           {item.atuacao.map(categoryLabel).join(' · ')}
         </span>
         <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#1a1a1a', margin: 0, lineHeight: 1.3 }}>

@@ -169,7 +169,7 @@ export default function Cases({
                 style={{
                   fontSize: 'var(--fs-eyebrow)',
                   fontWeight: 700,
-                  color: 'var(--color-primary)',
+                  color: 'var(--color-primary-text)',
                   letterSpacing: 'var(--ls-eyebrow)',
                   textTransform: 'uppercase',
                   display: 'block',
@@ -267,7 +267,7 @@ export default function Cases({
               style={{
                 fontSize: '14px',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: '0.04em',
                 textDecoration: 'none',
               }}

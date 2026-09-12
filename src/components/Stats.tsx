@@ -41,7 +41,7 @@ export default function Stats() {
           {stats.map((s) => (
             <FadeIn key={s.label}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800, color: 'var(--color-primary)', lineHeight: 1 }}>
+                <div style={{ fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800, color: 'var(--color-primary-text)', lineHeight: 1 }}>
                   {s.value}
                 </div>
                 <div

@@ -37,7 +37,7 @@ export default function Consulting() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
@@ -74,7 +74,7 @@ export default function Consulting() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'var(--color-primary)',
+                background: 'var(--color-primary-text)',
                 color: '#fff',
                 fontWeight: 700,
                 fontSize: '13px',
@@ -134,7 +134,7 @@ export default function Consulting() {
                 <div className="pillar-timeline-row">
                   <div className="pillar-node-col">
                     <div className="pillar-node-circle">
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary)' }}>0{i + 1}</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-primary-text)' }}>0{i + 1}</span>
                     </div>
                     {!isLast && <div className="pillar-node-line" />}
                   </div>
@@ -144,7 +144,7 @@ export default function Consulting() {
                       style={{
                         fontSize: '11px',
                         fontWeight: 800,
-                        color: 'var(--color-primary)',
+                        color: 'var(--color-primary-text)',
                         letterSpacing: '0.06em',
                         textTransform: 'uppercase',
                         display: 'block',
@@ -172,7 +172,7 @@ export default function Consulting() {
                             borderBottom: idx < card.items.length - 1 ? '1px solid var(--color-border)' : 'none',
                           }}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary)', flexShrink: 0, marginTop: '2px' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary-text)', flexShrink: 0, marginTop: '2px' }}>
                             check
                           </span>
                           <span style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5 }}>{item}</span>
@@ -201,7 +201,7 @@ export default function Consulting() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  background: 'var(--color-primary)',
+                  background: 'var(--color-primary-text)',
                   color: '#fff',
                   fontWeight: 700,
                   fontSize: '14px',

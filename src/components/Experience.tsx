@@ -58,8 +58,8 @@ export default function Experience() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
-          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)' }}>{item.period}</span>
-          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.5)' }}>{item.location}</span>
+          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.period}</span>
+          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.location}</span>
         </div>
         {isOpen && (
           <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: '10px 0 0' }}>
@@ -96,7 +96,7 @@ export default function Experience() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
@@ -118,7 +118,7 @@ export default function Experience() {
         <div className="experience-columns">
           {COLUMNS.map((col) => (
             <div key={col.range}>
-              <div style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(26,26,26,0.5)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(26,26,26,0.65)', marginBottom: '4px' }}>
                 {col.range}
               </div>
               <div style={{ borderTop: '1px solid var(--color-border)' }}>

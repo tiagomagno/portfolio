@@ -194,7 +194,7 @@ export function BriefingForm() {
           style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             padding: '14px 32px', borderRadius: '100px',
-            background: '#ff5625', color: '#fff', fontWeight: 700,
+            background: 'var(--color-primary-text)', color: '#fff', fontWeight: 700,
             fontSize: '15px', textDecoration: 'none',
           }}
         >
@@ -283,7 +283,7 @@ export function BriefingForm() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,
-                color: '#fff', background: '#ff5625', border: 'none', cursor: 'pointer',
+                color: '#fff', background: 'var(--color-primary-text)', border: 'none', cursor: 'pointer',
               }}
             >
               Próximo
@@ -296,7 +296,7 @@ export function BriefingForm() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,
-                color: '#fff', background: '#ff5625', border: 'none',
+                color: '#fff', background: 'var(--color-primary-text)', border: 'none',
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 opacity: isSubmitting ? 0.7 : 1,
               }}

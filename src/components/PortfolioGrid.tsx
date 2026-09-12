@@ -42,14 +42,14 @@ export default function PortfolioGrid({
                 color: rgba(26,26,26,0.85) !important;
               }
             `}</style>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '4px' }}>
               {t('portfolioPage.filterLabel')}
             </span>
             <FilterPill label={t('cases.filterAll')} active={activeFilter === null} onClick={() => setActiveFilter(null)} />
             {ATUACAO_CATEGORIES.map((cat) => (
               <FilterPill key={cat} label={tCategory(cat)} active={activeFilter === cat} onClick={() => setActiveFilter(cat)} />
             ))}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'rgba(26,26,26,0.3)', whiteSpace: 'nowrap' }}>
+            <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'rgba(26,26,26,0.65)', whiteSpace: 'nowrap' }}>
               {filtered.length} {filtered.length === 1 ? t('cases.count.singular') : t('cases.count.plural')}
             </span>
           </div>
@@ -121,8 +121,8 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
         fontSize: '12px',
         fontWeight: 600,
         color: active ? '#fff' : 'rgba(26,26,26,0.6)',
-        background: active ? 'var(--color-primary)' : 'transparent',
-        border: active ? '1px solid var(--color-primary)' : 'none',
+        background: active ? 'var(--color-primary-text)' : 'transparent',
+        border: active ? '1px solid var(--color-primary-text)' : 'none',
         padding: '8px 18px',
         borderRadius: '100px',
         cursor: 'pointer',

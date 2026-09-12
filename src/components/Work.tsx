@@ -57,7 +57,7 @@ export default function Work() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',
@@ -88,7 +88,7 @@ export default function Work() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                background: 'var(--color-primary)',
+                background: 'var(--color-primary-text)',
                 color: '#fff',
                 fontWeight: 700,
                 fontSize: '13px',

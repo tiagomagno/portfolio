@@ -84,7 +84,7 @@ export default function BriefingPage() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.15em',
-                  color: 'var(--color-primary)',
+                  color: 'var(--color-primary-text)',
                 }}
               >
                 Vamos Começar

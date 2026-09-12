@@ -38,7 +38,7 @@ export default function Faq() {
           .faq-item .faq-icon {
             flex-shrink: 0;
             transition: transform 0.2s;
-            color: var(--color-primary);
+            color: var(--color-primary-text);
           }
           .faq-item[open] .faq-icon { transform: rotate(45deg); }
           .faq-item .faq-answer {
@@ -57,7 +57,7 @@ export default function Faq() {
               style={{
                 fontSize: 'var(--fs-eyebrow)',
                 fontWeight: 700,
-                color: 'var(--color-primary)',
+                color: 'var(--color-primary-text)',
                 letterSpacing: 'var(--ls-eyebrow)',
                 textTransform: 'uppercase',
                 display: 'block',

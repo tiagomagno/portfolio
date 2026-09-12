@@ -29,11 +29,14 @@ export default function FadeIn({
   // que o React não corrige (o conteúdo ficava preso em opacity:0 pra sempre).
   // O respeito ao reduced-motion é feito via CSS global (data-fade-in em globals.css),
   // que roda fora do ciclo de hidratação do React.
+  // Anima só opacity/transform (propriedades compositadas pela GPU) — animar `filter`
+  // força repaint na thread principal a cada frame, reprovado pelo Lighthouse como
+  // "animação não composta" nas várias instâncias de FadeIn da página.
   return (
     <motion.div
       data-fade-in
-      initial={{ opacity: 0, filter: 'blur(10px)', ...directions[direction] }}
-      whileInView={{ opacity: 1, filter: 'blur(0px)', x: 0, y: 0 }}
+      initial={{ opacity: 0, ...directions[direction] }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: '-10%' }}
       transition={{ duration: 1.0, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
