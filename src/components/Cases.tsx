@@ -6,6 +6,7 @@ import FadeIn from './ui/FadeIn';
 import PortfolioCard from './PortfolioCard';
 import { useLang } from '@/context/LangContext';
 import { PORTFOLIO_ITEMS, slugify } from '@/data/portfolio';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CaseAssetOverrides } from '@/data/caseAssets';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
@@ -302,9 +303,11 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
         transition: 'opacity 0.15s',
       }}
     >
-      <span className="material-symbols-outlined" style={{ fontSize: '20px', color: 'rgba(26,26,26,0.7)' }}>
-        {direction === 'left' ? 'chevron_left' : 'chevron_right'}
-      </span>
+      {direction === 'left' ? (
+        <ChevronLeft size={20} color="rgba(26,26,26,0.7)" />
+      ) : (
+        <ChevronRight size={20} color="rgba(26,26,26,0.7)" />
+      )}
     </button>
   );
 }

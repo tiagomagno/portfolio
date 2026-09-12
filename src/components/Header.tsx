@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import { useEffect, useState } from 'react';
+import { ArrowRight, Menu, X, ChevronRight } from 'lucide-react';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
@@ -190,7 +191,7 @@ export default function Header() {
               }}
             >
               {t('nav.startProject')}
-              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>arrow_forward</span>
+              <ArrowRight size={15} />
             </a>
           </div>
         </div>
@@ -244,9 +245,7 @@ export default function Header() {
             }}
             aria-label={drawerOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-              {drawerOpen ? 'close' : 'menu'}
-            </span>
+            {drawerOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
           {/* Logo (centered) */}
@@ -343,7 +342,7 @@ export default function Header() {
               padding: 0,
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+            <X size={18} />
           </button>
         </div>
 
@@ -367,9 +366,7 @@ export default function Header() {
               }}
             >
               {label}
-              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-text-dim)' }}>
-                chevron_right
-              </span>
+              <ChevronRight size={16} color="var(--color-text-dim)" />
             </a>
           ))}
         </div>
@@ -397,7 +394,7 @@ export default function Header() {
             }}
           >
             {t('nav.startProject')}
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+            <ArrowRight size={18} />
           </a>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { Check, Send } from 'lucide-react';
 
 type SubmitStatus = 'idle' | 'sending' | 'success' | 'error';
 
@@ -203,9 +204,7 @@ export default function Contact() {
                     marginBottom: '4px',
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: '22px', color: '#16a34a' }}>
-                    check
-                  </span>
+                  <Check size={22} color="#16a34a" />
                 </div>
                 <h3 style={{ fontSize: '19px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
                   {t('contact.form.success')}
@@ -322,9 +321,7 @@ export default function Contact() {
                     }}
                   >
                     {status === 'sending' ? t('contact.form.sending') : t('contact.form.submit')}
-                    {status !== 'sending' && (
-                      <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>send</span>
-                    )}
+                    {status !== 'sending' && <Send size={20} />}
                   </button>
                 </form>
               </>

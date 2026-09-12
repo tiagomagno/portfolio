@@ -3,6 +3,7 @@
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { Plus } from 'lucide-react';
 
 const QUESTION_KEYS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'] as const;
 
@@ -81,7 +82,7 @@ export default function Faq() {
               <details key={i} className="faq-item">
                 <summary>
                   <span>{item.question}</span>
-                  <span className="faq-icon material-symbols-outlined" aria-hidden="true">add</span>
+                  <Plus className="faq-icon" size={20} aria-hidden="true" />
                 </summary>
                 <p className="faq-answer">{item.answer}</p>
               </details>

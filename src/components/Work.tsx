@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { ArrowRight } from 'lucide-react';
 
 export default function Work() {
   const { t } = useLang();
@@ -100,7 +101,7 @@ export default function Work() {
               }}
             >
               {t('nav.startProject')}
-              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+              <ArrowRight size={16} />
             </a>
           </FadeIn>
 

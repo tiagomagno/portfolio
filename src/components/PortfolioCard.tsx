@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import type { PortfolioItem } from '@/data/portfolio';
 import { SURFACE } from '@/lib/surfaces';
+import { Camera } from 'lucide-react';
 
 export default function PortfolioCard({
   item,
@@ -32,9 +33,7 @@ export default function PortfolioCard({
           />
         ) : (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'rgba(26,26,26,0.15)' }}>
-              photo_camera
-            </span>
+            <Camera size={32} color="rgba(26,26,26,0.15)" />
           </div>
         )}
 

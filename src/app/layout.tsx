@@ -86,12 +86,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${plusJakartaSans.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
-        {/* Encurta a conexão TCP/TLS até o Google Fonts antes do <link rel="stylesheet">
-            abaixo — sem isso ele é 100% do tempo de handshake um recurso bloqueando
-            a renderização (apontado pelo PageSpeed). */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <meta name="theme-color" content="#ffffff" />
         <script
           type="application/ld+json"

@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import { ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   const { t } = useLang();
@@ -131,7 +132,7 @@ export default function Hero() {
                   }}
                 >
                   {t('hero.cta.primary')}
-                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                  <ArrowRight size={16} />
                 </a>
                 <a
                   href="#cases"

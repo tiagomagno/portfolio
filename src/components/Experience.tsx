@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { ChevronDown } from 'lucide-react';
 
 // Agrupamento por período pra visão em colunas no desktop. Os índices referem-se
 // a `items` (item1..item7 = mais recente -> mais antigo).
@@ -44,18 +45,15 @@ export default function Experience() {
           <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
             {item.role} <span style={{ color: 'rgba(26,26,26,1)', fontWeight: 500 }}>— {item.company}</span>
           </h3>
-          <span
-            className="material-symbols-outlined"
+          <ChevronDown
+            size={18}
+            color="rgba(26,26,26,0.4)"
             style={{
-              fontSize: '18px',
-              color: 'rgba(26,26,26,0.4)',
               flexShrink: 0,
               transform: isOpen ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.2s',
             }}
-          >
-            expand_more
-          </span>
+          />
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
           <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.period}</span>

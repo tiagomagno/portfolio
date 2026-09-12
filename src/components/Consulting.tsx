@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { ArrowRight, Check } from 'lucide-react';
 
 const PILLARS = ['diagnostico', 'execucao', 'escala'] as const;
 
@@ -86,7 +87,7 @@ export default function Consulting() {
               }}
             >
               {t('consulting.cta')}
-              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+              <ArrowRight size={16} />
             </a>
           </div>
         </FadeIn>
@@ -172,9 +173,7 @@ export default function Consulting() {
                             borderBottom: idx < card.items.length - 1 ? '1px solid var(--color-border)' : 'none',
                           }}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary-text)', flexShrink: 0, marginTop: '2px' }}>
-                            check
-                          </span>
+                          <Check size={16} color="var(--color-primary-text)" style={{ flexShrink: 0, marginTop: '2px' }} />
                           <span style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5 }}>{item}</span>
                         </div>
                       ))}
@@ -213,7 +212,7 @@ export default function Consulting() {
                 }}
               >
                 {t('consulting.cta')}
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                <ArrowRight size={18} />
               </a>
             </div>
           </FadeIn>

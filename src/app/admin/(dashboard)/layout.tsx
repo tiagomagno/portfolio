@@ -23,6 +23,12 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f3f0' }}>
+      {/* Ícones do admin (CasesTable) usam Material Symbols. Carregado só aqui —
+          não no layout raiz — pra não pesar o carregamento das páginas públicas
+          com um recurso bloqueando a renderização (era o maior gargalo do PageSpeed). */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <header
         style={{
           display: 'flex',
