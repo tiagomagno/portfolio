@@ -19,9 +19,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const item = getPortfolioItemBySlug(slug);
   if (!item?.caseStudy) return { title: 'Case não encontrado - Tiago Magno' };
 
+  const overrides = await getCaseAssetOverrides(slug);
+  const coverImage = overrides?.coverImage ?? item.image;
+  const title = `${item.empresa} - Tiago Magno`;
+  const description = item.caseStudy.heroSubtitle;
+
   return {
-    title: `${item.empresa} - Tiago Magno`,
-    description: item.caseStudy.heroSubtitle,
+    title,
+    description,
+    alternates: { canonical: `/portfolio/${slug}` },
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url: `/portfolio/${slug}`,
+      images: coverImage ? [{ url: coverImage, alt: item.empresa }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: coverImage ? [coverImage] : undefined,
+    },
   };
 }
 
@@ -54,7 +73,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Header />
-      <main>
+      <main id="main-content">
         <CaseStudyPage item={resolvedItem} hiddenSlugs={[...hiddenSlugs]} />
       </main>
       <Footer />

@@ -29,6 +29,7 @@ const DEFAULT_METADATA: Metadata = {
   keywords: ['UX Designer', 'Product Designer', 'UX Design', 'Product Design', 'Design Thinking', 'UI Design', 'Design System'],
   authors: [{ name: 'Tiago Magno' }],
   metadataBase: new URL('https://tiagosmagno.com.br'),
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     url: 'https://tiagosmagno.com.br',
@@ -61,6 +62,23 @@ export async function generateMetadata(): Promise<Metadata> {
   return withSeoOverride(DEFAULT_METADATA, override);
 }
 
+// Schema.org Person: declara a entidade "Tiago Magno" pra buscadores tradicionais
+// e mecanismos de busca por IA (GEO) — sem isso o site tinha zero dados estruturados.
+const PERSON_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Tiago Magno',
+  jobTitle: 'UX Designer Sênior',
+  description:
+    'UX Designer Sênior com mais de 20 anos de experiência em Product Design, UI Design, Design Systems e consultoria de produto.',
+  url: 'https://tiagosmagno.com.br',
+  image: 'https://tiagosmagno.com.br/eu.jpg',
+  email: 'mailto:tiagosilvamagno@gmail.com',
+  sameAs: ['https://www.linkedin.com/in/tiagosmagno/'],
+  address: { '@type': 'PostalAddress', addressLocality: 'Manaus', addressRegion: 'AM', addressCountry: 'BR' },
+  knowsAbout: ['UX Design', 'UI Design', 'Design Systems', 'Product Design', 'Arquitetura da Informação', 'UX Research'],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -71,6 +89,11 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <meta name="theme-color" content="#ffffff" />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
+        />
       </head>
       <body>
         <SmoothScrollProvider>

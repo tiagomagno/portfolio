@@ -8,6 +8,7 @@ import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 const DEFAULT_METADATA: Metadata = {
   title: 'Briefing - Tiago Magno',
   description: 'Inicie seu projeto com um briefing detalhado e personalizado.',
+  alternates: { canonical: '/briefing' },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,6 +22,7 @@ export default function BriefingPage() {
       <Header />
 
       <main
+        id="main-content"
         style={{
           minHeight: '100vh',
           background: 'var(--color-bg)',

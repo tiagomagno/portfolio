@@ -13,6 +13,7 @@ import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 const DEFAULT_METADATA: Metadata = {
   title: 'Portfólio - Tiago Magno',
   description: 'Uma seleção de trabalhos em UX/UI, produtos digitais, identidade visual e design systems ao longo de mais de 20 anos de carreira.',
+  alternates: { canonical: '/portfolio' },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,7 +30,7 @@ export default async function PortfolioPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main-content">
         <PortfolioHero />
         <SectionDivider from={SURFACE.base} to={SURFACE.raised} />
         <PortfolioGrid overrides={Object.fromEntries(overrides)} hiddenSlugs={[...hiddenSlugs]} />

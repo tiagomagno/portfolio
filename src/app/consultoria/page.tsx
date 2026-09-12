@@ -7,6 +7,7 @@ import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 const DEFAULT_METADATA: Metadata = {
   title: 'Consultoria - Tiago Magno',
   description: 'Consultoria PJ em UX/UI e Product Design: diagnóstico, execução e evolução contínua, integrado ao seu time.',
+  alternates: { canonical: '/consultoria' },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,7 +19,7 @@ export default function ConsultoriaPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main-content">
         <Consulting />
       </main>
       <Footer />
