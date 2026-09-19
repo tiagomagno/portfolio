@@ -98,8 +98,8 @@ export default function BriefingPage() {
                   marginBottom: '16px',
                 }}
               >
-                Conte-me sobre o seu{' '}
-                <span>Desafio</span>
+                Vamos entender o seu{' '}
+                <span>desafio</span>
               </h1>
               <p
                 style={{
@@ -110,9 +110,9 @@ export default function BriefingPage() {
                   margin: '0 auto',
                 }}
               >
-                Este briefing nos ajudará a entender perfeitamente o cenário do seu produto ou
-                serviço. Responda com calma, os detalhes preenchidos aqui serão a base da nossa
-                estratégia.
+                Responda algumas perguntas sobre sua empresa, seu produto e o momento atual.
+                Isso ajuda a preparar uma conversa mais objetiva sobre como posso contribuir.
+                Depois do envio, o retorno acontece em até 24 horas úteis.
               </p>
             </div>
           </FadeIn>

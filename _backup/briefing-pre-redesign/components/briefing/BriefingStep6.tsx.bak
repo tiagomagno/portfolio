@@ -4,13 +4,19 @@ import React from 'react';
 import {
   UseFormRegister,
   FieldErrors,
+  UseFormSetValue,
+  UseFormGetValues,
   useFormContext,
 } from 'react-hook-form';
-import { BriefingFormData, PREFERRED_CONTACT_OPTIONS } from '@/lib/briefing';
+import { BriefingFormData } from '@/lib/briefing';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
   errors: FieldErrors<BriefingFormData>;
+  setValue: UseFormSetValue<BriefingFormData>;
+  getValues: UseFormGetValues<BriefingFormData>;
+  touchedFields: Partial<Record<keyof BriefingFormData, boolean>>;
+  isSubmitted: boolean;
 }
 
 function maskPhone(value: string): string {
@@ -44,9 +50,8 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function BriefingStep6({ register, errors }: Props) {
-  const { formState: { submitCount }, watch } = useFormContext<BriefingFormData>();
+  const { formState: { submitCount } } = useFormContext<BriefingFormData>();
   const whatsappReg = register('whatsapp');
-  const selectedContact = watch('preferredContact');
 
   // Campos que o usuário tocou manualmente neste step (via blur)
   const [blurred, setBlurred] = React.useState<Set<string>>(new Set());
@@ -64,8 +69,9 @@ export function BriefingStep6({ register, errors }: Props) {
     err(field) ? '#ef4444' : 'var(--color-border)';
 
   const simpleFields = [
-    { id: 'name' as const,  label: 'Seu Nome / Empresa',  placeholder: 'João Silva',       type: 'text',  autoComplete: 'name',  reg: register('name') },
-    { id: 'email' as const, label: 'E-mail Profissional', placeholder: 'joao@empresa.com', type: 'email', autoComplete: 'email', reg: register('email') },
+    { id: 'name' as const,     label: 'Seu Nome / Empresa',    placeholder: 'João Silva',              type: 'text',  autoComplete: 'name',  reg: register('name') },
+    { id: 'email' as const,    label: 'E-mail Profissional',   placeholder: 'joao@empresa.com',        type: 'email', autoComplete: 'email', reg: register('email') },
+    { id: 'deadline' as const, label: 'Prazo Desejado',        placeholder: 'Ex: 30 dias, Próximo mês',type: 'text',  autoComplete: 'off',    reg: register('deadline') },
   ];
 
   return (
@@ -115,45 +121,6 @@ export function BriefingStep6({ register, errors }: Props) {
             <p style={{ fontSize: '12px', color: '#ef4444' }}>{err('whatsapp')}</p>
           )}
         </div>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Forma preferida de contato</label>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-          {PREFERRED_CONTACT_OPTIONS.map((opt) => {
-            const isSelected = selectedContact === opt.value;
-            return (
-              <label
-                key={opt.value}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '12px 16px',
-                  background: isSelected ? 'rgba(255,86,37,0.08)' : 'var(--color-bg-high)',
-                  border: `1px solid ${isSelected ? '#ff5625' : 'var(--color-border)'}`,
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: isSelected ? 600 : 400,
-                  color: isSelected ? '#ff5625' : 'var(--color-text-muted)',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <input
-                  type="radio"
-                  value={opt.value}
-                  {...register('preferredContact')}
-                  className="sr-only-input"
-                />
-                {opt.label}
-              </label>
-            );
-          })}
-        </div>
-        {err('preferredContact') && (
-          <p style={{ fontSize: '12px', color: '#ef4444' }}>{err('preferredContact')}</p>
-        )}
       </div>
     </div>
   );

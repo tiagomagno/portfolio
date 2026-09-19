@@ -1,13 +1,7 @@
 'use client';
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
-import { BriefingFormData } from '@/lib/briefing';
-
-const AUDIENCE_OPTIONS = [
-  { value: 'pf', label: 'Pessoa Física (B2C)' },
-  { value: 'pj', label: 'Empresas (B2B)' },
-  { value: 'ambos', label: 'Ambos' },
-];
+import { BriefingFormData, BUDGET_RANGE_OPTIONS, ENGAGEMENT_FORMAT_OPTIONS } from '@/lib/briefing';
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
@@ -18,7 +12,7 @@ const labelStyle: React.CSSProperties = {
   color: 'var(--color-text-muted)',
 };
 
-const textareaStyle: React.CSSProperties = {
+const inputStyle: React.CSSProperties = {
   width: '100%',
   boxSizing: 'border-box',
   background: 'var(--color-bg-high)',
@@ -29,112 +23,118 @@ const textareaStyle: React.CSSProperties = {
   fontSize: '14px',
   fontFamily: 'inherit',
   outline: 'none',
-  resize: 'vertical',
-  minHeight: '110px',
+  height: '46px',
 };
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
   errors: {
-    targetAudience?: FieldError;
-    idealCustomer?: FieldError;
-    differential?: FieldError;
+    deadline?: FieldError;
+    engagementFormat?: FieldError;
   };
 }
 
 export function BriefingStep5({ register, errors }: Props) {
   const { watch } = useFormContext<BriefingFormData>();
-  const selected = watch('targetAudience');
+  const selectedBudget = watch('budgetRange');
+  const selectedFormat = watch('engagementFormat');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Sobre o Seu Negócio
+        Prazo e formato de trabalho
       </h3>
 
-      {/* Target audience pills */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Quem é o seu público-alvo principal?</label>
-        <style>{`
-          .audience-pill:focus-within {
-            box-shadow: 0 0 0 2px var(--color-primary);
-          }
-        `}</style>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-          {AUDIENCE_OPTIONS.map((opt) => {
-            const isSelected = selected === opt.value;
+        <label htmlFor="deadline" style={labelStyle}>Prazo desejado</label>
+        <input
+          id="deadline"
+          type="text"
+          autoComplete="off"
+          placeholder="Ex: 30 dias, próximo trimestre…"
+          style={inputStyle}
+          {...register('deadline')}
+        />
+        {errors.deadline && (
+          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
+            {errors.deadline.message}
+          </p>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={labelStyle}>Formato de trabalho preferido</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {ENGAGEMENT_FORMAT_OPTIONS.map((opt) => {
+            const isSelected = selectedFormat === opt.value;
             return (
               <label
                 key={opt.value}
-                className="audience-pill"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '12px 16px',
+                  gap: '12px',
+                  padding: '14px 16px',
                   background: isSelected ? 'rgba(255,86,37,0.08)' : 'var(--color-bg-high)',
                   border: `1px solid ${isSelected ? '#ff5625' : 'var(--color-border)'}`,
                   borderRadius: '12px',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  fontWeight: isSelected ? 600 : 400,
-                  color: isSelected ? '#ff5625' : 'var(--color-text-muted)',
+                  color: isSelected ? 'var(--color-text)' : 'var(--color-text-muted)',
                   transition: 'all 0.15s',
-                  textAlign: 'center',
                 }}
               >
                 <input
                   type="radio"
                   value={opt.value}
-                  {...register('targetAudience')}
-                  className="sr-only-input"
+                  {...register('engagementFormat')}
+                  style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                {opt.label}
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
               </label>
             );
           })}
         </div>
-        {errors.targetAudience && (
+        {errors.engagementFormat && (
           <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
-            {errors.targetAudience.message}
+            {errors.engagementFormat.message}
           </p>
         )}
       </div>
 
-      {/* Ideal customer */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label htmlFor="idealCustomer" style={labelStyle}>
-          Como você descreve seu cliente ideal?
-        </label>
-        <textarea
-          id="idealCustomer"
-          {...register('idealCustomer')}
-          placeholder="Ex: Clínicas médicas de médio porte, ou jovens de 20 a 30 anos que gostam de esportes..."
-          style={textareaStyle}
-        />
-        {errors.idealCustomer && (
-          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
-            {errors.idealCustomer.message}
-          </p>
-        )}
-      </div>
-
-      {/* Differential */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label htmlFor="differential" style={labelStyle}>
-          O que torna sua empresa única? (Qual seu diferencial?)
-        </label>
-        <textarea
-          id="differential"
-          {...register('differential')}
-          placeholder="Por que os clientes compram de você e não do concorrente?"
-          style={textareaStyle}
-        />
-        {errors.differential && (
-          <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">
-            {errors.differential.message}
-          </p>
-        )}
+        <label style={labelStyle}>Faixa de investimento estimada (opcional)</label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+          {BUDGET_RANGE_OPTIONS.map((opt) => {
+            const isSelected = selectedBudget === opt.value;
+            return (
+              <label
+                key={opt.value}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '12px 14px',
+                  background: isSelected ? 'rgba(255,86,37,0.08)' : 'var(--color-bg-high)',
+                  border: `1px solid ${isSelected ? '#ff5625' : 'var(--color-border)'}`,
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  color: isSelected ? 'var(--color-text)' : 'var(--color-text-muted)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                <input
+                  type="radio"
+                  value={opt.value}
+                  {...register('budgetRange')}
+                  style={{ width: '15px', height: '15px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
+                />
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+              </label>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

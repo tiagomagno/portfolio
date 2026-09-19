@@ -8,15 +8,11 @@ import { ChevronLeft, ChevronRight, CheckCircle, Loader2 } from 'lucide-react';
 import {
   briefingSchema,
   type BriefingFormData,
-  getCompanyStageLabel,
-  getTeamSizeLabel,
-  getProductTypeLabel,
-  getProductStageLabel,
+  getBusinessSegmentLabel,
+  formatGenericRaioXPainPoints,
   formatMainChallenges,
-  getProjectGoalLabel,
-  getBudgetRangeLabel,
-  getEngagementFormatLabel,
-  getPreferredContactLabel,
+  SPECIALIZED_BRIEFING_SEGMENTS,
+  GENERIC_RAIOX_PAIN_OPTIONS,
 } from '@/lib/briefing';
 import { BriefingStep1 } from './BriefingStep1';
 import BriefingStep2 from './BriefingStep2';
@@ -26,11 +22,11 @@ import { BriefingStep5 } from './BriefingStep5';
 import { BriefingStep6 } from './BriefingStep6';
 
 const STEPS = [
-  { id: 1, key: 'step1', title: 'Empresa' },
-  { id: 2, key: 'step2', title: 'Produto' },
+  { id: 1, key: 'step1', title: 'Negócio' },
+  { id: 2, key: 'step2', title: 'Raio-X' },
   { id: 3, key: 'step3', title: 'Desafio' },
-  { id: 4, key: 'step4', title: 'Objetivo' },
-  { id: 5, key: 'step5', title: 'Prazo' },
+  { id: 4, key: 'step4', title: 'Detalhes' },
+  { id: 5, key: 'step5', title: 'A Empresa' },
   { id: 6, key: 'step6', title: 'Contato' },
 ];
 
@@ -44,23 +40,29 @@ export function BriefingForm() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(briefingSchema) as any,
     defaultValues: {
+      idealCustomer: '',
+      differential: '',
       mainChallenge: [],
-      mainChallengeOther: '',
-      productTypeOther: '',
-      goalDescription: '',
+      features: [],
       name: '',
       email: '',
       whatsapp: '',
       deadline: '',
+      comercio_salesChannel: [],
+      genericRaioXPainPoints: [],
     } as Partial<BriefingFormData>,
   });
 
   const {
     register,
     handleSubmit,
+    watch,
     trigger,
+    getValues,
+    setValue,
+    setError,
     clearErrors,
-    formState: { errors },
+    formState: { errors, touchedFields, isSubmitted },
   } = form;
 
   const totalSteps = STEPS.length;
@@ -73,8 +75,8 @@ export function BriefingForm() {
   const isFirstRenderRef = useRef(true);
 
   useEffect(() => {
-    if (currentStep === totalSteps) {
-      clearErrors(['name', 'email', 'whatsapp', 'preferredContact']);
+    if (currentStep === 6) {
+      clearErrors(['name', 'email', 'whatsapp', 'deadline']);
     }
   }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -90,14 +92,40 @@ export function BriefingForm() {
   }, [currentStepKey]);
 
   const goNext = async () => {
+    if (currentStepKey === 'step1') {
+      const segment = getValues('businessSegment');
+      const otherRaw = getValues('businessSegmentOther') ?? '';
+      const other = typeof otherRaw === 'string' ? otherRaw.trim() : '';
+      if (!segment) { await trigger('businessSegment'); return; }
+      if (segment === 'outro' && other.length < 2) {
+        setError('businessSegmentOther', { type: 'manual', message: 'Informe o segmento do seu negócio (campo obrigatório).' });
+        return;
+      }
+      clearErrors('businessSegmentOther');
+    }
+
+    if (currentStepKey === 'step2') {
+      const seg = getValues('businessSegment');
+      if (seg && !SPECIALIZED_BRIEFING_SEGMENTS.has(seg)) {
+        const pts = (getValues('genericRaioXPainPoints') ?? []) as string[];
+        const allowed = new Set<string>(GENERIC_RAIOX_PAIN_OPTIONS.map((o) => o.id));
+        const painOk = pts.length >= 1 && pts.every((id) => allowed.has(id));
+        if (!painOk) {
+          setError('genericRaioXPainPoints', { type: 'manual', message: 'Marque pelo menos uma opção que represente sua dor ou desafio' });
+          return;
+        }
+        clearErrors('genericRaioXPainPoints');
+      }
+    }
+
     const fieldsToValidate = getFieldsForStep(currentStepKey);
     const ok = await trigger(fieldsToValidate as (keyof BriefingFormData)[]);
     if (ok && currentStep < totalSteps) {
       const nextStep = currentStep + 1;
-      // Limpa erros do step de contato antes de navegar pra ele, evitando
+      // Limpa erros do step 6 antes de navegar para ele, evitando
       // que a validação Zod do schema completo os mostre prematuramente.
       if (nextStep === totalSteps) {
-        clearErrors(['name', 'email', 'whatsapp', 'preferredContact']);
+        clearErrors(['name', 'email', 'whatsapp', 'deadline']);
       }
       setCurrentStep(nextStep);
     }
@@ -110,22 +138,23 @@ export function BriefingForm() {
     setSubmitStatus('idle');
     setErrorMessage('');
     try {
+      const resolvedSegment = data.businessSegment === 'outro'
+        ? data.businessSegmentOther
+        : getBusinessSegmentLabel(data.businessSegment);
+
       const emailParams = {
         Nome: data.name,
         Email: data.email,
         WhatsApp: data.whatsapp,
-        Contato_Preferido: getPreferredContactLabel(data.preferredContact),
-        Momento_Empresa: getCompanyStageLabel(data.companyStage),
-        Tamanho_Time: getTeamSizeLabel(data.teamSize),
-        Tipo_Produto: data.productType === 'outro' ? data.productTypeOther : getProductTypeLabel(data.productType),
-        Estagio_Produto: getProductStageLabel(data.productStage),
+        Segmento: resolvedSegment,
         Desafio_Principal: formatMainChallenges(data.mainChallenge),
-        Outro_Desafio: data.mainChallengeOther?.trim() || '—',
-        Objetivo_Projeto: getProjectGoalLabel(data.projectGoal),
-        Descricao_Objetivo: data.goalDescription,
+        Publico_Alvo: data.targetAudience,
+        Cliente_Ideal: data.idealCustomer,
+        Diferencial: data.differential,
+        Funcionalidades: (data.features || []).join(', '),
         Prazo: data.deadline,
-        Faixa_Investimento: getBudgetRangeLabel(data.budgetRange),
-        Formato_Trabalho: getEngagementFormatLabel(data.engagementFormat),
+        Dores_RaioX: formatGenericRaioXPainPoints(data.genericRaioXPainPoints),
+        Detalhes_Operacao: data.outro_operationDetails?.trim() || '—',
         _subject: 'Novo Briefing de Projeto! 🚀',
         _template: 'box',
       };
@@ -173,7 +202,7 @@ export function BriefingForm() {
           Obrigado! Recebemos seu briefing.
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
-          O retorno acontece em até 24 horas úteis, pra conversarmos sobre escopo e próximos passos.
+          Em breve entraremos em contato para alinhar os próximos passos do seu projeto.
         </p>
         <Link
           href="/"
@@ -223,27 +252,23 @@ export function BriefingForm() {
         {/* Step content */}
         <div style={{ minHeight: '320px' }} key={currentStepKey} ref={stepContentRef} tabIndex={-1}>
           {currentStepKey === 'step1' && (
-            <BriefingStep1 register={register} error={errors.companyStage} teamSizeError={errors.teamSize} />
+            <BriefingStep1 register={register} watch={watch} error={errors.businessSegment} otherError={errors.businessSegmentOther} />
           )}
-          {currentStepKey === 'step2' && (
-            <BriefingStep2
-              register={register}
-              error={errors.productType}
-              otherError={errors.productTypeOther}
-              stageError={errors.productStage}
-            />
-          )}
+          {currentStepKey === 'step2' && <BriefingStep2 />}
           {currentStepKey === 'step3' && (
-            <BriefingStep3 register={register} error={errors.mainChallenge as any} otherError={errors.mainChallengeOther} />
+            <BriefingStep3 register={register} error={errors.mainChallenge as any} />
           )}
           {currentStepKey === 'step4' && (
-            <BriefingStep4 register={register} error={errors.projectGoal} descriptionError={errors.goalDescription} />
+            <BriefingStep4 register={register} watch={watch} error={errors.features as any} />
           )}
           {currentStepKey === 'step5' && (
-            <BriefingStep5 register={register} errors={{ deadline: errors.deadline, engagementFormat: errors.engagementFormat }} />
+            <BriefingStep5 register={register} errors={errors} />
           )}
           {currentStepKey === 'step6' && (
-            <BriefingStep6 register={register} errors={errors} />
+            <BriefingStep6
+              register={register} errors={errors} setValue={setValue} getValues={getValues}
+              touchedFields={touchedFields as any} isSubmitted={isSubmitted}
+            />
           )}
         </div>
 
@@ -318,12 +343,18 @@ export function BriefingForm() {
 
 function getFieldsForStep(stepKey: string): (keyof BriefingFormData)[] {
   const map: Record<string, (keyof BriefingFormData)[]> = {
-    step1: ['companyStage', 'teamSize'],
-    step2: ['productType', 'productTypeOther', 'productStage'],
-    step3: ['mainChallenge', 'mainChallengeOther'],
-    step4: ['projectGoal', 'goalDescription'],
-    step5: ['deadline', 'budgetRange', 'engagementFormat'],
-    step6: ['name', 'email', 'whatsapp', 'preferredContact'],
+    step1: ['businessSegment', 'businessSegmentOther'],
+    step2: [
+      'advocacia_practiceAreas', 'advocacia_format', 'advocacia_screening', 'advocacia_caseFocus',
+      'saude_attendanceType', 'saude_mainVolume', 'saude_hasMedicalSoftware', 'saude_focus',
+      'comercio_salesChannel', 'comercio_salesType', 'comercio_logistics', 'comercio_hasERP',
+      'servicos_closureModel', 'servicos_proposalVolume', 'servicos_mainPainPoint',
+      'genericRaioXPainPoints', 'outro_operationDetails',
+    ],
+    step3: ['mainChallenge'],
+    step4: ['features'],
+    step5: ['targetAudience', 'idealCustomer', 'differential'],
+    step6: ['name', 'email', 'whatsapp', 'deadline'],
   };
   return map[stepKey] ?? [];
 }

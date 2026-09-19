@@ -2,15 +2,13 @@
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, MAIN_CHALLENGE_OPTIONS } from '@/lib/briefing';
-import { Input } from '@/components/ui/Input';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
   error?: FieldError;
-  otherError?: FieldError;
 }
 
-export function BriefingStep3({ register, error, otherError }: Props) {
+export function BriefingStep3({ register, error }: Props) {
   const { watch } = useFormContext<BriefingFormData>();
   const selected = watch('mainChallenge') ?? [];
 
@@ -18,7 +16,7 @@ export function BriefingStep3({ register, error, otherError }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <div>
         <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px', lineHeight: 1.2 }}>
-          Qual o principal desafio hoje?
+          Em qual área você precisa de mais ajuda hoje?
         </h3>
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', margin: 0 }}>
           Selecione todos que se aplicam.
@@ -56,16 +54,6 @@ export function BriefingStep3({ register, error, otherError }: Props) {
           );
         })}
       </div>
-
-      {selected.includes('outro') && (
-        <Input
-          {...register('mainChallengeOther')}
-          label="Qual outro desafio?"
-          placeholder="Descreva em poucas palavras"
-          required
-          error={otherError?.message}
-        />
-      )}
 
       {error && (
         <p style={{ fontSize: '12px', color: '#ef4444' }} role="alert">

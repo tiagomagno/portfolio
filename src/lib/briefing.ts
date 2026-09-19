@@ -5,189 +5,91 @@
 
 import { z } from 'zod';
 
-/** Lista para o select (valor, rótulo, grupo de optgroup) */
-export const BUSINESS_SEGMENT_OPTIONS = [
-  {
-    group: 'Serviços profissionais e atendimento',
-    value: 'advocacia',
-    label: 'Escritório de Advocacia',
-  },
-  {
-    group: 'Serviços profissionais e atendimento',
-    value: 'saude',
-    label: 'Clínica, consultório ou hospital',
-  },
-  {
-    group: 'Serviços profissionais e atendimento',
-    value: 'servicos',
-    label: 'Empresa de serviços (B2B)',
-  },
-  {
-    group: 'Comércio e varejo',
-    value: 'comercio',
-    label: 'Comércio (varejo ou atacado)',
-  },
-  {
-    group: 'Comércio e varejo',
-    value: 'varejo_online',
-    label: 'E-commerce / varejo digital',
-  },
-  {
-    group: 'Tecnologia e conhecimento',
-    value: 'tecnologia_saas',
-    label: 'Tecnologia, software ou SaaS',
-  },
-  {
-    group: 'Tecnologia e conhecimento',
-    value: 'educacao',
-    label: 'Educação, cursos ou treinamentos',
-  },
-  {
-    group: 'Tecnologia e conhecimento',
-    value: 'midia_marketing',
-    label: 'Mídia, marketing ou publicidade',
-  },
-  {
-    group: 'Operações e indústria',
-    value: 'industria_manufatura',
-    label: 'Indústria ou manufatura',
-  },
-  {
-    group: 'Operações e indústria',
-    value: 'agronegocio',
-    label: 'Agronegócio',
-  },
-  {
-    group: 'Operações e indústria',
-    value: 'construcao_engenharia',
-    label: 'Construção ou engenharia',
-  },
-  {
-    group: 'Operações e indústria',
-    value: 'logistica_transporte',
-    label: 'Logística ou transporte',
-  },
-  {
-    group: 'Operações e indústria',
-    value: 'energia_sustentabilidade',
-    label: 'Energia ou sustentabilidade',
-  },
-  {
-    group: 'Experiência e consumo',
-    value: 'alimentacao_hospedagem',
-    label: 'Restaurante, bar ou hotelaria',
-  },
-  {
-    group: 'Experiência e consumo',
-    value: 'estetica_bemestar',
-    label: 'Estética, beleza ou bem-estar',
-  },
-  {
-    group: 'Experiência e consumo',
-    value: 'eventos_entretenimento',
-    label: 'Eventos, shows ou entretenimento',
-  },
-  {
-    group: 'Experiência e consumo',
-    value: 'turismo_lazer',
-    label: 'Turismo, lazer ou agência de viagens',
-  },
-  {
-    group: 'Outros setores',
-    value: 'imobiliario',
-    label: 'Imobiliário ou incorporação',
-  },
-  {
-    group: 'Outros setores',
-    value: 'financeiro_seguros',
-    label: 'Financeiro, investimentos ou seguros',
-  },
-  {
-    group: 'Outros setores',
-    value: 'saude_animal',
-    label: 'Veterinária ou saúde animal',
-  },
-  {
-    group: 'Outros setores',
-    value: 'automotivo',
-    label: 'Automotivo, oficina ou autopeças',
-  },
-  {
-    group: 'Outros setores',
-    value: 'moda_textil',
-    label: 'Moda, confecção ou têxtil',
-  },
-  {
-    group: 'Outros setores',
-    value: 'arte_cultura',
-    label: 'Arte, cultura ou produção audiovisual',
-  },
-  {
-    group: 'Outros setores',
-    value: 'associacao_ong',
-    label: 'Associação, ONG ou terceiro setor',
-  },
-  {
-    group: 'Outros setores',
-    value: 'consultoria_corporativa',
-    label: 'Consultoria geral (não jurídica)',
-  },
-  {
-    group: 'Outros setores',
-    value: 'rh_recursos_humanos',
-    label: 'RH, recrutamento ou people',
-  },
-  {
-    group: 'Outros setores',
-    value: 'outro',
-    label: 'Outro segmento (especificar)',
-  },
+// ── Step 1 — Sobre a empresa ────────────────────────────────────────────
+
+export const COMPANY_STAGE_OPTIONS = [
+  { value: 'startup', label: 'Startup em fase de crescimento' },
+  { value: 'scaleup', label: 'Scale-up' },
+  { value: 'estabelecida', label: 'Empresa estabelecida' },
+  { value: 'time_interno', label: 'Time interno de produto ou engenharia' },
 ] as const;
 
-export type BusinessSegment = (typeof BUSINESS_SEGMENT_OPTIONS)[number]['value'];
+export const COMPANY_STAGES = COMPANY_STAGE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof COMPANY_STAGE_OPTIONS)[number]['value'],
+  ...(typeof COMPANY_STAGE_OPTIONS)[number]['value'][],
+];
+export type CompanyStage = (typeof COMPANY_STAGE_OPTIONS)[number]['value'];
 
-/** Segmentos com formulário “Raio-X” dedicado no passo 2 */
-export const SPECIALIZED_BRIEFING_SEGMENTS = new Set<BusinessSegment>([
-  'advocacia',
-  'saude',
-  'servicos',
-  'comercio',
-]);
+export const TEAM_SIZE_OPTIONS = [
+  { value: 'sem_time', label: 'Ainda não tenho um time de produto' },
+  { value: '1_5', label: '1 a 5 pessoas' },
+  { value: '6_20', label: '6 a 20 pessoas' },
+  { value: 'mais_20', label: 'Mais de 20 pessoas' },
+] as const;
 
-export const BUSINESS_SEGMENTS = BUSINESS_SEGMENT_OPTIONS.map(
-  (o) => o.value
-) as unknown as readonly [BusinessSegment, ...BusinessSegment[]];
+export const TEAM_SIZES = TEAM_SIZE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof TEAM_SIZE_OPTIONS)[number]['value'],
+  ...(typeof TEAM_SIZE_OPTIONS)[number]['value'][],
+];
+export type TeamSize = (typeof TEAM_SIZE_OPTIONS)[number]['value'];
 
-const BUSINESS_SEGMENT_LABELS: Record<BusinessSegment, string> =
-  BUSINESS_SEGMENT_OPTIONS.reduce(
-    (acc, o) => {
-      acc[o.value] = o.label;
-      return acc;
-    },
-    {} as Record<BusinessSegment, string>
-  );
+// ── Step 2 — Sobre o produto ────────────────────────────────────────────
 
-export function getBusinessSegmentLabel(segment: BusinessSegment): string {
-  return BUSINESS_SEGMENT_LABELS[segment];
+export const PRODUCT_TYPE_OPTIONS = [
+  { value: 'app_web', label: 'Aplicação web' },
+  { value: 'app_mobile', label: 'Aplicativo mobile' },
+  { value: 'ecommerce', label: 'E-commerce' },
+  { value: 'sistema_interno', label: 'Sistema interno / B2B' },
+  { value: 'produto_novo', label: 'Produto que ainda não existe' },
+  { value: 'outro', label: 'Outro tipo de produto' },
+] as const;
+
+export const PRODUCT_TYPES = PRODUCT_TYPE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof PRODUCT_TYPE_OPTIONS)[number]['value'],
+  ...(typeof PRODUCT_TYPE_OPTIONS)[number]['value'][],
+];
+export type ProductType = (typeof PRODUCT_TYPE_OPTIONS)[number]['value'];
+
+export const PRODUCT_STAGE_OPTIONS = [
+  { value: 'ideia', label: 'Ainda é uma ideia' },
+  { value: 'mvp', label: 'MVP em desenvolvimento' },
+  { value: 'operacao_evoluir', label: 'Já está em operação e precisa evoluir' },
+  { value: 'operacao_problemas', label: 'Já está em operação, mas com problemas de uso' },
+] as const;
+
+export const PRODUCT_STAGES = PRODUCT_STAGE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof PRODUCT_STAGE_OPTIONS)[number]['value'],
+  ...(typeof PRODUCT_STAGE_OPTIONS)[number]['value'][],
+];
+export type ProductStage = (typeof PRODUCT_STAGE_OPTIONS)[number]['value'];
+
+function getLabel<T extends string>(options: readonly { value: T; label: string }[], value: T): string {
+  return options.find((o) => o.value === value)?.label ?? value;
 }
 
-export const MAIN_CHALLENGES = [
-  'branding',
-  'website',
-  'social',
-  'growth',
-  'uxui',
-  'audiovisual',
+export const getCompanyStageLabel = (v: CompanyStage) => getLabel(COMPANY_STAGE_OPTIONS, v);
+export const getTeamSizeLabel = (v: TeamSize) => getLabel(TEAM_SIZE_OPTIONS, v);
+export const getProductTypeLabel = (v: ProductType) => getLabel(PRODUCT_TYPE_OPTIONS, v);
+export const getProductStageLabel = (v: ProductStage) => getLabel(PRODUCT_STAGE_OPTIONS, v);
+
+// ── Step 3 — Principal desafio ──────────────────────────────────────────
+// Espelha os problemas definidos na Etapa 1 do plano de posicionamento.
+
+export const MAIN_CHALLENGE_OPTIONS = [
+  { value: 'produto_dificil_usar', label: 'O produto ficou difícil de usar' },
+  { value: 'inconsistencia_visual', label: 'Telas inconsistentes / sem design system que escale' },
+  { value: 'nao_acompanha_negocio', label: 'A interface não acompanha a complexidade do negócio' },
+  { value: 'falta_validacao', label: 'Vamos lançar algo novo sem validar com usuários' },
+  { value: 'retrabalho_handoff', label: 'Retrabalho entre design e desenvolvimento' },
+  { value: 'decisoes_por_opiniao', label: 'Decisões de design tomadas por opinião, não evidência' },
+  { value: 'outro', label: 'Outro desafio' },
 ] as const;
 
-export const MAIN_CHALLENGE_OPTIONS: { value: (typeof MAIN_CHALLENGES)[number]; label: string }[] = [
-  { value: 'branding', label: 'Criar / Modernizar minha Identidade Visual' },
-  { value: 'website', label: 'Desenvolver um Novo Site, Loja ou Sistema' },
-  { value: 'social', label: 'Profissionalizar minhas Redes Sociais' },
-  { value: 'growth', label: 'Atrair mais Clientes e Aumentar Vendas com Anúncios' },
-  { value: 'uxui', label: 'Melhorar a experiência / Design de um App ou Software' },
-  { value: 'audiovisual', label: 'Realizar produção de Fotos ou Vídeos institucionais' },
+export const MAIN_CHALLENGES = MAIN_CHALLENGE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof MAIN_CHALLENGE_OPTIONS)[number]['value'],
+  ...(typeof MAIN_CHALLENGE_OPTIONS)[number]['value'][],
 ];
+export type MainChallenge = (typeof MAIN_CHALLENGE_OPTIONS)[number]['value'];
 
 const MAIN_CHALLENGE_LABEL_BY_VALUE: Record<string, string> = Object.fromEntries(
   MAIN_CHALLENGE_OPTIONS.map((o) => [o.value, o.label])
@@ -198,161 +100,126 @@ export function formatMainChallenges(values: string[] | undefined): string {
   return values.map((v) => MAIN_CHALLENGE_LABEL_BY_VALUE[v] ?? v).join('; ');
 }
 
-export const TARGET_AUDIENCE = ['pf', 'pj', 'ambos'] as const;
+// ── Step 4 — Objetivo do projeto ────────────────────────────────────────
 
-// Constantes de Enums para Segmentos
-export const SAUDE_ATTENDANCE_TYPE = ['particular', 'convenio', 'ambos'] as const;
-export const SAUDE_FOCUS = ['exames', 'consultas', 'procedimentos'] as const;
-export const COMERCIO_SALES_TYPE = ['varejo', 'atacado', 'b2b', 'varejo_atacado'] as const;
-export const COMERCIO_LOGISTICS = ['local', 'nacional', 'internacional'] as const;
-export const SERVICOS_CLOSURE_MODEL = ['orcamento', 'visita', 'tabela'] as const;
-export const ADVOCACIA_FORMAT = ['online', 'presencial', 'misto'] as const;
-export const ADVOCACIA_FOCUS = ['volume', 'estrategico'] as const;
-export const YES_NO = ['sim', 'nao'] as const;
-
-/** Opções de dor/desafio — Raio-X genérico (passo 2, segmentos não especializados) */
-export const GENERIC_RAIOX_PAIN_OPTIONS = [
-  { id: 'poucos_leads', label: 'Poucos leads ou contatos qualificados' },
-  { id: 'presenca_digital', label: 'Site ou redes sociais não trazem clientes' },
-  { id: 'conversao_baixa', label: 'Interesse nas visitas, mas poucas vendas / conversão baixa' },
-  { id: 'concorrencia_preco', label: 'Concorrência forte ou disputa por preço' },
-  { id: 'processo_followup', label: 'Sem processo de vendas ou follow-up organizado' },
-  { id: 'indicacao_reputacao', label: 'Poucas indicações ou reputação fraca no digital' },
-  { id: 'canal_marketing', label: 'Não sei onde investir (anúncios, SEO, conteúdo…)' },
-  { id: 'tempo_equipe', label: 'Pouco tempo ou equipe enxuta para marketing' },
-  { id: 'sazonalidade', label: 'Demanda irregular, sazonalidade ou picos difíceis de prever' },
+export const PROJECT_GOAL_OPTIONS = [
+  { value: 'redesign', label: 'Redesenhar um produto existente' },
+  { value: 'criacao_zero', label: 'Criar um produto novo, do zero' },
+  { value: 'consultoria_continua', label: 'Ter apoio contínuo dentro do time (consultoria)' },
+  { value: 'diagnostico', label: 'Um diagnóstico ou auditoria de UX' },
+  { value: 'apoio_pontual', label: 'Apoio pontual em uma entrega específica' },
 ] as const;
 
-// Schema base - Contato
+export const PROJECT_GOALS = PROJECT_GOAL_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof PROJECT_GOAL_OPTIONS)[number]['value'],
+  ...(typeof PROJECT_GOAL_OPTIONS)[number]['value'][],
+];
+export type ProjectGoal = (typeof PROJECT_GOAL_OPTIONS)[number]['value'];
+
+export const getProjectGoalLabel = (v: ProjectGoal) => getLabel(PROJECT_GOAL_OPTIONS, v);
+
+// ── Step 5 — Prazo, investimento e formato de trabalho ──────────────────
+
+export const BUDGET_RANGE_OPTIONS = [
+  { value: 'ate_10k', label: 'Até R$ 10 mil' },
+  { value: '10k_30k', label: 'R$ 10 mil a R$ 30 mil' },
+  { value: '30k_60k', label: 'R$ 30 mil a R$ 60 mil' },
+  { value: 'acima_60k', label: 'Acima de R$ 60 mil' },
+  { value: 'nao_sei', label: 'Ainda não sei' },
+] as const;
+
+export const BUDGET_RANGES = BUDGET_RANGE_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof BUDGET_RANGE_OPTIONS)[number]['value'],
+  ...(typeof BUDGET_RANGE_OPTIONS)[number]['value'][],
+];
+export type BudgetRange = (typeof BUDGET_RANGE_OPTIONS)[number]['value'];
+
+export const ENGAGEMENT_FORMAT_OPTIONS = [
+  { value: 'projeto_pontual', label: 'Projeto pontual, com escopo fechado' },
+  { value: 'consultoria_mensal', label: 'Consultoria contínua, mensal' },
+  { value: 'nao_sei', label: 'Ainda não sei / quero conversar sobre isso' },
+] as const;
+
+export const ENGAGEMENT_FORMATS = ENGAGEMENT_FORMAT_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof ENGAGEMENT_FORMAT_OPTIONS)[number]['value'],
+  ...(typeof ENGAGEMENT_FORMAT_OPTIONS)[number]['value'][],
+];
+export type EngagementFormat = (typeof ENGAGEMENT_FORMAT_OPTIONS)[number]['value'];
+
+export const getBudgetRangeLabel = (v: BudgetRange | undefined) => (v ? getLabel(BUDGET_RANGE_OPTIONS, v) : '—');
+export const getEngagementFormatLabel = (v: EngagementFormat) => getLabel(ENGAGEMENT_FORMAT_OPTIONS, v);
+
+// ── Step 6 — Contato ─────────────────────────────────────────────────────
+
+export const PREFERRED_CONTACT_OPTIONS = [
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'email', label: 'E-mail' },
+] as const;
+
+export const PREFERRED_CONTACTS = PREFERRED_CONTACT_OPTIONS.map((o) => o.value) as unknown as readonly [
+  (typeof PREFERRED_CONTACT_OPTIONS)[number]['value'],
+  ...(typeof PREFERRED_CONTACT_OPTIONS)[number]['value'][],
+];
+export type PreferredContact = (typeof PREFERRED_CONTACT_OPTIONS)[number]['value'];
+
+export const getPreferredContactLabel = (v: PreferredContact) => getLabel(PREFERRED_CONTACT_OPTIONS, v);
+
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   email: z.string().email('E-mail inválido'),
   whatsapp: z
     .string()
     .regex(/^\(\d{2}\) \d{5}-\d{4}$/, 'WhatsApp inválido. Use o formato (XX) XXXXX-XXXX'),
-  deadline: z.string().min(1, 'Informe o prazo desejado'),
+  preferredContact: z.enum(PREFERRED_CONTACTS, { error: 'Selecione a forma preferida de contato' }),
 });
 
-// Schema completo estruturado para 6 passos
+// ── Schema completo estruturado para 6 passos ───────────────────────────
+
 export const briefingSchema = z
   .object({
-    // Step 1 - Negócio
-    businessSegment: z.enum(BUSINESS_SEGMENTS, {
-      error: 'Selecione o segmento da sua empresa',
-    }),
-    businessSegmentOther: z.string().optional(),
-    
-    // Step 2 - Raio-X do Segmento (Campos Opcionais mas validados via refine)
-    // Advocacia
-    advocacia_practiceAreas: z.string().optional(), // Quais áreas?
-    advocacia_format: z.enum(ADVOCACIA_FORMAT).optional(),
-    advocacia_screening: z.enum(YES_NO).optional(),
-    advocacia_caseFocus: z.enum(ADVOCACIA_FOCUS).optional(),
-    
-    // Saúde
-    saude_attendanceType: z.enum(SAUDE_ATTENDANCE_TYPE).optional(),
-    saude_mainVolume: z.string().optional(),
-    saude_hasMedicalSoftware: z.enum(YES_NO).optional(),
-    saude_focus: z.enum(SAUDE_FOCUS).optional(),
-    
-    // Comércio
-    comercio_salesChannel: z.array(z.string()).optional(),
-    comercio_salesType: z.enum(COMERCIO_SALES_TYPE).optional(),
-    comercio_logistics: z.enum(COMERCIO_LOGISTICS).optional(),
-    comercio_hasERP: z.enum(YES_NO).optional(),
-    
-    // Serviços
-    servicos_closureModel: z.enum(SERVICOS_CLOSURE_MODEL).optional(),
-    servicos_proposalVolume: z.string().optional(),
-    servicos_mainPainPoint: z.string().optional(),
+    // Step 1 - Sobre a empresa
+    companyStage: z.enum(COMPANY_STAGES, { error: 'Selecione como sua empresa se encaixa' }),
+    teamSize: z.enum(TEAM_SIZES, { error: 'Selecione o tamanho do time' }),
 
-    // Raio-X genérico (segmentos sem formulário dedicado)
-    genericRaioXPainPoints: z.array(z.string()).optional(),
-    outro_operationDetails: z.string().optional(),
+    // Step 2 - Sobre o produto
+    productType: z.enum(PRODUCT_TYPES, { error: 'Selecione o tipo de produto' }),
+    productTypeOther: z.string().optional(),
+    productStage: z.enum(PRODUCT_STAGES, { error: 'Selecione o estágio atual do produto' }),
 
-    // Step 3 - Desafio Central (múltipla escolha)
+    // Step 3 - Principal desafio (múltipla escolha)
     mainChallenge: z.array(z.enum(MAIN_CHALLENGES)).min(1, 'Selecione pelo menos uma opção'),
+    mainChallengeOther: z.string().optional(),
 
-    // Step 4 - Detalhes/Funcionalidades (Dinâmico)
-    features: z.array(z.string()).min(1, 'Selecione pelo menos um item'),
+    // Step 4 - Objetivo do projeto
+    projectGoal: z.enum(PROJECT_GOALS, { error: 'Selecione o objetivo do projeto' }),
+    goalDescription: z.string().min(10, 'Descreva o objetivo em algumas palavras (mín. 10 caracteres)'),
 
-    // Step 5 - Sobre a Empresa (Público, Cliente e Diferencial)
-    targetAudience: z.enum(TARGET_AUDIENCE, {
-      error: 'Selecione o público-alvo',
-    }),
-    idealCustomer: z.string().min(5, 'Descreva seu cliente ideal (mín. 5 caracteres)'),
-    differential: z.string().min(10, 'Descreva o diferencial (mín. 10 caracteres)'),
-    
+    // Step 5 - Prazo, investimento e formato de trabalho
+    deadline: z.string().min(1, 'Informe o prazo desejado'),
+    // Campo opcional: quando nenhuma opção é marcada, o react-hook-form reporta
+    // null (não undefined) pra esse grupo de radios sem defaultValue.
+    budgetRange: z
+      .union([z.enum(BUDGET_RANGES), z.literal(''), z.null()])
+      .optional()
+      .transform((v) => (v === '' || v == null ? undefined : v)),
+    engagementFormat: z.enum(ENGAGEMENT_FORMATS, { error: 'Selecione o formato de trabalho' }),
+
     // Step 6 - Contato
     ...contactSchema.shape,
   })
-  .refine((data) => {
-    if (data.businessSegment !== 'outro') return true;
-    const t = data.businessSegmentOther?.trim() ?? '';
-    return t.length >= 2;
-  }, {
-    message: 'Informe o segmento do seu negócio (campo obrigatório).',
-    path: ['businessSegmentOther'],
-  })
-  // Refines para obrigar os campos condicionados
-  .refine((data) => {
-    if (data.businessSegment === 'advocacia') {
-      return !!data.advocacia_practiceAreas && !!data.advocacia_format && !!data.advocacia_screening && !!data.advocacia_caseFocus;
-    }
-    return true;
-  }, {
-    message: 'Preencha todos os campos do Raio-X Jurídico',
-    path: ['advocacia_practiceAreas'], // Colocando no primeiro campo como âncora geral para erro
-  })
-  .refine((data) => {
-    if (data.businessSegment === 'saude') {
-      return !!data.saude_attendanceType && !!data.saude_mainVolume && !!data.saude_hasMedicalSoftware && !!data.saude_focus;
-    }
-    return true;
-  }, {
-    message: 'Preencha todos os campos do Raio-X da Saúde',
-    path: ['saude_mainVolume'],
-  })
-  .refine((data) => {
-    if (data.businessSegment === 'comercio') {
-      return data.comercio_salesChannel && data.comercio_salesChannel.length > 0 && !!data.comercio_salesType && !!data.comercio_logistics && !!data.comercio_hasERP;
-    }
-    return true;
-  }, {
-    message: 'Preencha todos os campos do Raio-X do Comércio',
-    path: ['comercio_logistics'],
-  })
-  .refine((data) => {
-    if (data.businessSegment === 'servicos') {
-      return !!data.servicos_closureModel && !!data.servicos_proposalVolume && !!data.servicos_mainPainPoint;
-    }
-    return true;
-  }, {
-    message: 'Preencha todos os campos do Raio-X de Serviços',
-    path: ['servicos_proposalVolume'],
-  })
-  .refine((data) => {
-    if (SPECIALIZED_BRIEFING_SEGMENTS.has(data.businessSegment)) {
-      return true;
-    }
-    const allowed = new Set<string>(
-      GENERIC_RAIOX_PAIN_OPTIONS.map((o) => o.id)
-    );
-    const pts = data.genericRaioXPainPoints ?? [];
-    if (pts.length < 1) return false;
-    return pts.every((id: string) => allowed.has(id));
-  }, {
-    message: 'Marque pelo menos uma opção que represente sua dor ou desafio',
-    path: ['genericRaioXPainPoints'],
-  });
+  .refine(
+    (data) => {
+      if (data.productType !== 'outro') return true;
+      return (data.productTypeOther?.trim() ?? '').length >= 2;
+    },
+    { message: 'Informe o tipo do seu produto (campo obrigatório).', path: ['productTypeOther'] }
+  )
+  .refine(
+    (data) => {
+      if (!data.mainChallenge.includes('outro')) return true;
+      return (data.mainChallengeOther?.trim() ?? '').length >= 2;
+    },
+    { message: 'Descreva o outro desafio (campo obrigatório).', path: ['mainChallengeOther'] }
+  );
 
 export type BriefingFormData = z.infer<typeof briefingSchema>;
-
-const GENERIC_PAIN_LABEL_BY_ID: Record<string, string> = Object.fromEntries(
-  GENERIC_RAIOX_PAIN_OPTIONS.map((o) => [o.id, o.label])
-);
-
-export function formatGenericRaioXPainPoints(ids: string[] | undefined): string {
-  if (!ids?.length) return '';
-  return ids.map((id) => GENERIC_PAIN_LABEL_BY_ID[id] ?? id).join('; ');
-}
