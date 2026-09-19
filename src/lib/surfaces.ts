@@ -10,6 +10,8 @@ export const SURFACE = {
   raised: '#ffffff',
   /** Image/input card tone sitting on a `raised` section */
   card: '#f3f1ee',
+  /** Very light, subtle tone for floating cards/icon chips that shouldn't compete with content */
+  subtle: '#f8f7f6',
   /** ProcessCard tone (Processo section) — pair with a border, it's close to `base` */
   processCard: '#ffffff',
   /** Footer tone — stays dark by design */

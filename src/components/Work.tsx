@@ -14,8 +14,6 @@ export default function Work() {
     { title: t('work.svc2.title'), label: t('work.svc2.label') },
     { title: t('work.svc3.title'), label: t('work.svc3.label') },
     { title: t('work.svc4.title'), label: t('work.svc4.label') },
-    { title: t('work.svc5.title'), label: t('work.svc5.label') },
-    { title: t('work.svc6.title'), label: t('work.svc6.label') },
   ];
 
   return (
@@ -92,9 +90,7 @@ export default function Work() {
                 background: 'var(--color-primary-text)',
                 color: '#fff',
                 fontWeight: 700,
-                fontSize: '13px',
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
+                fontSize: '14px',
                 padding: '14px 28px',
                 borderRadius: '10px',
                 textDecoration: 'none',

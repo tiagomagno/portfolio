@@ -3,6 +3,15 @@
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { PenTool, Component, Monitor, Wrench, Palette, type LucideIcon } from 'lucide-react';
+
+const GROUP_ICONS: Record<number, LucideIcon> = {
+  1: PenTool,
+  2: Component,
+  3: Monitor,
+  4: Wrench,
+  5: Palette,
+};
 
 export default function Skills() {
   const { t } = useLang();
@@ -10,6 +19,7 @@ export default function Skills() {
   const groups = [1, 2, 3, 4, 5].map((n) => ({
     label: t(`skills.group${n}.label`),
     items: t(`skills.group${n}.items`),
+    Icon: GROUP_ICONS[n],
   }));
 
   return (
@@ -50,13 +60,29 @@ export default function Skills() {
         <div className="skills-grid">
           {groups.map((group, i) => (
             <FadeIn key={group.label} delay={0.1 + i * 0.05}>
-              <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '16px' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
-                  {group.label}
-                </h3>
-                <p style={{ fontSize: '14px', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: 0 }}>
-                  {group.items}
-                </p>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div
+                  style={{
+                    flexShrink: 0,
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '16px',
+                    border: '1px solid var(--color-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <group.Icon size={28} color="var(--color-primary-text)" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
+                    {group.label}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: 0 }}>
+                    {group.items}
+                  </p>
+                </div>
               </div>
             </FadeIn>
           ))}

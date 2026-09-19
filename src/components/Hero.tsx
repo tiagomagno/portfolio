@@ -64,7 +64,7 @@ export default function Hero() {
             minHeight: '100vh',
           }}
         >
-          <div className="hero-inner" style={{ maxWidth: '640px' }}>
+          <div className="hero-inner" style={{ maxWidth: '760px' }}>
             <FadeIn delay={0.1}>
               <h1
                 style={{
@@ -73,27 +73,12 @@ export default function Hero() {
                   lineHeight: 1.0,
                   letterSpacing: '-0.02em',
                   color: '#1a1a1a',
-                  margin: '0 0 16px',
+                  margin: '0 0 24px',
                   whiteSpace: 'pre-line',
                 }}
               >
                 {t('hero.title')}
               </h1>
-            </FadeIn>
-
-            <FadeIn delay={0.15}>
-              <p
-                style={{
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: '#1a1a1a',
-                  lineHeight: 1.4,
-                  maxWidth: '480px',
-                  margin: '0 0 16px',
-                }}
-              >
-                {t('hero.tagline')}
-              </p>
             </FadeIn>
 
             <FadeIn delay={0.2}>
@@ -122,9 +107,7 @@ export default function Hero() {
                     color: '#fff',
                     fontFamily: 'var(--font-headline)',
                     fontWeight: 700,
-                    fontSize: '13px',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
+                    fontSize: '14px',
                     padding: '15px 32px',
                     borderRadius: '10px',
                     textDecoration: 'none',
@@ -144,9 +127,7 @@ export default function Hero() {
                     color: '#1a1a1a',
                     fontFamily: 'var(--font-headline)',
                     fontWeight: 600,
-                    fontSize: '13px',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
+                    fontSize: '14px',
                     padding: '15px 32px',
                     borderRadius: '10px',
                     border: '1px solid rgba(26,26,26,0.15)',

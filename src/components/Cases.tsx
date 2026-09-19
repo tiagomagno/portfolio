@@ -15,12 +15,6 @@ import { SURFACE } from '@/lib/surfaces';
 // nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
 const FEATURED_CASES = PORTFOLIO_ITEMS.filter((item) => item.caseStudy);
 
-function chunk<T>(items: T[], size: number): T[][] {
-  const pages: T[][] = [];
-  for (let i = 0; i < items.length; i += size) pages.push(items.slice(i, i + size));
-  return pages;
-}
-
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
@@ -30,22 +24,22 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
-// No mobile a página do carrossel é 2 colunas x 1 linha (swipe mais suave, sem
-// precisar rolar um par empilhado verticalmente); tablet/desktop seguem 2 linhas.
-function useCarouselLayout() {
-  const [layout, setLayout] = useState({ columns: 3, rows: 2 });
+// Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
+// "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
+function useItemsPerView() {
+  const [itemsPerView, setItemsPerView] = useState(3);
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      if (w <= 560) setLayout({ columns: 2, rows: 1 });
-      else if (w <= 900) setLayout({ columns: 2, rows: 2 });
-      else setLayout({ columns: 3, rows: 2 });
+      if (w <= 560) setItemsPerView(1);
+      else if (w <= 900) setItemsPerView(2);
+      else setItemsPerView(3);
     };
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-  return layout;
+  return itemsPerView;
 }
 
 export default function Cases({
@@ -76,35 +70,59 @@ export default function Cases({
     setShuffledCases(shuffle(visibleFeaturedCases));
   }, [visibleFeaturedCases]);
 
-  const { columns, rows } = useCarouselLayout();
-  const itemsPerPage = columns * rows;
-  const pages = useMemo(() => chunk(shuffledCases, itemsPerPage), [shuffledCases, itemsPerPage]);
-  const totalPages = pages.length;
+  const itemsPerView = useItemsPerView();
+
+  // Carrossel infinito: o track renderiza a lista 3x (anterior/atual/próxima),
+  // sempre parte no início da cópia do meio e, ao chegar perto do fim de uma
+  // ponta, salta silenciosamente (sem animação) pro mesmo ponto na cópia do
+  // meio — dá a sensação de loop sem fim em qualquer direção (arrasto ou seta).
+  const trackItems = useMemo(
+    () => [...shuffledCases, ...shuffledCases, ...shuffledCases],
+    [shuffledCases]
+  );
+  const setCount = shuffledCases.length;
 
   const trackRef = useRef<HTMLDivElement>(null);
-  const [pageIndex, setPageIndex] = useState(0);
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragStartScroll = useRef(0);
   const dragDistance = useRef(0);
   const activePointerId = useRef<number | null>(null);
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Posiciona o track no início da cópia do meio, deslocado uma coluna pra trás,
+  // assim já nasce com uma coluna esmaecida "espiando" nos dois lados (5 colunas:
+  // peek — cheia — cheia — cheia — peek), em vez de começar exatamente no início
+  // de um card (o que só mostrava peek do lado direito, por sobra de espaço).
   useEffect(() => {
-    setPageIndex(0);
-    trackRef.current?.scrollTo({ left: 0 });
-  }, [itemsPerPage]);
-
-  const goToPage = (index: number) => {
     const track = trackRef.current;
-    if (!track) return;
-    const clamped = Math.max(0, Math.min(totalPages - 1, index));
-    track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' });
+    if (!track || setCount === 0) return;
+    const third = track.scrollWidth / 3;
+    const cardStep = third / setCount;
+    track.scrollLeft = third - cardStep;
+  }, [setCount, itemsPerView]);
+
+  const wrapIfNeeded = () => {
+    const track = trackRef.current;
+    if (!track || setCount === 0) return;
+    const third = track.scrollWidth / 3;
+    if (track.scrollLeft < third * 0.5) {
+      track.scrollLeft += third;
+    } else if (track.scrollLeft > third * 1.5) {
+      track.scrollLeft -= third;
+    }
   };
 
   const handleScroll = () => {
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(wrapIfNeeded, 120);
+  };
+
+  const step = (direction: 1 | -1) => {
     const track = trackRef.current;
-    if (!track || track.clientWidth === 0) return;
-    setPageIndex(Math.round(track.scrollLeft / track.clientWidth));
+    if (!track || setCount === 0) return;
+    const cardStep = (track.scrollWidth / 3) / setCount;
+    track.scrollTo({ left: track.scrollLeft + direction * cardStep * itemsPerView, behavior: 'smooth' });
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -192,42 +210,50 @@ export default function Cases({
               </h2>
             </div>
 
-            {totalPages > 1 && (
+            {setCount > 1 && (
               <div style={{ display: 'flex', gap: '8px' }}>
-                <CarouselArrow direction="left" disabled={pageIndex === 0} onClick={() => goToPage(pageIndex - 1)} />
-                <CarouselArrow direction="right" disabled={pageIndex >= totalPages - 1} onClick={() => goToPage(pageIndex + 1)} />
+                <CarouselArrow direction="left" disabled={false} onClick={() => step(-1)} />
+                <CarouselArrow direction="right" disabled={false} onClick={() => step(1)} />
               </div>
             )}
           </div>
         </FadeIn>
+      </div>
 
-        <style>{`
-          .cases-carousel-track {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-          }
-          .cases-carousel-track::-webkit-scrollbar { display: none; }
-          .cases-carousel-page {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            display: grid;
-            grid-template-columns: repeat(${columns}, 1fr);
-            grid-auto-rows: 1fr;
-            gap: 16px;
-          }
-          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
-          .portfolio-card-v2-image img {
-            filter: saturate(0) contrast(1.02);
-            transition: filter 0.5s ease, transform 0.5s ease;
-          }
-          .portfolio-card-v2-link:hover .portfolio-card-v2-image img {
-            filter: saturate(1) contrast(1);
-            transform: scale(1.04);
-          }
-        `}</style>
+      <style>{`
+        .cases-carousel-viewport {
+          -webkit-mask-image: linear-gradient(to right, transparent 0, black 120px, black calc(100% - 120px), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, black 120px, black calc(100% - 120px), transparent 100%);
+        }
+        .cases-carousel-track {
+          display: flex;
+          gap: 16px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          scroll-snap-type: x proximity;
+          scrollbar-width: none;
+        }
+        .cases-carousel-track::-webkit-scrollbar { display: none; }
+        .cases-carousel-card {
+          /* ${itemsPerView} colunas cheias + 1 coluna esmaecida ("peek") de cada lado,
+             todas do mesmo tamanho — ${itemsPerView + 2} colunas iguais ao todo. */
+          flex: 0 0 calc((100% - 16px * (${itemsPerView + 2} - 1)) / ${itemsPerView + 2});
+          scroll-snap-align: start;
+        }
+        .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
+        .portfolio-card-v2-image img {
+          filter: saturate(0) contrast(1.02);
+          transition: filter 0.5s ease, transform 0.5s ease;
+        }
+        .portfolio-card-v2-link:hover .portfolio-card-v2-image img {
+          filter: saturate(1) contrast(1);
+          transform: scale(1.04);
+        }
+      `}</style>
 
+      {/* Full-bleed: sai do section-container de propósito, pra a máscara de
+          esmaecimento nas bordas usar 100% da largura da tela. */}
+      <div className="cases-carousel-viewport">
         <div
           ref={trackRef}
           className="cases-carousel-track"
@@ -239,22 +265,22 @@ export default function Cases({
           onClickCapture={handleTrackClickCapture}
           style={{ cursor: 'grab' }}
         >
-          {pages.map((pageItems, pageI) => (
-            <div key={pageI} className="cases-carousel-page">
-              {pageItems.map((item, i) => {
-                const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
-                return (
-                  <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
-                    <Link href={`/portfolio/${slugify(item.empresa)}`} className="portfolio-card-v2-link">
-                      <PortfolioCard item={item} coverImage={coverImage} categoryLabel={tCategory} priority={pageI === 0 && i === 0} />
+          {trackItems.map((item, idx) => {
+            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
+            return (
+              <div key={`${item.id}-${idx}`} className="cases-carousel-card">
+                <FadeIn delay={0.02 * (idx % setCount)} style={{ height: '100%' }}>
+                  <Link href={`/portfolio/${slugify(item.empresa)}`} className="portfolio-card-v2-link">
+                      <PortfolioCard item={item} coverImage={coverImage} categoryLabel={tCategory} priority={idx === setCount} />
                     </Link>
                   </FadeIn>
-                );
-              })}
-            </div>
-          ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.3}>
           <div style={{ textAlign: 'center', marginTop: '48px' }}>
             <style>{`
@@ -269,7 +295,9 @@ export default function Cases({
                 fontSize: '14px',
                 fontWeight: 700,
                 color: 'var(--color-primary-text)',
-                letterSpacing: '0.04em',
+                padding: '13px 24px',
+                borderRadius: '10px',
+                border: '1px solid rgba(26,26,26,0.15)',
                 textDecoration: 'none',
               }}
             >

@@ -1,9 +1,9 @@
 'use client';
 
 import { useLang } from '@/context/LangContext';
-import Image from 'next/image';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { Camera } from 'lucide-react';
 
 export default function About() {
   const { t } = useLang();
@@ -26,16 +26,21 @@ export default function About() {
         `}</style>
 
         <div className="about-grid">
-          {/* Photo */}
+          {/* Photo (placeholder até a foto final ser definida) */}
           <FadeIn delay={0.1}>
-            <div style={{ position: 'relative', aspectRatio: '4 / 5', borderRadius: '20px', overflow: 'hidden' }}>
-              <Image
-                src="/about-photo.png"
-                alt={t('about.newPhoto.alt')}
-                fill
-                sizes="(max-width: 900px) 100vw, 640px"
-                style={{ objectFit: 'cover', objectPosition: 'center top' }}
-              />
+            <div
+              style={{
+                position: 'relative',
+                aspectRatio: '4 / 3.4',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                background: SURFACE.card,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Camera size={56} color="rgba(26,26,26,0.15)" aria-label={t('about.newPhoto.alt')} />
             </div>
           </FadeIn>
 

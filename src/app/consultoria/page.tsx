@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Consulting from '@/components/Consulting';
+import Faq from '@/components/Faq';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
 const DEFAULT_METADATA: Metadata = {
@@ -21,6 +22,7 @@ export default function ConsultoriaPage() {
       <Header />
       <main id="main-content">
         <Consulting />
+        <Faq />
       </main>
       <Footer />
     </>

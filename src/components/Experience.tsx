@@ -4,20 +4,17 @@ import { useState } from 'react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ArrowUpRight } from 'lucide-react';
 
-// Agrupamento por período pra visão em colunas no desktop. Os índices referem-se
-// a `items` (item1..item7 = mais recente -> mais antigo).
-const COLUMNS = [
-  { range: '2003 ~ 2010', indices: [6, 5] },
-  { range: '2011 ~ 2016', indices: [4, 3] },
-  { range: '2016 ~ 2025', indices: [2, 1, 0] },
-];
+// Só os 3 marcos mais alinhados ao posicionamento atual (Product Design para
+// empresas e times de produto) ficam na home — item1/2/3 = mais recentes.
+// A trajetória completa (FUCAPI, Luna, ITJC, ICON) fica só no LinkedIn.
+const HIGHLIGHT_ITEMS = [1, 2, 3];
 
 export default function Experience() {
   const { t } = useLang();
 
-  const items = [1, 2, 3, 4, 5, 6, 7].map((n) => ({
+  const items = HIGHLIGHT_ITEMS.map((n) => ({
     period: t(`experience.item${n}.period`),
     location: t(`experience.item${n}.location`),
     role: t(`experience.item${n}.role`),
@@ -27,46 +24,6 @@ export default function Experience() {
 
   const [expanded, setExpanded] = useState<Record<number, boolean>>({});
   const toggle = (i: number) => setExpanded((prev) => ({ ...prev, [i]: !prev[i] }));
-
-  const renderRow = (i: number, isLast: boolean) => {
-    const item = items[i];
-    const isOpen = !!expanded[i];
-    return (
-      <div
-        className="experience-row"
-        onClick={() => toggle(i)}
-        style={{
-          cursor: 'pointer',
-          padding: '26px 0',
-          borderBottom: isLast ? 'none' : '1px solid var(--color-border)',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
-            {item.role} <span style={{ color: 'rgba(26,26,26,1)', fontWeight: 500 }}>— {item.company}</span>
-          </h3>
-          <ChevronDown
-            size={18}
-            color="rgba(26,26,26,0.4)"
-            style={{
-              flexShrink: 0,
-              transform: isOpen ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s',
-            }}
-          />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
-          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.period}</span>
-          <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.location}</span>
-        </div>
-        {isOpen && (
-          <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: '10px 0 0' }}>
-            {item.desc}
-          </p>
-        )}
-      </div>
-    );
-  };
 
   return (
     <section id="experience" style={{ background: SURFACE.raised, padding: '96px 0' }}>
@@ -80,11 +37,20 @@ export default function Experience() {
             flex-wrap: wrap;
             margin-bottom: 72px;
           }
-          .experience-columns { display: none; }
-          .experience-flat { display: block; }
+          .experience-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+          .experience-row { border-bottom: 1px solid var(--color-border); }
+          .experience-row[data-last="true"] { border-bottom: none; }
           @media (min-width: 701px) {
-            .experience-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
-            .experience-flat { display: none; }
+            .experience-grid {
+              grid-template-columns: repeat(3, 1fr);
+              gap: 48px;
+              border-top: 1px solid var(--color-border);
+            }
+            .experience-row { border-bottom: none; padding-top: 24px !important; }
           }
         `}</style>
 
@@ -112,32 +78,70 @@ export default function Experience() {
           </p>
         </div>
 
-        {/* Desktop: 3 colunas agrupadas por período */}
-        <div className="experience-columns">
-          {COLUMNS.map((col) => (
-            <div key={col.range}>
-              <div style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(26,26,26,0.65)', marginBottom: '4px' }}>
-                {col.range}
-              </div>
-              <div style={{ borderTop: '1px solid var(--color-border)' }}>
-                {col.indices.map((idx, j) => (
-                  <FadeIn key={idx} delay={0.03 * j}>
-                    {renderRow(idx, j === col.indices.length - 1)}
-                  </FadeIn>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="experience-grid">
+          {items.map((item, i) => {
+            const isOpen = !!expanded[i];
+            return (
+              <FadeIn key={i} delay={0.05 * i}>
+                <div
+                  className="experience-row"
+                  data-last={i === items.length - 1}
+                  onClick={() => toggle(i)}
+                  style={{ cursor: 'pointer', padding: '26px 0' }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                    <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
+                      {item.role} <span style={{ color: 'rgba(26,26,26,1)', fontWeight: 500 }}>— {item.company}</span>
+                    </h3>
+                    <ChevronDown
+                      size={18}
+                      color="rgba(26,26,26,0.4)"
+                      style={{
+                        flexShrink: 0,
+                        transform: isOpen ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.2s',
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.period}</span>
+                    <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.65)' }}>{item.location}</span>
+                  </div>
+                  {isOpen && (
+                    <p style={{ fontSize: '13px', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: '10px 0 0' }}>
+                      {item.desc}
+                    </p>
+                  )}
+                </div>
+              </FadeIn>
+            );
+          })}
         </div>
 
-        {/* Mobile: lista única, igual ao formato atual */}
-        <div className="experience-flat">
-          {items.map((_, i) => (
-            <FadeIn key={i} delay={0.03 * i}>
-              {renderRow(i, i === items.length - 1)}
-            </FadeIn>
-          ))}
-        </div>
+        <FadeIn delay={0.2}>
+          <a
+            href="https://www.linkedin.com/in/tiagosmagno/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginTop: '40px',
+              fontSize: '14px',
+              fontWeight: 700,
+              color: 'var(--color-primary-text)',
+              padding: '13px 24px',
+              borderRadius: '10px',
+              border: '1px solid rgba(26,26,26,0.15)',
+              textDecoration: 'none',
+              transition: 'border-color 0.2s',
+            }}
+          >
+            {t('experience.linkedinCta')}
+            <ArrowUpRight size={16} />
+          </a>
+        </FadeIn>
       </div>
     </section>
   );

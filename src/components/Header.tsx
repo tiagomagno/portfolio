@@ -1,13 +1,16 @@
 'use client';
 
 import { useLang } from '@/context/LangContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Menu, X, ChevronRight } from 'lucide-react';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -17,6 +20,27 @@ export default function Header() {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
+
+  // Gestão de foco do drawer (WCAG 2.4.3 / 2.4.11): ao abrir, move o foco pro
+  // primeiro item interativo; ao fechar, devolve pro botão que abriu o menu.
+  useEffect(() => {
+    if (drawerOpen) {
+      wasOpenRef.current = true;
+      closeButtonRef.current?.focus();
+    } else if (wasOpenRef.current) {
+      hamburgerRef.current?.focus();
+    }
+  }, [drawerOpen]);
+
+  // Fecha com Esc — o drawer se comporta como um diálogo modal na navegação por teclado.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
 
   // Header starts transparent; gains a background once the page scrolls.
@@ -146,7 +170,7 @@ export default function Header() {
         >
           {/* Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-            <style>{`.nav-link:hover { color: var(--color-primary) !important; } .nav-cta:hover { color: var(--color-primary-hover) !important; }`}</style>
+            <style>{`.nav-link:hover { color: var(--color-primary) !important; } .nav-cta:hover { background: var(--color-primary-hover) !important; }`}</style>
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
@@ -181,13 +205,15 @@ export default function Header() {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
-                color: 'var(--color-primary-text)',
+                gap: '6px',
+                background: 'var(--color-primary-text)',
+                color: '#fff',
                 fontSize: '13px',
                 fontWeight: 700,
-                letterSpacing: '0.02em',
+                padding: '10px 18px',
+                borderRadius: '8px',
                 textDecoration: 'none',
-                transition: 'color 0.15s',
+                transition: 'background 0.15s',
               }}
             >
               {t('nav.startProject')}
@@ -228,6 +254,7 @@ export default function Header() {
         >
           {/* Hamburger (far left) */}
           <button
+            ref={hamburgerRef}
             onClick={() => setDrawerOpen((o) => !o)}
             style={{
               background: 'transparent',
@@ -244,6 +271,8 @@ export default function Header() {
               flexShrink: 0,
             }}
             aria-label={drawerOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+            aria-expanded={drawerOpen}
+            aria-controls="mobile-drawer"
           >
             {drawerOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -289,7 +318,12 @@ export default function Header() {
 
       {/* ── Mobile Drawer ── */}
       <div
+        id="mobile-drawer"
         className="show-mobile"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('nav.openMenu')}
+        inert={!drawerOpen}
         style={{
           position: 'fixed',
           top: 0,
@@ -326,6 +360,7 @@ export default function Header() {
             </span>
           </a>
           <button
+            ref={closeButtonRef}
             onClick={() => setDrawerOpen(false)}
             aria-label={t('nav.closeMenu')}
             style={{
@@ -384,10 +419,8 @@ export default function Header() {
               background: 'var(--color-primary-text)',
               color: '#fff',
               fontFamily: 'var(--font-headline)',
-              fontSize: '13px',
+              fontSize: '14px',
               fontWeight: 700,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
               padding: '14px 20px',
               borderRadius: '10px',
               textDecoration: 'none',

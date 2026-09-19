@@ -4,12 +4,13 @@
    CSS CUSTOM PROPERTIES (Design Tokens)
    ============================================ */
 :root {
-  /* Largura máxima do conteúdo, usada por todas as seções do site (section-container).
-     90% da viewport até travar em 1500px nas resoluções muito grandes (4K+). */
-  --container-max: min(90vw, 1500px);
+  /* Largura do conteúdo, usada por todas as seções do site (section-container).
+     Sempre 90% da viewport (margem de 5% de cada lado), sem travar em nenhuma
+     resolução — inclusive 4K+. */
+  --container-max: 90vw;
 
   /* ── Typography Scale ── */
-  --fs-h1:          clamp(44px, 7vw, 84px);
+  --fs-h1:          clamp(36px, 5vw, 60px);
   --fs-h2:          clamp(28px, 4vw, 44px);
   --fs-card-title:  18px;
   --fs-body-lg:     16px;
@@ -159,7 +160,7 @@ section[id] {
 /* Mobile typography scale overrides */
 @media (max-width: 767px) {
   :root {
-    --fs-h1:         clamp(40px, 13vw, 60px);
+    --fs-h1:         clamp(32px, 9vw, 44px);
     --fs-h2:         clamp(24px, 7vw, 32px);
     --fs-card-title: 15px;
     --fs-body-lg:    14px;

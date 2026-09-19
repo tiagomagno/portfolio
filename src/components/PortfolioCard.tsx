@@ -20,7 +20,7 @@ export default function PortfolioCard({
     <div className="portfolio-card-v2">
       <div
         className="portfolio-card-v2-image"
-        style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: '16px', overflow: 'hidden', background: SURFACE.card }}
+        style={{ position: 'relative', aspectRatio: '4 / 3.6', borderRadius: '16px', overflow: 'hidden', background: SURFACE.card }}
       >
         {coverImage ? (
           <Image

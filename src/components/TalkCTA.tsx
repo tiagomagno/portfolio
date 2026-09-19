@@ -8,10 +8,20 @@ export default function TalkCTA() {
   const { t } = useLang();
 
   return (
-    <section style={{ background: SURFACE.raised, padding: '48px 0 96px' }}>
+    <section style={{ background: SURFACE.raised, padding: '64px 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1} direction="up">
-          <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
+          <div
+            style={{
+              textAlign: 'center',
+              width: '100%',
+              boxSizing: 'border-box',
+              margin: '0 auto',
+              background: SURFACE.subtle,
+              borderRadius: '24px',
+              padding: '48px 32px',
+            }}
+          >
             <span
               style={{
                 fontSize: 'var(--fs-eyebrow)',
@@ -25,7 +35,7 @@ export default function TalkCTA() {
             >
               {t('work.cta.eyebrow')}
             </span>
-            <h3 style={{ fontSize: 'clamp(26px, 4.5vw, 48px)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px', whiteSpace: 'nowrap' }}>
+            <h3 style={{ fontSize: 'clamp(26px, 4.5vw, 48px)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
               {t('work.cta.title')}
             </h3>
             <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '440px' }}>
@@ -35,11 +45,10 @@ export default function TalkCTA() {
               href="/briefing"
               style={{
                 display: 'inline-block',
-                background: '#1a1a1a',
+                background: 'var(--color-primary-text)',
                 color: '#fff',
-                fontSize: '12px',
+                fontSize: '14px',
                 fontWeight: 700,
-                letterSpacing: '0.06em',
                 padding: '15px 32px',
                 borderRadius: '10px',
                 textDecoration: 'none',

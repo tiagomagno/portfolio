@@ -30,7 +30,7 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType> = {
   contact: Contact,
 };
 
-const DEFAULT_ORDER = ['hero', 'about', 'stats', 'work', 'experience', 'cases', 'skills', 'services', 'faq', 'talkCta', 'contact'];
+const DEFAULT_ORDER = ['hero', 'about', 'stats', 'work', 'experience', 'cases', 'skills', 'services', 'talkCta', 'contact'];
 
 // Schema.org HowTo para a seção "Processo" (Discover/Design/Develop/Deploy) — o site já
 // tinha o conteúdo ideal pra featured snippets, só faltava a marcação estruturada (AEO).
@@ -62,15 +62,9 @@ async function getSectionOrder(): Promise<string[]> {
   try {
     const sections = await prisma.homeSection.findMany({ where: { visible: true }, orderBy: { order: 'asc' } });
     if (sections.length === 0) return DEFAULT_ORDER;
-    const order = sections.map((s) => s.key).filter((key) => key in SECTION_COMPONENTS);
-    // "faq" é novo — se o admin ainda não configurou a seção em /admin/sections,
-    // insere antes do contato em vez de deixá-la de fora até a próxima config manual.
-    if (!order.includes('faq')) {
-      const contactIndex = order.indexOf('contact');
-      const insertAt = contactIndex === -1 ? order.length : contactIndex;
-      order.splice(insertAt, 0, 'faq');
-    }
-    return order;
+    // FAQ saiu da home (mudou pra página /consultoria) — filtra mesmo que ainda
+    // esteja salva na ordem configurada em /admin/sections de alguma instalação antiga.
+    return sections.map((s) => s.key).filter((key) => key in SECTION_COMPONENTS && key !== 'faq');
   } catch {
     return DEFAULT_ORDER;
   }
@@ -101,9 +95,12 @@ export default async function Home() {
                 return Section ? <Section key={key} /> : null;
               })();
           if (!section) return null;
+          // A seção talkCta tem fundo próprio (card flutuante) — sem divider
+          // duro nem antes nem depois dela.
+          const skipDivider = key === 'talkCta' || order[i - 1] === 'talkCta';
           return (
             <div key={key}>
-              {i > 0 && <Divider />}
+              {i > 0 && !skipDivider && <Divider />}
               {section}
             </div>
           );
