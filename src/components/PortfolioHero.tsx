@@ -15,21 +15,6 @@ export default function PortfolioHero() {
       }}
     >
       <div
-        style={{
-          position: 'absolute',
-          top: '10%',
-          left: '25%',
-          width: '800px',
-          height: '400px',
-          background: 'var(--color-primary)',
-          opacity: 0.06,
-          filter: 'blur(150px)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div
         className="section-container"
         style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '68px 24px 60px', position: 'relative', zIndex: 1 }}
       >

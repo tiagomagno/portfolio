@@ -35,7 +35,7 @@ export default function TalkCTA() {
             >
               {t('work.cta.eyebrow')}
             </span>
-            <h3 style={{ fontSize: 'clamp(26px, 4.5vw, 48px)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
+            <h3 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
               {t('work.cta.title')}
             </h3>
             <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '440px' }}>

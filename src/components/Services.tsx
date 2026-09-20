@@ -15,7 +15,7 @@ export default function Services() {
   ] as const;
 
   return (
-    <section id="services" style={{ background: SURFACE.base, padding: '96px 0' }}>
+    <section id="services" style={{ background: SURFACE.base, padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}

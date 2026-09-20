@@ -31,39 +31,6 @@ export default function BriefingPage() {
           paddingTop: '72px', /* height of fixed desktop header */
         }}
       >
-        {/* Glow top-right */}
-        <div
-          style={{
-            pointerEvents: 'none',
-            position: 'absolute',
-            top: '-10%',
-            right: '-5%',
-            width: '600px',
-            height: '600px',
-            borderRadius: '50%',
-            background: 'var(--color-primary)',
-            opacity: 0.08,
-            filter: 'blur(120px)',
-            zIndex: 0,
-          }}
-        />
-        {/* Glow bottom-left */}
-        <div
-          style={{
-            pointerEvents: 'none',
-            position: 'absolute',
-            bottom: '-10%',
-            left: '-5%',
-            width: '500px',
-            height: '500px',
-            borderRadius: '50%',
-            background: 'var(--color-primary)',
-            opacity: 0.06,
-            filter: 'blur(120px)',
-            zIndex: 0,
-          }}
-        />
-
         <div
           style={{
             position: 'relative',

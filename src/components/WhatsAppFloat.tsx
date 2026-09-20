@@ -27,7 +27,7 @@ export default function WhatsAppFloat() {
       <style>{`
         .whatsapp-float:hover { transform: scale(1.08); }
         @media (max-width: 767px) {
-          .whatsapp-float { bottom: 16px !important; right: 16px !important; width: 50px !important; height: 50px !important; }
+          .whatsapp-float { display: none !important; }
         }
       `}</style>
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

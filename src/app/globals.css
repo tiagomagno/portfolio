@@ -5,9 +5,11 @@
    ============================================ */
 :root {
   /* Largura do conteúdo, usada por todas as seções do site (section-container).
-     Sempre 90% da viewport (margem de 5% de cada lado), sem travar em nenhuma
-     resolução — inclusive 4K+. */
-  --container-max: 90vw;
+     Sempre 80% da viewport (margem de 10% de cada lado), sem travar em nenhuma
+     resolução — inclusive 4K+. A seção de Cases é exceção: o carrossel usa full-bleed
+     (100vw) de propósito, fora do section-container, pra máscara de esmaecimento
+     funcionar nas bordas reais da tela. */
+  --container-max: 80vw;
 
   /* ── Typography Scale ── */
   --fs-h1:          clamp(36px, 5vw, 60px);
@@ -42,6 +44,12 @@
   --color-text: #1a1a1a;
   --color-text-muted: #5a5a5a;
   --color-text-dim: #71717A;
+
+  /* Padding vertical padrão das seções e do Divider entre elas — reduzidos em
+     mobile (ver media query abaixo) pra fechar o espaço enorme que os dois somados
+     criavam entre uma seção e a próxima em telas pequenas. */
+  --section-pad-y: 96px;
+  --divider-pad-y: 48px;
 }
 
 .dark {
@@ -166,14 +174,19 @@ section[id] {
     --fs-body-lg:    14px;
     --fs-body:       13px;
     --fs-small:      11px;
+
+    /* Espaçamento entre seções em mobile: 24px de respiro em cada seção +
+       24px no Divider entre elas, no lugar dos 96px/48px do desktop. */
+    --section-pad-y: 24px;
+    --divider-pad-y: 24px;
   }
 }
 
 @media (max-width: 767px) {
   .section-container {
     max-width: 100% !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
     width: 100% !important;
   }
 
@@ -255,10 +268,10 @@ section[id] {
     scrollbar-width: none !important;
     padding-bottom: 4px;
     /* extend to full bleed on mobile */
-    margin-left: -16px !important;
-    margin-right: -16px !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    margin-left: -24px !important;
+    margin-right: -24px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
   }
   .filters-scroll::-webkit-scrollbar {
     display: none !important;

@@ -17,22 +17,32 @@ export default function Work() {
   ];
 
   return (
-    <section id="work" style={{ background: SURFACE.base, padding: '96px 0' }}>
+    <section id="work" style={{ background: SURFACE.base, padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .work-section-grid {
             display: grid;
             grid-template-columns: 0.85fr 1.15fr;
-            gap: 56px;
+            grid-template-areas: "text cards" "cta cards";
+            gap: 0 56px;
             align-items: start;
           }
+          .work-text { grid-area: text; }
+          .work-cta-wrap { grid-area: cta; }
           .work-cards-grid {
+            grid-area: cards;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
           }
           @media (max-width: 900px) {
-            .work-section-grid { grid-template-columns: 1fr; gap: 32px; }
+            .work-section-grid {
+              grid-template-columns: 1fr;
+              /* Botão de CTA por último, depois dos cards de serviço, em telas estreitas. */
+              grid-template-areas: "text" "cards" "cta";
+              gap: 32px;
+            }
+            .work-cta-wrap { margin-top: 0 !important; }
           }
           @media (max-width: 500px) {
             .work-cards-grid { grid-template-columns: 1fr; }
@@ -50,8 +60,8 @@ export default function Work() {
         `}</style>
 
         <div className="work-section-grid">
-          {/* Left column */}
-          <FadeIn delay={0.1} direction="up">
+          {/* Left column: text */}
+          <FadeIn delay={0.1} direction="up" className="work-text">
             <span
               style={{
                 fontSize: 'var(--fs-eyebrow)',
@@ -76,9 +86,13 @@ export default function Work() {
             >
               {t('work.title')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '420px' }}>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: 0, maxWidth: '420px' }}>
               {t('work.subtitle')}
             </p>
+          </FadeIn>
+
+          {/* CTA button — próprio bloco pra poder ir para o final da seção em mobile */}
+          <FadeIn delay={0.15} direction="up" className="work-cta-wrap" style={{ marginTop: '28px' }}>
             <a
               href="/briefing"
               className="work-cta-button"

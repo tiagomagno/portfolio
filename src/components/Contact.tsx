@@ -79,27 +79,13 @@ export default function Contact() {
       id="contact"
       style={{
         background: SURFACE.footer,
-        padding: '96px 0',
+        paddingTop: 'calc(var(--section-pad-y) + 32px)',
+        paddingBottom: 'var(--section-pad-y)',
         position: 'relative',
         overflow: 'hidden',
         borderRadius: '32px 32px 0 0',
       }}
     >
-      {/* Glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '400px',
-          height: '400px',
-          background: 'var(--color-primary)',
-          opacity: 0.1,
-          filter: 'blur(100px)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }}
-      />
 
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div
@@ -112,7 +98,7 @@ export default function Contact() {
         >
           {/* Left */}
           <FadeIn delay={0.1} direction="right">
-          <div>
+          <div className="contact-left-col">
             <span
               style={{
                 fontSize: 'var(--fs-eyebrow)',
@@ -141,7 +127,7 @@ export default function Contact() {
             <p style={{ fontSize: 'var(--fs-body-lg)', color: TEXT_ON_DARK_DIM, lineHeight: 1.7, maxWidth: '400px', margin: '0 0 40px' }}>
               {t('contact.subtitle')}
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="contact-info-list" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   E-MAIL
@@ -200,6 +186,16 @@ export default function Contact() {
                 }
                 .contact-fields-grid {
                   grid-template-columns: 1fr !important;
+                }
+                .contact-left-col {
+                  text-align: center !important;
+                }
+                .contact-left-col p {
+                  margin-left: auto !important;
+                  margin-right: auto !important;
+                }
+                .contact-info-list {
+                  align-items: center !important;
                 }
               }
             `}</style>

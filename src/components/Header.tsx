@@ -2,12 +2,13 @@
 
 import { useLang } from '@/context/LangContext';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Menu, X, ChevronRight } from 'lucide-react';
+import { ArrowRight, Menu, X, ChevronRight, MoreVertical } from 'lucide-react';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
@@ -89,12 +90,12 @@ export default function Header() {
         {t('nav.skipToContent')}
       </a>
 
-      {/* ── Floating language switcher — lives on the page edge, not inside the header row ── */}
+      {/* ── Floating language switcher — lives on the page edge, not inside the header row.
+          Em mobile some daqui: vira uma opção no menu de 3 pontinhos da barra superior. ── */}
       <style>{`
         @media (max-width: 767px) {
           .lang-switcher {
-            top: 72px !important;
-            transform: none !important;
+            display: none !important;
           }
         }
       `}</style>
@@ -296,10 +297,90 @@ export default function Header() {
             </span>
           </a>
 
-          {/* spacer to balance the hamburger on the left */}
-          <div style={{ width: '44px', flexShrink: 0 }} />
+          {/* Language menu (3 pontinhos) */}
+          <button
+            onClick={() => setLangMenuOpen((o) => !o)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--color-text)',
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: 0,
+              flexShrink: 0,
+            }}
+            aria-label={t('nav.openMenu')}
+            aria-haspopup="menu"
+            aria-expanded={langMenuOpen}
+          >
+            <MoreVertical size={20} />
+          </button>
         </div>
       </nav>
+
+      {/* ── Language dropdown (mobile) ── */}
+      {/* Renderizado condicionalmente (não com display toggle): a regra global
+          ".show-mobile { display: flex !important }" em mobile venceria um
+          display:none inline, deixando o menu sempre visível por engano. */}
+      {langMenuOpen && (
+        <>
+          <div
+            className="show-mobile"
+            onClick={() => setLangMenuOpen(false)}
+            style={{ position: 'fixed', inset: 0, zIndex: 220 }}
+          />
+          <div
+            role="menu"
+            className="show-mobile"
+            style={{
+              position: 'fixed',
+              top: '64px',
+              right: '16px',
+              zIndex: 230,
+              flexDirection: 'column',
+              gap: '4px',
+              background: 'var(--color-bg-card)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '12px',
+              padding: '6px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            }}
+          >
+            {langs.map(({ value, label }) => (
+              <button
+                key={value}
+                role="menuitemradio"
+                aria-checked={lang === value}
+                onClick={() => {
+                  setLang(value);
+                  setLangMenuOpen(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: lang === value ? 'var(--color-primary-text)' : 'transparent',
+                  color: lang === value ? '#fff' : 'var(--color-text)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {label === 'PT' ? 'Português' : 'English'}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* ── Mobile Drawer Overlay ── */}
       {drawerOpen && (

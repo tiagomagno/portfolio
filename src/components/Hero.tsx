@@ -10,22 +10,6 @@ export default function Hero() {
   return (
     <section id="hero">
       <div style={{ position: 'relative', overflow: 'hidden' }}>
-        {/* Glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '600px',
-            height: '600px',
-            background: 'var(--color-primary)',
-            opacity: 0.06,
-            filter: 'blur(150px)',
-            borderRadius: '50%',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
 
         <style>{`
           @media (max-width: 767px) {
@@ -40,9 +24,8 @@ export default function Hero() {
             }
             .hero-cta-group {
               width: 100%;
-              justify-content: center !important;
             }
-            .hero-cta-group a {
+            .hero-cta-primary {
               width: 100%;
               justify-content: center;
             }
@@ -99,6 +82,7 @@ export default function Hero() {
               <div className="hero-cta-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '14px' }}>
                 <a
                   href="/briefing"
+                  className="hero-cta-primary"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -116,26 +100,6 @@ export default function Hero() {
                 >
                   {t('hero.cta.primary')}
                   <ArrowRight size={16} />
-                </a>
-                <a
-                  href="#cases"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    background: 'transparent',
-                    color: '#1a1a1a',
-                    fontFamily: 'var(--font-headline)',
-                    fontWeight: 600,
-                    fontSize: '14px',
-                    padding: '15px 32px',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(26,26,26,0.15)',
-                    textDecoration: 'none',
-                    transition: 'border-color 0.2s',
-                  }}
-                >
-                  {t('hero.cta.secondary')}
                 </a>
               </div>
             </FadeIn>

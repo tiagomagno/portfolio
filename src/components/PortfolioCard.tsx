@@ -27,8 +27,9 @@ export default function PortfolioCard({
             src={coverImage}
             alt={item.empresa}
             fill
+            draggable={false}
             sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-            style={{ objectFit: 'cover', objectPosition: 'top' }}
+            style={{ objectFit: 'cover', objectPosition: 'top', userSelect: 'none' }}
             priority={priority}
           />
         ) : (

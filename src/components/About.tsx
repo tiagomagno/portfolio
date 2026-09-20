@@ -1,9 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
-import { Camera } from 'lucide-react';
 
 export default function About() {
   const { t } = useLang();
@@ -11,7 +11,7 @@ export default function About() {
   const tags = [t('about.tag1'), t('about.tag2'), t('about.tag3'), t('about.tag4')];
 
   return (
-    <section id="about" style={{ background: SURFACE.raised, padding: '96px 0' }}>
+    <section id="about" style={{ background: SURFACE.raised, padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .about-grid {
@@ -23,24 +23,31 @@ export default function About() {
           @media (max-width: 900px) {
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
           }
+          @media (max-width: 767px) {
+            .about-tags { flex-direction: column !important; align-items: flex-start !important; }
+          }
         `}</style>
 
         <div className="about-grid">
-          {/* Photo (placeholder até a foto final ser definida) */}
+          {/* Photo */}
           <FadeIn delay={0.1}>
             <div
               style={{
                 position: 'relative',
-                aspectRatio: '4 / 3.4',
+                aspectRatio: '4 / 3.8',
                 borderRadius: '20px',
                 overflow: 'hidden',
                 background: SURFACE.card,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
               }}
             >
-              <Camera size={56} color="rgba(26,26,26,0.15)" aria-label={t('about.newPhoto.alt')} />
+              <Image
+                src="/about-photo.webp"
+                alt={t('about.newPhoto.alt')}
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+                style={{ objectFit: 'cover' }}
+                priority
+              />
             </div>
           </FadeIn>
 
@@ -84,7 +91,7 @@ export default function About() {
             </FadeIn>
 
             <FadeIn delay={0.3}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              <div className="about-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {tags.map((tag) => (
                   <span
                     key={tag}
