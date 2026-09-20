@@ -96,8 +96,9 @@ export default async function Home() {
               })();
           if (!section) return null;
           // A seção talkCta tem fundo próprio (card flutuante) — sem divider
-          // duro nem antes nem depois dela.
-          const skipDivider = key === 'talkCta' || order[i - 1] === 'talkCta';
+          // duro nem antes nem depois dela. A transição hero → about também não
+          // leva divider (a Hero já fecha visualmente sozinha).
+          const skipDivider = key === 'talkCta' || order[i - 1] === 'talkCta' || (key === 'about' && order[i - 1] === 'hero');
           return (
             <div key={key}>
               {i > 0 && !skipDivider && <Divider />}
