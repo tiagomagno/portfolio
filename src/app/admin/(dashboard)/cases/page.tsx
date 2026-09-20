@@ -25,6 +25,7 @@ export default async function AdminCasesPage() {
       galleryCount: Array.isArray(asset?.gallery) ? (asset!.gallery as unknown[]).length : 0,
       visible: visibility?.visible ?? true,
       removedAt: visibility?.removedAt ? visibility.removedAt.toISOString() : null,
+      featuredOnHome: asset?.featuredOnHome ?? false,
     };
   });
 
@@ -32,7 +33,7 @@ export default async function AdminCasesPage() {
     <div>
       <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Cases</h1>
       <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
-        Capa (listagem/home), imagem de topo e galeria de cada case do portfólio.
+        Capa (listagem/home), imagem de topo, galeria e seleção para o carrossel da home de cada case do portfólio.
       </p>
 
       <CasesTable rows={rows} categories={ATUACAO_CATEGORIES} />

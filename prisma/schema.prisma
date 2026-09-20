@@ -29,6 +29,10 @@ model CaseAsset {
   /// Categorias (AtuacaoCategory[]) que sobrescrevem as fixas em src/data/portfolio.ts.
   /// null = sem override, usa as categorias estáticas do case.
   atuacao    Json?
+  /// Selecionado para aparecer no carrossel de Cases da home (o admin escolhe até 10;
+  /// a ordem de exibição continua embaralhada no client, então não há campo de ordem).
+  /// Nenhum item marcado = comportamento antigo (mostra todos os cases com case study).
+  featuredOnHome Boolean @default(false)
   updatedAt  DateTime @updatedAt
 }
 

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import type { AtuacaoCategory } from '@/data/portfolio';
 import CaseAssetEditor from './[slug]/CaseAssetEditor';
 
+export const MAX_FEATURED_ON_HOME = 10;
+
 export interface CaseRow {
   id: number;
   empresa: string;
@@ -16,6 +18,7 @@ export interface CaseRow {
   galleryCount: number;
   visible: boolean;
   removedAt: string | null;
+  featuredOnHome: boolean;
 }
 
 export default function CasesTable({ rows, categories }: { rows: CaseRow[]; categories: AtuacaoCategory[] }) {
@@ -24,8 +27,10 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
   const [selected, setSelected] = useState<CaseRow | null>(null);
   const [showRemoved, setShowRemoved] = useState(false);
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
+  const [featuredError, setFeaturedError] = useState<string | null>(null);
 
   const removedCount = useMemo(() => rows.filter((r) => r.removedAt).length, [rows]);
+  const featuredCount = useMemo(() => rows.filter((r) => r.featuredOnHome).length, [rows]);
 
   const filtered = useMemo(() => {
     let list = showRemoved ? rows.filter((r) => r.removedAt) : rows.filter((r) => !r.removedAt);
@@ -52,11 +57,49 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     }
   }
 
+  async function toggleFeatured(slug: string, featured: boolean) {
+    setUpdatingSlug(slug);
+    setFeaturedError(null);
+    try {
+      const res = await fetch(`/api/admin/featured-cases/${slug}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setFeaturedError(data?.error ?? 'Não foi possível atualizar.');
+        return;
+      }
+      router.refresh();
+    } finally {
+      setUpdatingSlug(null);
+    }
+  }
+
   return (
     <div>
       <style>{`
         .admin-icon-action:hover:not(:disabled) { background: rgba(26,26,26,0.06); }
       `}</style>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+        <span
+          style={{
+            fontSize: '12px',
+            fontWeight: 700,
+            color: featuredCount >= MAX_FEATURED_ON_HOME ? '#166534' : 'rgba(26,26,26,0.6)',
+            background: featuredCount >= MAX_FEATURED_ON_HOME ? 'rgba(22,101,52,0.1)' : 'rgba(26,26,26,0.06)',
+            padding: '5px 12px',
+            borderRadius: '100px',
+          }}
+        >
+          {featuredCount}/{MAX_FEATURED_ON_HOME} selecionados para a home
+        </span>
+        {featuredError && (
+          <span style={{ fontSize: '12px', color: '#b91c1c' }} role="alert">{featuredError}</span>
+        )}
+      </div>
+
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'center' }}>
         <FilterPill label="Todas" active={activeFilter === null} onClick={() => setActiveFilter(null)} />
         {categories.map((cat) => (
@@ -88,6 +131,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
               <Th>Case</Th>
               <Th>Categoria</Th>
               <Th align="center">Status</Th>
+              <Th align="center">Home</Th>
               <Th align="center">Capa</Th>
               <Th align="center">Topo</Th>
               <Th align="center">Galeria</Th>
@@ -131,6 +175,18 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                 </Td>
                 <Td align="center">
                   <StatusBadge visible={row.visible} removed={!!row.removedAt} />
+                </Td>
+                <Td align="center">
+                  {!row.removedAt && (
+                    <input
+                      type="checkbox"
+                      checked={row.featuredOnHome}
+                      disabled={updatingSlug === row.slug || (!row.featuredOnHome && featuredCount >= MAX_FEATURED_ON_HOME)}
+                      onChange={(e) => toggleFeatured(row.slug, e.target.checked)}
+                      title={row.featuredOnHome ? 'Remover do carrossel da home' : 'Mostrar no carrossel da home'}
+                      style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+                    />
+                  )}
                 </Td>
                 <Td align="center">
                   <Dot ok={row.hasCover} />

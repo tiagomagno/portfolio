@@ -27,13 +27,12 @@ function shuffle<T>(items: T[]): T[] {
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
 function useItemsPerView() {
-  const [itemsPerView, setItemsPerView] = useState(3);
+  const [itemsPerView, setItemsPerView] = useState(2);
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
       if (w <= 560) setItemsPerView(1);
-      else if (w <= 900) setItemsPerView(2);
-      else setItemsPerView(3);
+      else setItemsPerView(2);
     };
     update();
     window.addEventListener('resize', update);
@@ -53,14 +52,21 @@ export default function Cases({
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
 
   const hidden = new Set(hiddenSlugs);
-  const visibleFeaturedCases = useMemo(
-    () =>
-      FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa))).map((item) => {
-        const override = overrides[slugify(item.empresa)]?.atuacao;
-        return override ? { ...item, atuacao: override } : item;
-      }),
-    [hiddenSlugs, overrides]
-  );
+  const visibleFeaturedCases = useMemo(() => {
+    const pool = FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa)));
+    const featuredSlugs = new Set(
+      Object.entries(overrides)
+        .filter(([, o]) => o.featuredOnHome)
+        .map(([slug]) => slug)
+    );
+    // Enquanto o admin não selecionar nenhum case pra home (/admin/cases), mantém o
+    // comportamento antigo (mostra todos) em vez de deixar o carrossel vazio.
+    const selected = featuredSlugs.size > 0 ? pool.filter((item) => featuredSlugs.has(slugify(item.empresa))) : pool;
+    return selected.map((item) => {
+      const override = overrides[slugify(item.empresa)]?.atuacao;
+      return override ? { ...item, atuacao: override } : item;
+    });
+  }, [hiddenSlugs, overrides]);
 
   // Ordem embaralhada a cada carregamento da página. Começa com a ordem original
   // (idêntica no server e no client) e só embaralha depois de montar, pra não gerar
@@ -90,16 +96,17 @@ export default function Cases({
   const activePointerId = useRef<number | null>(null);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Posiciona o track no início da cópia do meio, deslocado uma coluna pra trás,
-  // assim já nasce com uma coluna esmaecida "espiando" nos dois lados (5 colunas:
-  // peek — cheia — cheia — cheia — peek), em vez de começar exatamente no início
-  // de um card (o que só mostrava peek do lado direito, por sobra de espaço).
+  // Posiciona o track no início da cópia do meio. Em telas com peek (2/3 colunas
+  // cheias), desloca uma coluna pra trás, assim já nasce com uma coluna esmaecida
+  // "espiando" nos dois lados (peek — cheia — cheia — cheia — peek), em vez de
+  // começar exatamente no início de um card. No mobile (1 card, sem peek — o card
+  // ocupa a tela toda respeitando as margens), começa direto no primeiro card.
   useEffect(() => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
     const third = track.scrollWidth / 3;
     const cardStep = third / setCount;
-    track.scrollLeft = third - cardStep;
+    track.scrollLeft = itemsPerView === 1 ? third - 24 : third - cardStep;
   }, [setCount, itemsPerView]);
 
   const wrapIfNeeded = () => {
@@ -143,6 +150,7 @@ export default function Cases({
     dragDistance.current = Math.abs(delta);
     if (dragDistance.current > 6 && activePointerId.current !== null && !trackRef.current.hasPointerCapture(activePointerId.current)) {
       trackRef.current.setPointerCapture(activePointerId.current);
+      trackRef.current.classList.add('is-dragging');
     }
     trackRef.current.scrollLeft = dragStartScroll.current - delta;
   };
@@ -153,6 +161,7 @@ export default function Cases({
     if (trackRef.current.hasPointerCapture(e.pointerId)) {
       trackRef.current.releasePointerCapture(e.pointerId);
     }
+    trackRef.current.classList.remove('is-dragging');
     activePointerId.current = null;
   };
 
@@ -168,7 +177,7 @@ export default function Cases({
   };
 
   return (
-    <section id="cases" style={{ background: SURFACE.base, padding: '96px 0' }}>
+    <section id="cases" style={{ background: SURFACE.base, padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
@@ -199,7 +208,7 @@ export default function Cases({
               </span>
               <h2
                 style={{
-                  fontSize: 'clamp(32px, 4.5vw, 56px)',
+                  fontSize: 'var(--fs-h2)',
                   fontWeight: 900,
                   color: '#1a1a1a',
                   lineHeight: 1.1,
@@ -232,13 +241,33 @@ export default function Cases({
           overflow-y: hidden;
           scroll-snap-type: x proximity;
           scrollbar-width: none;
+          -webkit-user-drag: none;
         }
         .cases-carousel-track::-webkit-scrollbar { display: none; }
+        .cases-carousel-track.is-dragging { scroll-snap-type: none; user-select: none; cursor: grabbing; }
+        .cases-carousel-track.is-dragging * { pointer-events: none; }
+        .cases-carousel-track img { -webkit-user-drag: none; user-drag: none; }
         .cases-carousel-card {
           /* ${itemsPerView} colunas cheias + 1 coluna esmaecida ("peek") de cada lado,
              todas do mesmo tamanho — ${itemsPerView + 2} colunas iguais ao todo. */
           flex: 0 0 calc((100% - 16px * (${itemsPerView + 2} - 1)) / ${itemsPerView + 2});
           scroll-snap-align: start;
+        }
+        /* Mobile (1 item por vez): card ocupa 100% da tela respeitando as mesmas
+           margens de 24px do resto do site, sem peek nem esmaecimento lateral —
+           scroll-padding desloca o ponto de encaixe em vez de um card menor. */
+        @media (max-width: 560px) {
+          .cases-carousel-card {
+            flex: 0 0 calc(100vw - 48px) !important;
+            scroll-snap-align: start !important;
+          }
+          .cases-carousel-track {
+            scroll-padding: 0 24px;
+          }
+          .cases-carousel-viewport {
+            -webkit-mask-image: none;
+            mask-image: none;
+          }
         }
         .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
         .portfolio-card-v2-image img {
@@ -263,6 +292,7 @@ export default function Cases({
           onPointerUp={endDrag}
           onPointerLeave={endDrag}
           onClickCapture={handleTrackClickCapture}
+          onDragStart={(e) => e.preventDefault()}
           style={{ cursor: 'grab' }}
         >
           {trackItems.map((item, idx) => {

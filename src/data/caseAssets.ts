@@ -7,6 +7,7 @@ export interface CaseAssetOverrides {
   heroColor: string | null;
   gallery: string[];
   atuacao: AtuacaoCategory[] | null;
+  featuredOnHome: boolean;
 }
 
 /**
@@ -45,6 +46,7 @@ export async function getCaseAssetOverrides(slug: string): Promise<CaseAssetOver
       heroColor: asset.heroColor,
       gallery: activeGalleryUrls(asset.gallery),
       atuacao: parseAtuacaoList(asset.atuacao),
+      featuredOnHome: asset.featuredOnHome,
     };
   } catch (err) {
     console.error(`getCaseAssetOverrides(${slug}) falhou:`, err);
@@ -64,6 +66,7 @@ export async function getAllCaseAssetOverrides(): Promise<Map<string, CaseAssetO
           heroColor: a.heroColor,
           gallery: activeGalleryUrls(a.gallery),
           atuacao: parseAtuacaoList(a.atuacao),
+          featuredOnHome: a.featuredOnHome,
         },
       ])
     );
