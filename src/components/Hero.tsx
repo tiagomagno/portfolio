@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import HeroBackground from './HeroBackground';
 import { ArrowRight } from 'lucide-react';
 
 export default function Hero() {
@@ -31,6 +32,8 @@ export default function Hero() {
             }
           }
         `}</style>
+
+        <HeroBackground />
 
         {/* Main content */}
         <div
