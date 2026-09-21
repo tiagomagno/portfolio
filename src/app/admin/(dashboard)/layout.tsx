@@ -40,7 +40,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: '#1a1a1a' }}>Admin</span>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: '#1a1a1a' }}>Tiago Magno</span>
           <nav style={{ display: 'flex', gap: '4px' }}>
             {NAV.map((item) => {
               const active = pathname?.startsWith(item.href);
@@ -64,12 +64,36 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
             })}
           </nav>
         </div>
-        <button
-          onClick={handleLogout}
-          style={{ border: '1px solid var(--color-border)', background: 'transparent', borderRadius: '8px', padding: '8px 14px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', color: '#1a1a1a' }}
-        >
-          Sair
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid var(--color-border)',
+              background: 'transparent',
+              borderRadius: '8px',
+              padding: '8px 14px',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              color: '#1a1a1a',
+              textDecoration: 'none',
+            }}
+          >
+            Ver site
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>open_in_new</span>
+          </a>
+          <button
+            onClick={handleLogout}
+            style={{ border: '1px solid var(--color-border)', background: 'transparent', borderRadius: '8px', padding: '8px 14px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', color: '#1a1a1a' }}
+          >
+            Sair
+          </button>
+        </div>
       </header>
       <main style={{ padding: '32px 24px' }}>{children}</main>
     </div>

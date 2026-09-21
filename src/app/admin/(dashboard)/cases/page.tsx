@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ATUACAO_CATEGORIES, parseAtuacaoList } from '@/data/portfolio';
 import { prisma } from '@/lib/prisma';
 import CasesTable, { type CaseRow } from './CasesTable';
@@ -24,29 +23,10 @@ export default async function AdminCasesPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', gap: '16px', flexWrap: 'wrap' }}>
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Cases</h1>
-          <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: 0 }}>
-            Cadastro, imagens, visibilidade e seleção para o carrossel da home de cada case do portfólio.
-          </p>
-        </div>
-        <Link
-          href="/admin/cases/new"
-          style={{
-            fontSize: '13px',
-            fontWeight: 700,
-            color: '#fff',
-            background: 'var(--color-primary)',
-            padding: '10px 18px',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          + Novo case
-        </Link>
-      </div>
+      <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Cases</h1>
+      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
+        Cadastro, imagens, visibilidade e seleção para o carrossel da home de cada case do portfólio.
+      </p>
 
       <CasesTable rows={rows} categories={ATUACAO_CATEGORIES} />
     </div>

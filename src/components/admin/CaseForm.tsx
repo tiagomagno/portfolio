@@ -41,10 +41,16 @@ export default function CaseForm({
   mode,
   slug,
   initialData,
+  onSuccess,
+  onCancel,
 }: {
   mode: 'create' | 'edit';
   slug?: string;
   initialData?: CaseFormData;
+  /** Quando fornecido, chamado em vez de navegar pra /admin/cases após salvar (uso dentro de um Sheet). */
+  onSuccess?: () => void;
+  /** Quando fornecido, o botão "Cancelar" chama isso em vez de navegar pra /admin/cases. */
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState('basico');
@@ -86,7 +92,11 @@ export default function CaseForm({
         setSubmitError(err?.error ?? 'Erro ao salvar.');
         return;
       }
-      router.push('/admin/cases');
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push('/admin/cases');
+      }
       router.refresh();
     } finally {
       setSubmitting(false);
@@ -268,9 +278,19 @@ export default function CaseForm({
           >
             {submitting ? 'Salvando...' : mode === 'create' ? 'Criar case' : 'Salvar alterações'}
           </button>
-          <Link href="/admin/cases" style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(26,26,26,0.55)', textDecoration: 'none' }}>
-            Cancelar
-          </Link>
+          {onCancel ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(26,26,26,0.55)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Cancelar
+            </button>
+          ) : (
+            <Link href="/admin/cases" style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(26,26,26,0.55)', textDecoration: 'none' }}>
+              Cancelar
+            </Link>
+          )}
           {submitError && <span style={errorStyle} role="alert">{submitError}</span>}
         </div>
       </form>

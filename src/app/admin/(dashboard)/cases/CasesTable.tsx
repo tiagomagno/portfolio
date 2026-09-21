@@ -1,10 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { AtuacaoCategory } from '@/data/portfolio';
-import PillTabs from '@/components/ui/PillTabs';
+import { caseRecordToFormData, type CaseFormData } from '@/lib/caseForm';
+import CaseForm from '@/components/admin/CaseForm';
+import Sheet from '@/components/admin/Sheet';
 
 export const MAX_FEATURED_ON_HOME = 10;
 
@@ -22,18 +23,23 @@ export interface CaseRow {
   homeOrder: number;
 }
 
-type Tab = 'ativos' | 'desativados' | 'excluidos';
+type StatusFilter = 'all' | 'ativo' | 'desativado' | 'excluido';
 type CoverFilter = 'all' | 'with' | 'without';
 type HomeFilter = 'all' | 'selected' | 'not-selected';
+type SheetState = { slug: string } | { mode: 'new' } | null;
 
 export default function CasesTable({ rows, categories }: { rows: CaseRow[]; categories: AtuacaoCategory[] }) {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>('ativos');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState<AtuacaoCategory | 'all'>('all');
   const [coverFilter, setCoverFilter] = useState<CoverFilter>('all');
   const [homeFilter, setHomeFilter] = useState<HomeFilter>('all');
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
   const [featuredError, setFeaturedError] = useState<string | null>(null);
+  const [sheet, setSheet] = useState<SheetState>(null);
+  const [sheetInitialData, setSheetInitialData] = useState<CaseFormData | undefined>(undefined);
+  const [sheetLoading, setSheetLoading] = useState(false);
+  const [sheetEmpresa, setSheetEmpresa] = useState('');
 
   const featuredCount = useMemo(() => rows.filter((r) => r.featuredOnHome).length, [rows]);
   const featuredOrder = useMemo(
@@ -41,28 +47,27 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     [rows]
   );
 
-  // Selecionados pra home aparecem primeiro (na ordem de prioridade definida pelas setas),
-  // pra ficarem fáceis de achar e reordenar sem precisar rolar a lista inteira.
-  const byTab = useMemo(
-    () => ({
-      ativos: [...rows.filter((r) => r.visible && !r.removedAt)].sort((a, b) => {
-        if (a.featuredOnHome !== b.featuredOnHome) return a.featuredOnHome ? -1 : 1;
-        if (a.featuredOnHome) return a.homeOrder - b.homeOrder;
-        return 0;
-      }),
-      desativados: rows.filter((r) => !r.visible && !r.removedAt),
-      excluidos: rows.filter((r) => !!r.removedAt),
-    }),
-    [rows]
-  );
-
+  // Sem "excluído" no filtro padrão ('all' = ativos + desativados) — mantém o lixo fora
+  // da visão principal, só aparece escolhendo "Excluído" no select de Status.
   const filtered = useMemo(() => {
-    let list = byTab[tab];
+    let list = rows;
+    if (statusFilter === 'excluido') list = rows.filter((r) => !!r.removedAt);
+    else if (statusFilter === 'ativo') list = rows.filter((r) => r.visible && !r.removedAt);
+    else if (statusFilter === 'desativado') list = rows.filter((r) => !r.visible && !r.removedAt);
+    else list = rows.filter((r) => !r.removedAt);
+
     if (categoryFilter !== 'all') list = list.filter((r) => r.atuacao.includes(categoryFilter));
     if (coverFilter !== 'all') list = list.filter((r) => (coverFilter === 'with' ? r.hasCover : !r.hasCover));
     if (homeFilter !== 'all') list = list.filter((r) => (homeFilter === 'selected' ? r.featuredOnHome : !r.featuredOnHome));
-    return list;
-  }, [byTab, tab, categoryFilter, coverFilter, homeFilter]);
+
+    // Ativos antes de desativados; dentro dos ativos, selecionados pra home primeiro (ordem de prioridade).
+    return [...list].sort((a, b) => {
+      if (a.visible !== b.visible) return a.visible ? -1 : 1;
+      if (a.visible && a.featuredOnHome !== b.featuredOnHome) return a.featuredOnHome ? -1 : 1;
+      if (a.visible && a.featuredOnHome && b.featuredOnHome) return a.homeOrder - b.homeOrder;
+      return 0;
+    });
+  }, [rows, statusFilter, categoryFilter, coverFilter, homeFilter]);
 
   async function updateStatus(slug: string, visible: boolean, removed: boolean) {
     setUpdatingSlug(slug);
@@ -112,6 +117,30 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     }
   }
 
+  function openNewSheet() {
+    setSheetEmpresa('Novo case');
+    setSheetInitialData(undefined);
+    setSheet({ mode: 'new' });
+  }
+
+  async function openEditSheet(row: CaseRow) {
+    setSheetEmpresa(row.empresa);
+    setSheet({ slug: row.slug });
+    setSheetLoading(true);
+    try {
+      const res = await fetch(`/api/admin/cases/${row.slug}`);
+      const data = await res.json();
+      setSheetInitialData(caseRecordToFormData(data.case));
+    } finally {
+      setSheetLoading(false);
+    }
+  }
+
+  function closeSheet() {
+    setSheet(null);
+    setSheetInitialData(undefined);
+  }
+
   return (
     <div>
       <style>{`
@@ -120,18 +149,25 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
       `}</style>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <PillTabs
-          tabs={[
-            { id: 'ativos', label: `Ativos (${byTab.ativos.length})` },
-            { id: 'desativados', label: `Desativados (${byTab.desativados.length})` },
-            { id: 'excluidos', label: `Excluídos (${byTab.excluidos.length})` },
-          ]}
-          activeId={tab}
-          onChange={(id) => setTab(id as Tab)}
-        />
+        <button
+          onClick={openNewSheet}
+          type="button"
+          style={{
+            fontSize: '13px',
+            fontWeight: 700,
+            color: '#fff',
+            background: 'var(--color-primary)',
+            padding: '10px 18px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          + Novo case
+        </button>
         <span
           style={{
-            marginLeft: 'auto',
             fontSize: '12px',
             fontWeight: 700,
             color: featuredCount >= MAX_FEATURED_ON_HOME ? '#166534' : 'rgba(26,26,26,0.6)',
@@ -159,7 +195,18 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                   options={[{ value: 'all', label: 'Categoria' }, ...categories.map((c) => ({ value: c, label: c }))]}
                 />
               </Th>
-              <Th align="center">Status</Th>
+              <Th align="center">
+                <ThSelect
+                  value={statusFilter}
+                  onChange={(v) => setStatusFilter(v as StatusFilter)}
+                  options={[
+                    { value: 'all', label: 'Status' },
+                    { value: 'ativo', label: 'Ativo' },
+                    { value: 'desativado', label: 'Desativado' },
+                    { value: 'excluido', label: 'Excluído' },
+                  ]}
+                />
+              </Th>
               <Th align="center">
                 <ThSelect
                   value={homeFilter}
@@ -276,9 +323,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                       />
                     ) : (
                       <>
-                        <Link href={`/admin/cases/${row.slug}`} className="admin-icon-action" style={iconLinkStyle} title="Editar" aria-label="Editar">
-                          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
-                        </Link>
+                        <IconAction icon="edit" label="Editar" onClick={() => openEditSheet(row)} />
                         <IconAction
                           icon={row.visible ? 'visibility_off' : 'visibility'}
                           label={row.visible ? 'Desativar' : 'Ativar'}
@@ -291,7 +336,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                           tone="danger"
                           disabled={updatingSlug === row.slug}
                           onClick={() => {
-                            if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois em "Excluídos".`)) {
+                            if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois filtrando por Status "Excluído".`)) {
                               updateStatus(row.slug, false, true);
                             }
                           }}
@@ -305,24 +350,25 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
           </tbody>
         </table>
       </div>
+
+      <Sheet open={sheet !== null} onClose={closeSheet} title={sheet && 'mode' in sheet ? 'Novo case' : sheetEmpresa}>
+        {sheet !== null &&
+          (sheetLoading ? (
+            <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)' }}>Carregando...</p>
+          ) : (
+            <CaseForm
+              key={'mode' in sheet ? 'new' : sheet.slug}
+              mode={'mode' in sheet ? 'create' : 'edit'}
+              slug={'slug' in sheet ? sheet.slug : undefined}
+              initialData={sheetInitialData}
+              onSuccess={closeSheet}
+              onCancel={closeSheet}
+            />
+          ))}
+      </Sheet>
     </div>
   );
 }
-
-const iconLinkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '32px',
-  height: '32px',
-  borderRadius: '50%',
-  border: '1px solid var(--color-border)',
-  background: '#fff',
-  color: '#1a1a1a',
-  flexShrink: 0,
-  textDecoration: 'none',
-  transition: 'background 0.15s',
-};
 
 function ThSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
@@ -331,11 +377,11 @@ function ThSelect({ value, onChange, options }: { value: string; onChange: (v: s
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
-        fontSize: '11px',
+        fontSize: '12px',
         fontWeight: 700,
+        textTransform: 'none',
+        letterSpacing: 'normal',
         color: value === 'all' ? 'rgba(26,26,26,0.5)' : '#1a1a1a',
-        textTransform: 'uppercase',
-        letterSpacing: '0.06em',
         border: 'none',
         background: 'transparent',
         cursor: 'pointer',

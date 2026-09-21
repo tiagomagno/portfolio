@@ -4,7 +4,7 @@
  * client (CaseForm.tsx, validação com react-hook-form) quanto no server (rotas de API).
  */
 import { z } from 'zod';
-import { ATUACAO_CATEGORIES, type AtuacaoCategory } from '@/data/portfolio';
+import { ATUACAO_CATEGORIES, parseAtuacaoList, type AtuacaoCategory } from '@/data/portfolio';
 
 const metricSchema = z.object({ value: z.string(), label: z.string() });
 const alternativeSchema = z.object({ title: z.string(), reason: z.string() });
@@ -92,3 +92,55 @@ export const emptyCaseFormDefaults: CaseFormData = {
   handoff: { engineeringCollaboration: '', specDocumentation: '', launchStrategy: '' },
   impact: { metrics: [], qualitativeImpact: '', postMortem: '' },
 };
+
+/** Formato genérico o bastante pra cobrir tanto uma linha do Prisma (server) quanto o
+ * JSON já desserializado de GET /api/admin/cases/[slug] (client) — sem depender de
+ * @prisma/client, que não pode ser importado em componentes client. */
+export interface CaseRecordLike {
+  slug: string;
+  empresa: string;
+  atuacao: unknown;
+  produtos: unknown;
+  coverImage: string | null;
+  heroImage: string | null;
+  heroColor: string | null;
+  gallery: unknown;
+  role: string | null;
+  year: string | null;
+  heroSubtitle: string | null;
+  overview: unknown;
+  diagnosis: unknown;
+  design: unknown;
+  handoff: unknown;
+  impact: unknown;
+}
+
+/** Converte uma linha do banco (ou a resposta da API) no formato do formulário, pra prefill da edição. */
+export function caseRecordToFormData(row: CaseRecordLike): CaseFormData {
+  const overview = (row.overview as CaseFormData['overview'] | null) ?? { context: '', businessProblem: '', goals: [], roleScope: '', constraints: [] };
+  const diagnosis = (row.diagnosis as CaseFormData['diagnosis'] | null) ?? { methodology: '', whyThisApproach: '', insight: '', stakeholderManagement: '' };
+  const design = (row.design as CaseFormData['design'] | null) ?? { hypothesis: '', discardedAlternatives: [], edgeCases: '', designSystem: '', usabilityValidation: '' };
+  const handoff = (row.handoff as CaseFormData['handoff'] | null) ?? { engineeringCollaboration: '', specDocumentation: '', launchStrategy: '' };
+  const impact = (row.impact as CaseFormData['impact'] | null) ?? { metrics: [], qualitativeImpact: '', postMortem: '' };
+  const produtos = Array.isArray(row.produtos) ? (row.produtos as string[]) : [];
+  const gallery = Array.isArray(row.gallery) ? (row.gallery as CaseFormData['gallery']) : [];
+
+  return {
+    empresa: row.empresa,
+    slug: row.slug,
+    atuacao: parseAtuacaoList(row.atuacao) ?? [],
+    produtos: produtos.length > 0 ? produtos : [''],
+    coverImage: row.coverImage ?? '',
+    heroImage: row.heroImage ?? '',
+    heroColor: row.heroColor ?? '',
+    gallery,
+    role: row.role ?? '',
+    year: row.year ?? '',
+    heroSubtitle: row.heroSubtitle ?? '',
+    overview: { ...overview, goals: overview.goals.length > 0 ? overview.goals : [''], constraints: overview.constraints.length > 0 ? overview.constraints : [''] },
+    diagnosis,
+    design,
+    handoff,
+    impact,
+  };
+}
