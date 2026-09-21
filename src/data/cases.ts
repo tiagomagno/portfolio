@@ -57,29 +57,54 @@ function mapCase(row: Case): PortfolioItem {
   };
 }
 
-/** Cases visíveis no site (não desativados, não excluídos), na ordem de criação. */
+/** Cases visíveis no site (não desativados, não excluídos), na ordem de criação. Sempre
+ * falha em silêncio (retorna []) — usado em páginas estáticas/ISR (Home, /portfolio) que
+ * rodam no build; sem isso, um deploy antes da tabela Case existir no banco (ou uma
+ * instabilidade pontual do banco) derrubaria o build/render inteiro. */
 export async function getVisibleCases(): Promise<PortfolioItem[]> {
-  const rows = await prisma.case.findMany({ where: { visible: true, removedAt: null }, orderBy: { createdAt: 'asc' } });
-  return rows.map(mapCase);
+  try {
+    const rows = await prisma.case.findMany({ where: { visible: true, removedAt: null }, orderBy: { createdAt: 'asc' } });
+    return rows.map(mapCase);
+  } catch (err) {
+    console.error('getVisibleCases falhou:', err);
+    return [];
+  }
 }
 
 /** Todos os cases, independente de visibilidade — usado por generateStaticParams (a
- * página de detalhe decide em runtime se esconde ou não um case desativado). */
+ * página de detalhe decide em runtime se esconde ou não um case desativado). Mesma
+ * falha-em-silêncio de getVisibleCases (roda no build). */
 export async function getAllCases(): Promise<PortfolioItem[]> {
-  const rows = await prisma.case.findMany({ orderBy: { createdAt: 'asc' } });
-  return rows.map(mapCase);
+  try {
+    const rows = await prisma.case.findMany({ orderBy: { createdAt: 'asc' } });
+    return rows.map(mapCase);
+  } catch (err) {
+    console.error('getAllCases falhou:', err);
+    return [];
+  }
 }
 
-/** Um case pelo slug — retorna null se não existir OU se estiver desativado/excluído. */
+/** Um case pelo slug — retorna null se não existir, estiver desativado/excluído, OU se o
+ * banco falhar (fail-silent, mesmo padrão das demais funções deste arquivo). */
 export async function getCaseBySlug(slug: string): Promise<PortfolioItem | null> {
-  const row = await prisma.case.findUnique({ where: { slug } });
-  if (!row || !row.visible || row.removedAt) return null;
-  return mapCase(row);
+  try {
+    const row = await prisma.case.findUnique({ where: { slug } });
+    if (!row || !row.visible || row.removedAt) return null;
+    return mapCase(row);
+  } catch (err) {
+    console.error(`getCaseBySlug(${slug}) falhou:`, err);
+    return null;
+  }
 }
 
 /** Um case pelo slug, ignorando visibilidade — usado só por generateMetadata (o corpo da
  * página usa getCaseBySlug, que já trata "não encontrado" e "escondido" da mesma forma). */
 export async function getCaseBySlugIncludingHidden(slug: string): Promise<PortfolioItem | null> {
-  const row = await prisma.case.findUnique({ where: { slug } });
-  return row ? mapCase(row) : null;
+  try {
+    const row = await prisma.case.findUnique({ where: { slug } });
+    return row ? mapCase(row) : null;
+  } catch (err) {
+    console.error(`getCaseBySlugIncludingHidden(${slug}) falhou:`, err);
+    return null;
+  }
 }
