@@ -45,9 +45,11 @@ model Case {
   handoff        Json?
   /// { metrics: {value,label}[], qualitativeImpact, postMortem }
   impact         Json?
-  /// Selecionado para aparecer no carrossel de Cases da home (o admin escolhe até 10;
-  /// a ordem de exibição continua embaralhada no client, então não há campo de ordem).
+  /// Selecionado para aparecer no carrossel de Cases da home (o admin escolhe até 10).
   featuredOnHome Boolean   @default(false)
+  /// Posição entre os cases selecionados pra home (menor = aparece primeiro no carrossel).
+  /// Só é relevante quando featuredOnHome = true; ignorado nos demais.
+  homeOrder      Int       @default(0)
   visible        Boolean   @default(true)
   /// Soft-delete: tira o case da lista principal do admin, mantendo a opção de restaurar.
   removedAt      DateTime?

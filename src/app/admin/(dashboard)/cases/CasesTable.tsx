@@ -19,6 +19,7 @@ export interface CaseRow {
   visible: boolean;
   removedAt: string | null;
   featuredOnHome: boolean;
+  homeOrder: number;
 }
 
 type Tab = 'ativos' | 'desativados' | 'excluidos';
@@ -35,10 +36,20 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
   const [featuredError, setFeaturedError] = useState<string | null>(null);
 
   const featuredCount = useMemo(() => rows.filter((r) => r.featuredOnHome).length, [rows]);
+  const featuredOrder = useMemo(
+    () => [...rows].filter((r) => r.featuredOnHome).sort((a, b) => a.homeOrder - b.homeOrder).map((r) => r.slug),
+    [rows]
+  );
 
+  // Selecionados pra home aparecem primeiro (na ordem de prioridade definida pelas setas),
+  // pra ficarem fáceis de achar e reordenar sem precisar rolar a lista inteira.
   const byTab = useMemo(
     () => ({
-      ativos: rows.filter((r) => r.visible && !r.removedAt),
+      ativos: [...rows.filter((r) => r.visible && !r.removedAt)].sort((a, b) => {
+        if (a.featuredOnHome !== b.featuredOnHome) return a.featuredOnHome ? -1 : 1;
+        if (a.featuredOnHome) return a.homeOrder - b.homeOrder;
+        return 0;
+      }),
       desativados: rows.filter((r) => !r.visible && !r.removedAt),
       excluidos: rows.filter((r) => !!r.removedAt),
     }),
@@ -81,6 +92,20 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
         setFeaturedError(data?.error ?? 'Não foi possível atualizar.');
         return;
       }
+      router.refresh();
+    } finally {
+      setUpdatingSlug(null);
+    }
+  }
+
+  async function reorderFeatured(slug: string, direction: 'up' | 'down') {
+    setUpdatingSlug(slug);
+    try {
+      await fetch(`/api/admin/cases/${slug}/reorder`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ direction }),
+      });
       router.refresh();
     } finally {
       setUpdatingSlug(null);
@@ -200,14 +225,33 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                 </Td>
                 <Td align="center">
                   {!row.removedAt && (
-                    <input
-                      type="checkbox"
-                      checked={row.featuredOnHome}
-                      disabled={updatingSlug === row.slug || (!row.featuredOnHome && featuredCount >= MAX_FEATURED_ON_HOME)}
-                      onChange={(e) => toggleFeatured(row.slug, e.target.checked)}
-                      title={row.featuredOnHome ? 'Remover do carrossel da home' : 'Mostrar no carrossel da home'}
-                      style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
-                    />
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <input
+                        type="checkbox"
+                        checked={row.featuredOnHome}
+                        disabled={updatingSlug === row.slug || (!row.featuredOnHome && featuredCount >= MAX_FEATURED_ON_HOME)}
+                        onChange={(e) => toggleFeatured(row.slug, e.target.checked)}
+                        title={row.featuredOnHome ? 'Remover do carrossel da home' : 'Mostrar no carrossel da home'}
+                        style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+                      />
+                      {row.featuredOnHome && (
+                        <>
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', minWidth: '14px' }}>
+                            {featuredOrder.indexOf(row.slug) + 1}
+                          </span>
+                          <ReorderButton
+                            direction="up"
+                            disabled={updatingSlug === row.slug || featuredOrder.indexOf(row.slug) === 0}
+                            onClick={() => reorderFeatured(row.slug, 'up')}
+                          />
+                          <ReorderButton
+                            direction="down"
+                            disabled={updatingSlug === row.slug || featuredOrder.indexOf(row.slug) === featuredOrder.length - 1}
+                            onClick={() => reorderFeatured(row.slug, 'down')}
+                          />
+                        </>
+                      )}
+                    </div>
                   )}
                 </Td>
                 <Td align="center">
@@ -383,6 +427,37 @@ function IconAction({
     >
       <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
         {icon}
+      </span>
+    </button>
+  );
+}
+
+function ReorderButton({ direction, onClick, disabled }: { direction: 'up' | 'down'; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      type="button"
+      title={direction === 'up' ? 'Subir prioridade' : 'Descer prioridade'}
+      aria-label={direction === 'up' ? 'Subir prioridade' : 'Descer prioridade'}
+      className="admin-icon-action"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '20px',
+        height: '20px',
+        borderRadius: '4px',
+        border: '1px solid var(--color-border)',
+        background: '#fff',
+        color: '#1a1a1a',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.3 : 1,
+        flexShrink: 0,
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>
+        {direction === 'up' ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
       </span>
     </button>
   );

@@ -61,6 +61,8 @@ export interface PortfolioItem {
   caseStudy?: CaseStudyData;
   /** Selecionado para aparecer no carrossel de Cases da home. */
   featuredOnHome?: boolean;
+  /** Posição entre os selecionados pra home (menor = primeiro). Só relevante se featuredOnHome. */
+  homeOrder?: number;
 }
 
 export function slugify(text: string): string {

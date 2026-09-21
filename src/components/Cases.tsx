@@ -10,15 +10,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
 
-function shuffle<T>(items: T[]): T[] {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
 function useItemsPerView() {
@@ -42,21 +33,13 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
 
   // Só cases com case study completo entram no preview da Home — sempre clicáveis,
   // nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
+  // Selecionados pra home aparecem na ordem definida no admin (homeOrder, menor primeiro);
+  // sem nenhum selecionado, mantém o comportamento antigo (mostra todos, ordem de criação).
   const visibleFeaturedCases = useMemo(() => {
     const pool = items.filter((item) => item.caseStudy);
-    const selected = pool.filter((item) => item.featuredOnHome);
-    // Enquanto o admin não selecionar nenhum case pra home (/admin/cases), mantém o
-    // comportamento antigo (mostra todos) em vez de deixar o carrossel vazio.
+    const selected = pool.filter((item) => item.featuredOnHome).sort((a, b) => (a.homeOrder ?? 0) - (b.homeOrder ?? 0));
     return selected.length > 0 ? selected : pool;
   }, [items]);
-
-  // Ordem embaralhada a cada carregamento da página. Começa com a ordem original
-  // (idêntica no server e no client) e só embaralha depois de montar, pra não gerar
-  // um HTML diferente do que o React espera na hidratação.
-  const [shuffledCases, setShuffledCases] = useState(visibleFeaturedCases);
-  useEffect(() => {
-    setShuffledCases(shuffle(visibleFeaturedCases));
-  }, [visibleFeaturedCases]);
 
   const itemsPerView = useItemsPerView();
 
@@ -65,10 +48,10 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   // ponta, salta silenciosamente (sem animação) pro mesmo ponto na cópia do
   // meio — dá a sensação de loop sem fim em qualquer direção (arrasto ou seta).
   const trackItems = useMemo(
-    () => [...shuffledCases, ...shuffledCases, ...shuffledCases],
-    [shuffledCases]
+    () => [...visibleFeaturedCases, ...visibleFeaturedCases, ...visibleFeaturedCases],
+    [visibleFeaturedCases]
   );
-  const setCount = shuffledCases.length;
+  const setCount = visibleFeaturedCases.length;
 
   const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);

@@ -19,6 +19,7 @@ export default async function AdminCasesPage() {
     visible: item.visible,
     removedAt: item.removedAt ? item.removedAt.toISOString() : null,
     featuredOnHome: item.featuredOnHome,
+    homeOrder: item.homeOrder,
   }));
 
   return (

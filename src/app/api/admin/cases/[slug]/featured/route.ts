@@ -13,14 +13,26 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const body = await request.json();
   const featured = body.featured === true;
 
+  const current = await prisma.case.findUnique({ where: { slug }, select: { featuredOnHome: true } });
+
   if (featured) {
     const count = await prisma.case.count({ where: { featuredOnHome: true } });
-    const current = await prisma.case.findUnique({ where: { slug }, select: { featuredOnHome: true } });
     if (!current?.featuredOnHome && count >= MAX_FEATURED) {
       return NextResponse.json({ error: `Limite de ${MAX_FEATURED} cases na home atingido.` }, { status: 400 });
     }
   }
 
-  const updated = await prisma.case.update({ where: { slug }, data: { featuredOnHome: featured } });
-  return NextResponse.json({ featuredOnHome: updated.featuredOnHome });
+  // Ao marcar, entra no fim da fila de prioridade (pode ser reordenado depois com as setas
+  // da tabela). Ao desmarcar, não precisa zerar homeOrder — fica sem efeito até ser marcado de novo.
+  let homeOrder: number | undefined;
+  if (featured && !current?.featuredOnHome) {
+    const last = await prisma.case.findFirst({ where: { featuredOnHome: true }, orderBy: { homeOrder: 'desc' }, select: { homeOrder: true } });
+    homeOrder = (last?.homeOrder ?? -1) + 1;
+  }
+
+  const updated = await prisma.case.update({
+    where: { slug },
+    data: { featuredOnHome: featured, ...(homeOrder !== undefined ? { homeOrder } : {}) },
+  });
+  return NextResponse.json({ featuredOnHome: updated.featuredOnHome, homeOrder: updated.homeOrder });
 }

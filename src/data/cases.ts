@@ -54,6 +54,7 @@ function mapCase(row: Case): PortfolioItem {
     gallery: activeGalleryUrls(row.gallery),
     caseStudy: buildCaseStudy(row),
     featuredOnHome: row.featuredOnHome,
+    homeOrder: row.homeOrder,
   };
 }
 
