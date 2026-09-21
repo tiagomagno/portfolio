@@ -15,6 +15,49 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+/// Case do portfólio (dados básicos + narrativa completa de case study), criado e editado
+/// via /admin/cases. Substitui os itens hardcoded que existiam em src/data/portfolio.ts —
+/// esse arquivo agora só guarda tipos/helpers puros (slugify, categorias etc).
+model Case {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  empresa        String
+  /// AtuacaoCategory[]
+  atuacao        Json
+  /// string[]
+  produtos       Json
+  coverImage     String?   @db.Text
+  heroImage      String?   @db.Text
+  /// Cor sólida alternativa ao heroImage no banner de topo. Mutuamente exclusiva com heroImage.
+  heroColor      String?
+  /// { url: string, active: boolean }[]
+  gallery        Json?
+  role           String?
+  year           String?
+  heroSubtitle   String?   @db.Text
+  /// { context, businessProblem, goals: string[], roleScope, constraints: string[] }
+  overview       Json?
+  /// { methodology, whyThisApproach, insight, stakeholderManagement }
+  diagnosis      Json?
+  /// { hypothesis, discardedAlternatives: {title,reason}[], edgeCases, designSystem, usabilityValidation }
+  design         Json?
+  /// { engineeringCollaboration, specDocumentation, launchStrategy }
+  handoff        Json?
+  /// { metrics: {value,label}[], qualitativeImpact, postMortem }
+  impact         Json?
+  /// Selecionado para aparecer no carrossel de Cases da home (o admin escolhe até 10;
+  /// a ordem de exibição continua embaralhada no client, então não há campo de ordem).
+  featuredOnHome Boolean   @default(false)
+  visible        Boolean   @default(true)
+  /// Soft-delete: tira o case da lista principal do admin, mantendo a opção de restaurar.
+  removedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+/// LEGADO — substituído pelo model Case (imagens/categorias agora vivem direto na linha do
+/// case). Mantido sem uso pra não ser uma migration destrutiva; candidato a remoção futura
+/// com autorização explícita.
 /// Sobrepõe as imagens (capa/topo/galeria) e as categorias de um case do portfólio,
 /// geridas pelo admin. O texto do case continua vindo de src/data/portfolio.ts.
 model CaseAsset {
@@ -36,6 +79,9 @@ model CaseAsset {
   updatedAt  DateTime @updatedAt
 }
 
+/// LEGADO — substituído pelo model Case (visible/removedAt agora vivem direto na linha do
+/// case). Mantido sem uso pra não ser uma migration destrutiva; candidato a remoção futura
+/// com autorização explícita.
 /// Visibilidade de um case do portfólio no site (a lista completa e o texto continuam
 /// fixos em src/data/portfolio.ts — não é possível remover a entrada de lá em runtime,
 /// então isso controla apenas se ele aparece ou não). Sem uma linha aqui para um slug,

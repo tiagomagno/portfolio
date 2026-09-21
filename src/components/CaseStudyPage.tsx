@@ -4,19 +4,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
 import { CATEGORY_KEYS } from '@/lib/translations';
-import { getCaseStudyItems, slugify, type PortfolioItem } from '@/data/portfolio';
+import type { PortfolioItem } from '@/data/portfolio';
 import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 import SectionDivider from './ui/SectionDivider';
 
-export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: PortfolioItem; hiddenSlugs?: string[] }) {
+export default function CaseStudyPage({ item, allCases }: { item: PortfolioItem; allCases: PortfolioItem[] }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
   const cs = item.caseStudy!;
   const category = tCategory(item.atuacao[0]);
 
-  const hidden = new Set(hiddenSlugs);
-  const allCases = getCaseStudyItems().filter((c) => !hidden.has(slugify(c.empresa)));
   const currentIndex = allCases.findIndex((c) => c.id === item.id);
   const nextCase = allCases.length > 1 ? allCases[(currentIndex + 1) % allCases.length] : null;
 
@@ -249,7 +247,7 @@ export default function CaseStudyPage({ item, hiddenSlugs = [] }: { item: Portfo
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {nextCase ? (
             <Link
-              href={`/portfolio/${slugify(nextCase.empresa)}`}
+              href={`/portfolio/${nextCase.slug}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',

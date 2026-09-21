@@ -1,18 +1,18 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { AtuacaoCategory } from '@/data/portfolio';
-import CaseAssetEditor from './[slug]/CaseAssetEditor';
+import PillTabs from '@/components/ui/PillTabs';
 
 export const MAX_FEATURED_ON_HOME = 10;
 
 export interface CaseRow {
-  id: number;
+  id: string;
   empresa: string;
   slug: string;
   atuacao: AtuacaoCategory[];
-  fallbackImage?: string;
   hasCover: boolean;
   hasHero: boolean;
   galleryCount: number;
@@ -21,32 +21,42 @@ export interface CaseRow {
   featuredOnHome: boolean;
 }
 
+type Tab = 'ativos' | 'desativados' | 'excluidos';
+type CoverFilter = 'all' | 'with' | 'without';
+type HomeFilter = 'all' | 'selected' | 'not-selected';
+
 export default function CasesTable({ rows, categories }: { rows: CaseRow[]; categories: AtuacaoCategory[] }) {
   const router = useRouter();
-  const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
-  const [selected, setSelected] = useState<CaseRow | null>(null);
-  const [showRemoved, setShowRemoved] = useState(false);
+  const [tab, setTab] = useState<Tab>('ativos');
+  const [categoryFilter, setCategoryFilter] = useState<AtuacaoCategory | 'all'>('all');
+  const [coverFilter, setCoverFilter] = useState<CoverFilter>('all');
+  const [homeFilter, setHomeFilter] = useState<HomeFilter>('all');
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
   const [featuredError, setFeaturedError] = useState<string | null>(null);
 
-  const removedCount = useMemo(() => rows.filter((r) => r.removedAt).length, [rows]);
   const featuredCount = useMemo(() => rows.filter((r) => r.featuredOnHome).length, [rows]);
 
+  const byTab = useMemo(
+    () => ({
+      ativos: rows.filter((r) => r.visible && !r.removedAt),
+      desativados: rows.filter((r) => !r.visible && !r.removedAt),
+      excluidos: rows.filter((r) => !!r.removedAt),
+    }),
+    [rows]
+  );
+
   const filtered = useMemo(() => {
-    let list = showRemoved ? rows.filter((r) => r.removedAt) : rows.filter((r) => !r.removedAt);
-    if (activeFilter) list = list.filter((r) => r.atuacao.includes(activeFilter));
+    let list = byTab[tab];
+    if (categoryFilter !== 'all') list = list.filter((r) => r.atuacao.includes(categoryFilter));
+    if (coverFilter !== 'all') list = list.filter((r) => (coverFilter === 'with' ? r.hasCover : !r.hasCover));
+    if (homeFilter !== 'all') list = list.filter((r) => (homeFilter === 'selected' ? r.featuredOnHome : !r.featuredOnHome));
     return list;
-  }, [rows, activeFilter, showRemoved]);
+  }, [byTab, tab, categoryFilter, coverFilter, homeFilter]);
 
-  function closePanel() {
-    setSelected(null);
-    router.refresh();
-  }
-
-  async function updateVisibility(slug: string, visible: boolean, removed: boolean) {
+  async function updateStatus(slug: string, visible: boolean, removed: boolean) {
     setUpdatingSlug(slug);
     try {
-      await fetch(`/api/admin/portfolio-visibility/${slug}`, {
+      await fetch(`/api/admin/cases/${slug}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ visible, removed }),
@@ -61,7 +71,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     setUpdatingSlug(slug);
     setFeaturedError(null);
     try {
-      const res = await fetch(`/api/admin/featured-cases/${slug}`, {
+      const res = await fetch(`/api/admin/cases/${slug}/featured`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ featured }),
@@ -81,10 +91,22 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     <div>
       <style>{`
         .admin-icon-action:hover:not(:disabled) { background: rgba(26,26,26,0.06); }
+        .admin-th-select { font: inherit; color: inherit; }
       `}</style>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <PillTabs
+          tabs={[
+            { id: 'ativos', label: `Ativos (${byTab.ativos.length})` },
+            { id: 'desativados', label: `Desativados (${byTab.desativados.length})` },
+            { id: 'excluidos', label: `Excluídos (${byTab.excluidos.length})` },
+          ]}
+          activeId={tab}
+          onChange={(id) => setTab(id as Tab)}
+        />
         <span
           style={{
+            marginLeft: 'auto',
             fontSize: '12px',
             fontWeight: 700,
             color: featuredCount >= MAX_FEATURED_ON_HOME ? '#166534' : 'rgba(26,26,26,0.6)',
@@ -100,39 +122,41 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'center' }}>
-        <FilterPill label="Todas" active={activeFilter === null} onClick={() => setActiveFilter(null)} />
-        {categories.map((cat) => (
-          <FilterPill key={cat} label={cat} active={activeFilter === cat} onClick={() => setActiveFilter(cat)} />
-        ))}
-        <button
-          onClick={() => setShowRemoved((v) => !v)}
-          style={{
-            marginLeft: 'auto',
-            fontSize: '12px',
-            fontWeight: 600,
-            color: showRemoved ? '#fff' : 'rgba(26,26,26,0.55)',
-            background: showRemoved ? '#b91c1c' : 'transparent',
-            border: showRemoved ? '1px solid #b91c1c' : '1px solid var(--color-border)',
-            padding: '7px 16px',
-            borderRadius: '100px',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {showRemoved ? 'Voltar aos ativos' : `Excluídos (${removedCount})`}
-        </button>
-      </div>
-
       <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
               <Th>Case</Th>
-              <Th>Categoria</Th>
+              <Th>
+                <ThSelect
+                  value={categoryFilter}
+                  onChange={(v) => setCategoryFilter(v as AtuacaoCategory | 'all')}
+                  options={[{ value: 'all', label: 'Categoria' }, ...categories.map((c) => ({ value: c, label: c }))]}
+                />
+              </Th>
               <Th align="center">Status</Th>
-              <Th align="center">Home</Th>
-              <Th align="center">Capa</Th>
+              <Th align="center">
+                <ThSelect
+                  value={homeFilter}
+                  onChange={(v) => setHomeFilter(v as HomeFilter)}
+                  options={[
+                    { value: 'all', label: 'Home' },
+                    { value: 'selected', label: 'Selecionados' },
+                    { value: 'not-selected', label: 'Não selecionados' },
+                  ]}
+                />
+              </Th>
+              <Th align="center">
+                <ThSelect
+                  value={coverFilter}
+                  onChange={(v) => setCoverFilter(v as CoverFilter)}
+                  options={[
+                    { value: 'all', label: 'Capa' },
+                    { value: 'with', label: 'Com capa' },
+                    { value: 'without', label: 'Sem capa' },
+                  ]}
+                />
+              </Th>
               <Th align="center">Topo</Th>
               <Th align="center">Galeria</Th>
               <Th align="right">&nbsp;</Th>
@@ -142,9 +166,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
             {filtered.length === 0 && (
               <tr>
                 <Td>
-                  <span style={{ color: 'rgba(26,26,26,0.4)' }}>
-                    {showRemoved ? 'Nenhum case excluído.' : 'Nenhum case encontrado.'}
-                  </span>
+                  <span style={{ color: 'rgba(26,26,26,0.4)' }}>Nenhum case encontrado.</span>
                 </Td>
               </tr>
             )}
@@ -206,16 +228,18 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                         icon="restore"
                         label="Restaurar"
                         disabled={updatingSlug === row.slug}
-                        onClick={() => updateVisibility(row.slug, true, false)}
+                        onClick={() => updateStatus(row.slug, true, false)}
                       />
                     ) : (
                       <>
-                        <IconAction icon="edit" label="Editar" onClick={() => setSelected(row)} />
+                        <Link href={`/admin/cases/${row.slug}`} className="admin-icon-action" style={iconLinkStyle} title="Editar" aria-label="Editar">
+                          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                        </Link>
                         <IconAction
                           icon={row.visible ? 'visibility_off' : 'visibility'}
                           label={row.visible ? 'Desativar' : 'Ativar'}
                           disabled={updatingSlug === row.slug}
-                          onClick={() => updateVisibility(row.slug, !row.visible, false)}
+                          onClick={() => updateStatus(row.slug, !row.visible, false)}
                         />
                         <IconAction
                           icon="delete"
@@ -224,7 +248,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                           disabled={updatingSlug === row.slug}
                           onClick={() => {
                             if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois em "Excluídos".`)) {
-                              updateVisibility(row.slug, false, true);
+                              updateStatus(row.slug, false, true);
                             }
                           }}
                         />
@@ -237,76 +261,49 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
           </tbody>
         </table>
       </div>
-
-      {selected && (
-        <>
-          <div
-            onClick={closePanel}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              height: '100vh',
-              width: 'min(560px, 100vw)',
-              background: '#fff',
-              boxShadow: '-8px 0 24px rgba(0,0,0,0.12)',
-              zIndex: 41,
-              overflowY: 'auto',
-              padding: '28px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>{selected.empresa}</h2>
-              <button
-                onClick={closePanel}
-                aria-label="Fechar"
-                style={{
-                  background: 'var(--color-bg-high)',
-                  border: 'none',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  color: '#1a1a1a',
-                  flexShrink: 0,
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <CaseAssetEditor slug={selected.slug} fallbackImage={selected.fallbackImage} fallbackAtuacao={selected.atuacao} />
-          </div>
-        </>
-      )}
     </div>
   );
 }
 
-function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+const iconLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+  height: '32px',
+  borderRadius: '50%',
+  border: '1px solid var(--color-border)',
+  background: '#fff',
+  color: '#1a1a1a',
+  flexShrink: 0,
+  textDecoration: 'none',
+  transition: 'background 0.15s',
+};
+
+function ThSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
-    <button
-      onClick={onClick}
+    <select
+      className="admin-th-select"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
       style={{
-        fontSize: '12px',
-        fontWeight: 600,
-        color: active ? '#fff' : 'rgba(26,26,26,0.6)',
-        background: active ? 'var(--color-primary)' : '#fff',
-        border: active ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
-        padding: '7px 16px',
-        borderRadius: '100px',
+        fontSize: '11px',
+        fontWeight: 700,
+        color: value === 'all' ? 'rgba(26,26,26,0.5)' : '#1a1a1a',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        border: 'none',
+        background: 'transparent',
         cursor: 'pointer',
-        whiteSpace: 'nowrap',
+        padding: 0,
       }}
     >
-      {label}
-    </button>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
   );
 }
 

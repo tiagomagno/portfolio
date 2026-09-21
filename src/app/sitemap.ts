@@ -1,11 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { getCaseStudyItems, slugify } from '@/data/portfolio';
-import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
+import { getVisibleCases } from '@/data/cases';
 
 const BASE_URL = 'https://tiagosmagno.com.br';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const hiddenSlugs = await getHiddenPortfolioSlugs();
+  const cases = await getVisibleCases();
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: 'monthly', priority: 1 },
@@ -14,10 +13,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/briefing`, changeFrequency: 'yearly', priority: 0.5 },
   ];
 
-  const casePages: MetadataRoute.Sitemap = getCaseStudyItems()
-    .filter((item) => !hiddenSlugs.has(slugify(item.empresa)))
+  const casePages: MetadataRoute.Sitemap = cases
+    .filter((item) => item.caseStudy)
     .map((item) => ({
-      url: `${BASE_URL}/portfolio/${slugify(item.empresa)}`,
+      url: `${BASE_URL}/portfolio/${item.slug}`,
       changeFrequency: 'yearly',
       priority: 0.6,
     }));

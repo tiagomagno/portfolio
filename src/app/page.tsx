@@ -13,10 +13,10 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import Divider from '@/components/Divider';
 import { prisma } from '@/lib/prisma';
-import { getAllCaseAssetOverrides } from '@/data/caseAssets';
-import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
+import { getVisibleCases } from '@/data/cases';
 
-const SECTION_COMPONENTS: Record<string, React.ComponentType> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
   hero: Hero,
   about: About,
   stats: Stats,
@@ -71,12 +71,7 @@ async function getSectionOrder(): Promise<string[]> {
 }
 
 export default async function Home() {
-  const [order, overrides, hiddenSlugs] = await Promise.all([
-    getSectionOrder(),
-    getAllCaseAssetOverrides(),
-    getHiddenPortfolioSlugs(),
-  ]);
-  const overridesBySlug = Object.fromEntries(overrides);
+  const [order, cases] = await Promise.all([getSectionOrder(), getVisibleCases()]);
 
   return (
     <>
@@ -89,7 +84,7 @@ export default async function Home() {
         />
         {order.map((key, i) => {
           const section = key === 'cases'
-            ? <Cases key={key} overrides={overridesBySlug} hiddenSlugs={[...hiddenSlugs]} />
+            ? <Cases key={key} items={cases} />
             : (() => {
                 const Section = SECTION_COMPONENTS[key];
                 return Section ? <Section key={key} /> : null;

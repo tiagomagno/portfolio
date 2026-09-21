@@ -6,8 +6,7 @@ import PortfolioGrid from '@/components/PortfolioGrid';
 import PortfolioCTA from '@/components/PortfolioCTA';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { SURFACE } from '@/lib/surfaces';
-import { getAllCaseAssetOverrides } from '@/data/caseAssets';
-import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
+import { getVisibleCases } from '@/data/cases';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
 const DEFAULT_METADATA: Metadata = {
@@ -25,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 60;
 
 export default async function PortfolioPage() {
-  const [overrides, hiddenSlugs] = await Promise.all([getAllCaseAssetOverrides(), getHiddenPortfolioSlugs()]);
+  const items = await getVisibleCases();
 
   return (
     <>
@@ -33,7 +32,7 @@ export default async function PortfolioPage() {
       <main id="main-content">
         <PortfolioHero />
         <SectionDivider from={SURFACE.base} to={SURFACE.raised} />
-        <PortfolioGrid overrides={Object.fromEntries(overrides)} hiddenSlugs={[...hiddenSlugs]} />
+        <PortfolioGrid items={items} />
         <PortfolioCTA />
         <SectionDivider from={SURFACE.base} to={SURFACE.footer} />
       </main>

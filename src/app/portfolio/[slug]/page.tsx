@@ -3,24 +3,21 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CaseStudyPage from '@/components/CaseStudyPage';
-import { getCaseStudyItems, getPortfolioItemBySlug, slugify } from '@/data/portfolio';
-import { getCaseAssetOverrides } from '@/data/caseAssets';
-import { getHiddenPortfolioSlugs } from '@/data/portfolioVisibility';
+import { getAllCases, getVisibleCases, getCaseBySlug, getCaseBySlugIncludingHidden } from '@/data/cases';
 
-// Reflete imagens atualizadas pelo admin (/admin/cases) sem precisar de novo deploy.
+// Reflete imagens/textos atualizados pelo admin (/admin/cases) sem precisar de novo deploy.
 export const revalidate = 60;
 
-export function generateStaticParams() {
-  return getCaseStudyItems().map((item) => ({ slug: slugify(item.empresa) }));
+export async function generateStaticParams() {
+  const cases = await getAllCases();
+  return cases.filter((item) => item.caseStudy).map((item) => ({ slug: item.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const item = getPortfolioItemBySlug(slug);
+  const item = await getCaseBySlugIncludingHidden(slug);
   if (!item?.caseStudy) return { title: 'Case não encontrado - Tiago Magno' };
 
-  const overrides = await getCaseAssetOverrides(slug);
-  const coverImage = overrides?.coverImage ?? item.image;
   const title = `${item.empresa} - Tiago Magno`;
   const description = item.caseStudy.heroSubtitle;
 
@@ -33,48 +30,36 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title,
       description,
       url: `/portfolio/${slug}`,
-      images: coverImage ? [{ url: coverImage, alt: item.empresa }] : undefined,
+      images: item.image ? [{ url: item.image, alt: item.empresa }] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: coverImage ? [coverImage] : undefined,
+      images: item.image ? [item.image] : undefined,
     },
   };
 }
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = getPortfolioItemBySlug(slug);
 
+  // getCaseBySlug já retorna null tanto pra "não existe" quanto pra "desativado/excluído" —
+  // um case escondido no admin não deve mais ser acessível, mesmo por link direto.
+  const [item, visibleCases] = await Promise.all([getCaseBySlug(slug), getVisibleCases()]);
   if (!item?.caseStudy) {
     notFound();
   }
 
-  const [overrides, hiddenSlugs] = await Promise.all([getCaseAssetOverrides(slug), getHiddenPortfolioSlugs()]);
-
-  // Case desativado/excluído no admin (/admin/cases) — não deve mais ser acessível, mesmo por link direto.
-  if (hiddenSlugs.has(slug)) {
-    notFound();
-  }
-
-  const resolvedItem = overrides
-    ? {
-        ...item,
-        image: overrides.coverImage ?? item.image,
-        heroImage: overrides.heroImage ?? item.heroImage,
-        heroColor: overrides.heroColor ?? item.heroColor,
-        gallery: overrides.gallery.length > 0 ? overrides.gallery : item.gallery,
-        atuacao: overrides.atuacao ?? item.atuacao,
-      }
-    : item;
+  // Lista de navegação "próximo case" só com cases visíveis e com narrativa completa —
+  // nunca aponta pra um case desativado/excluído (levaria a um 404).
+  const casesWithStudy = visibleCases.filter((c) => c.caseStudy);
 
   return (
     <>
       <Header />
       <main id="main-content">
-        <CaseStudyPage item={resolvedItem} hiddenSlugs={[...hiddenSlugs]} />
+        <CaseStudyPage item={item} allCases={casesWithStudy} />
       </main>
       <Footer />
     </>

@@ -2,31 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { PORTFOLIO_ITEMS, ATUACAO_CATEGORIES, slugify, type AtuacaoCategory } from '@/data/portfolio';
-import type { CaseAssetOverrides } from '@/data/caseAssets';
+import { ATUACAO_CATEGORIES, type AtuacaoCategory, type PortfolioItem } from '@/data/portfolio';
 import { useLang } from '@/context/LangContext';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 import PortfolioCard from './PortfolioCard';
 
-export default function PortfolioGrid({
-  overrides = {},
-  hiddenSlugs = [],
-}: {
-  overrides?: Record<string, CaseAssetOverrides>;
-  hiddenSlugs?: string[];
-}) {
+export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
   const [activeFilter, setActiveFilter] = useState<AtuacaoCategory | null>(null);
 
-  const hidden = new Set(hiddenSlugs);
-  const visibleItems = PORTFOLIO_ITEMS.filter((item) => !hidden.has(slugify(item.empresa))).map((item) => {
-    const override = overrides[slugify(item.empresa)]?.atuacao;
-    return override ? { ...item, atuacao: override } : item;
-  });
-  const filtered = activeFilter ? visibleItems.filter((item) => item.atuacao.includes(activeFilter)) : visibleItems;
+  const filtered = activeFilter ? items.filter((item) => item.atuacao.includes(activeFilter)) : items;
 
   return (
     <section style={{ background: SURFACE.raised, padding: '60px 0 100px' }}>
@@ -81,11 +69,10 @@ export default function PortfolioGrid({
 
         <div className="portfolio-full-grid">
           {filtered.map((item, i) => {
-            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
             const card = (
               <PortfolioCard
                 item={item}
-                coverImage={coverImage}
+                coverImage={item.image}
                 categoryLabel={tCategory}
                 comingSoonLabel={t('portfolioPage.comingSoon')}
               />
@@ -94,7 +81,7 @@ export default function PortfolioGrid({
             return (
               <FadeIn key={item.id} delay={0.02 * Math.min(i, 20)} style={{ height: '100%' }}>
                 {item.caseStudy ? (
-                  <Link href={`/portfolio/${slugify(item.empresa)}`} className="portfolio-card-v2-link">
+                  <Link href={`/portfolio/${item.slug}`} className="portfolio-card-v2-link">
                     {card}
                   </Link>
                 ) : (

@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPortfolioItemBySlug } from '@/data/portfolio';
-import CaseAssetEditor from './CaseAssetEditor';
+import { prisma } from '@/lib/prisma';
+import { caseRowToFormData } from '@/lib/caseFormServer';
+import CaseForm from '@/components/admin/CaseForm';
 
 export default async function AdminCaseEditPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = getPortfolioItemBySlug(slug);
+  const item = await prisma.case.findUnique({ where: { slug } });
   if (!item) notFound();
 
   return (
@@ -14,7 +15,7 @@ export default async function AdminCaseEditPage({ params }: { params: Promise<{ 
         ← Voltar
       </Link>
       <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '8px 0 24px' }}>{item.empresa}</h1>
-      <CaseAssetEditor slug={slug} fallbackImage={item.image} fallbackAtuacao={item.atuacao} />
+      <CaseForm mode="edit" slug={slug} initialData={caseRowToFormData(item)} />
     </div>
   );
 }

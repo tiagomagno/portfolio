@@ -5,15 +5,10 @@ import Link from 'next/link';
 import FadeIn from './ui/FadeIn';
 import PortfolioCard from './PortfolioCard';
 import { useLang } from '@/context/LangContext';
-import { PORTFOLIO_ITEMS, slugify } from '@/data/portfolio';
+import type { PortfolioItem } from '@/data/portfolio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { CaseAssetOverrides } from '@/data/caseAssets';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
-
-// Só cases com case study completo entram no preview da Home — sempre clicáveis,
-// nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
-const FEATURED_CASES = PORTFOLIO_ITEMS.filter((item) => item.caseStudy);
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -41,32 +36,19 @@ function useItemsPerView() {
   return itemsPerView;
 }
 
-export default function Cases({
-  overrides = {},
-  hiddenSlugs = [],
-}: {
-  overrides?: Record<string, CaseAssetOverrides>;
-  hiddenSlugs?: string[];
-}) {
+export default function Cases({ items }: { items: PortfolioItem[] }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
 
-  const hidden = new Set(hiddenSlugs);
+  // Só cases com case study completo entram no preview da Home — sempre clicáveis,
+  // nunca levam a um card "em breve". A lista completa (com os demais) fica em /portfolio.
   const visibleFeaturedCases = useMemo(() => {
-    const pool = FEATURED_CASES.filter((item) => !hidden.has(slugify(item.empresa)));
-    const featuredSlugs = new Set(
-      Object.entries(overrides)
-        .filter(([, o]) => o.featuredOnHome)
-        .map(([slug]) => slug)
-    );
+    const pool = items.filter((item) => item.caseStudy);
+    const selected = pool.filter((item) => item.featuredOnHome);
     // Enquanto o admin não selecionar nenhum case pra home (/admin/cases), mantém o
     // comportamento antigo (mostra todos) em vez de deixar o carrossel vazio.
-    const selected = featuredSlugs.size > 0 ? pool.filter((item) => featuredSlugs.has(slugify(item.empresa))) : pool;
-    return selected.map((item) => {
-      const override = overrides[slugify(item.empresa)]?.atuacao;
-      return override ? { ...item, atuacao: override } : item;
-    });
-  }, [hiddenSlugs, overrides]);
+    return selected.length > 0 ? selected : pool;
+  }, [items]);
 
   // Ordem embaralhada a cada carregamento da página. Começa com a ordem original
   // (idêntica no server e no client) e só embaralha depois de montar, pra não gerar
@@ -296,12 +278,11 @@ export default function Cases({
           style={{ cursor: 'grab' }}
         >
           {trackItems.map((item, idx) => {
-            const coverImage = overrides[slugify(item.empresa)]?.coverImage ?? item.image;
             return (
               <div key={`${item.id}-${idx}`} className="cases-carousel-card">
                 <FadeIn delay={0.02 * (idx % setCount)} style={{ height: '100%' }}>
-                  <Link href={`/portfolio/${slugify(item.empresa)}`} className="portfolio-card-v2-link">
-                      <PortfolioCard item={item} coverImage={coverImage} categoryLabel={tCategory} priority={idx === setCount} />
+                  <Link href={`/portfolio/${item.slug}`} className="portfolio-card-v2-link">
+                      <PortfolioCard item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} />
                     </Link>
                   </FadeIn>
                 </div>
