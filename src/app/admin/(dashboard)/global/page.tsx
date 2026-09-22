@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Sheet from '@/components/admin/Sheet';
+import AdminListTable from '@/components/admin/AdminListTable';
+import IconActionButton from '@/components/admin/IconActionButton';
 import GlobalHeaderEditor from '@/components/admin/GlobalHeaderEditor';
 import GlobalFooterEditor from '@/components/admin/GlobalFooterEditor';
 import SiteSettingsForm from '@/components/admin/SiteSettingsForm';
@@ -25,43 +27,10 @@ export default function AdminGlobalPage() {
         Organização de conteúdos globais — header, seção de contatos e footer, usados em todas as páginas do site.
       </p>
 
-      <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
-        {ITEMS.map((item, i) => (
-          <div
-            key={item.id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '16px',
-              padding: '18px 20px',
-              borderTop: i > 0 ? '1px solid var(--color-border)' : undefined,
-            }}
-          >
-            <div>
-              <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>{item.title}</h2>
-              <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: 0, lineHeight: 1.5 }}>{item.desc}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setOpenId(item.id)}
-              style={{
-                flexShrink: 0,
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '1px solid var(--color-border)',
-                background: 'transparent',
-                color: '#1a1a1a',
-                fontSize: '13px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Editar
-            </button>
-          </div>
-        ))}
-      </div>
+      <AdminListTable
+        rows={ITEMS.map((item) => ({ id: item.id, title: item.title, desc: item.desc }))}
+        renderAction={(row) => <IconActionButton icon="edit" label="Editar" onClick={() => setOpenId(row.id as ItemId)} />}
+      />
 
       <Sheet open={!!open} onClose={() => setOpenId(null)} title={open?.title}>
         {open?.id === 'header' && <GlobalHeaderEditor />}
