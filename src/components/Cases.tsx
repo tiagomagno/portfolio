@@ -60,6 +60,12 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   const dragDistance = useRef(0);
   const activePointerId = useRef<number | null>(null);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Velocidade do cursor (px/ms) na última amostra de pointermove — usada só pra dar
+  // inércia ao soltar o arrasto (sem isso o carrossel travava seco na hora do "solta").
+  const dragVelocity = useRef(0);
+  const lastMoveTime = useRef(0);
+  const lastMoveX = useRef(0);
+  const momentumFrame = useRef<number | null>(null);
 
   // Posiciona o track no início da cópia do meio. Em telas com peek (2/3 colunas
   // cheias), desloca uma coluna pra trás, assim já nasce com uma coluna esmaecida
@@ -73,6 +79,12 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     const cardStep = third / setCount;
     track.scrollLeft = itemsPerView === 1 ? third - 24 : third - cardStep;
   }, [setCount, itemsPerView]);
+
+  useEffect(() => {
+    return () => {
+      if (momentumFrame.current) cancelAnimationFrame(momentumFrame.current);
+    };
+  }, []);
 
   const wrapIfNeeded = () => {
     const track = trackRef.current;
@@ -99,11 +111,18 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse' || !trackRef.current) return;
+    if (momentumFrame.current) {
+      cancelAnimationFrame(momentumFrame.current);
+      momentumFrame.current = null;
+    }
     isDragging.current = true;
     dragDistance.current = 0;
     dragStartX.current = e.clientX;
     dragStartScroll.current = trackRef.current.scrollLeft;
     activePointerId.current = e.pointerId;
+    dragVelocity.current = 0;
+    lastMoveTime.current = e.timeStamp;
+    lastMoveX.current = e.clientX;
     // Não captura o ponteiro aqui ainda: setPointerCapture logo no pointerdown faz o clique
     // (mesmo parado, sem arrastar nada) mirar o track em vez do link do card por baixo do dedo/
     // cursor — só captura de fato depois que handlePointerMove confirma que é um arrasto real.
@@ -118,6 +137,16 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
       trackRef.current.classList.add('is-dragging');
     }
     trackRef.current.scrollLeft = dragStartScroll.current - delta;
+
+    // Velocidade instantânea (px/ms) desde a última amostra — descarta amostras com dt
+    // ~0 (alguns navegadores disparam pointermove duplicado no mesmo frame) pra não gerar
+    // picos irreais de velocidade que fariam a inércia disparar longe demais.
+    const dt = e.timeStamp - lastMoveTime.current;
+    if (dt > 4) {
+      dragVelocity.current = (e.clientX - lastMoveX.current) / dt;
+      lastMoveTime.current = e.timeStamp;
+      lastMoveX.current = e.clientX;
+    }
   };
 
   const endDrag = (e: React.PointerEvent) => {
@@ -128,6 +157,24 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     }
     trackRef.current.classList.remove('is-dragging');
     activePointerId.current = null;
+
+    // Inércia: continua deslizando na direção do arrasto, desacelerando, em vez de
+    // travar seco no ponto exato em que o botão do mouse foi solto.
+    const track = trackRef.current;
+    let velocity = dragVelocity.current;
+    const glide = (lastTime: number) => (time: number) => {
+      const dt = Math.min(time - lastTime, 32);
+      velocity *= Math.pow(0.88, dt / 16);
+      if (Math.abs(velocity) < 0.02) {
+        momentumFrame.current = null;
+        return;
+      }
+      track.scrollLeft -= velocity * dt;
+      momentumFrame.current = requestAnimationFrame(glide(time));
+    };
+    if (Math.abs(velocity) > 0.05) {
+      momentumFrame.current = requestAnimationFrame(glide(performance.now()));
+    }
   };
 
   // O arrasto do carrossel usa o mesmo ponteiro do clique nos cards — sem isso, qualquer

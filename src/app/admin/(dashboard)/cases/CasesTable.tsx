@@ -21,6 +21,9 @@ export interface CaseRow {
   removedAt: string | null;
   featuredOnHome: boolean;
   homeOrder: number;
+  /** Papel + Ano + Subtítulo do topo preenchidos — sem isso, o case fica sem `caseStudy`
+   * (data/cases.ts) e não aparece no carrossel da home mesmo marcado "Home". */
+  hasCaseStudy: boolean;
 }
 
 type StatusFilter = 'all' | 'ativo' | 'desativado' | 'excluido';
@@ -42,6 +45,10 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
   const [sheetEmpresa, setSheetEmpresa] = useState('');
 
   const featuredCount = useMemo(() => rows.filter((r) => r.featuredOnHome).length, [rows]);
+  const featuredMissingCaseStudy = useMemo(
+    () => rows.filter((r) => r.featuredOnHome && !r.hasCaseStudy).length,
+    [rows]
+  );
   const featuredOrder = useMemo(
     () => [...rows].filter((r) => r.featuredOnHome).sort((a, b) => a.homeOrder - b.homeOrder).map((r) => r.slug),
     [rows]
@@ -178,6 +185,28 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
         >
           {featuredCount}/{MAX_FEATURED_ON_HOME} selecionados para a home
         </span>
+        {featuredMissingCaseStudy > 0 && (
+          <span
+            title='Esses cases não vão aparecer no carrossel: falta preencher Papel, Ano ou Subtítulo do topo na aba "Visão Geral" (veja o ícone de aviso na coluna Home).'
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#b45309',
+              background: 'rgba(180,83,9,0.1)',
+              padding: '5px 12px',
+              borderRadius: '100px',
+              cursor: 'help',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+              warning
+            </span>
+            {featuredMissingCaseStudy} sem case study completo
+          </span>
+        )}
         {featuredError && (
           <span style={{ fontSize: '12px', color: '#b91c1c' }} role="alert">{featuredError}</span>
         )}
@@ -296,6 +325,16 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                             disabled={updatingSlug === row.slug || featuredOrder.indexOf(row.slug) === featuredOrder.length - 1}
                             onClick={() => reorderFeatured(row.slug, 'down')}
                           />
+                          {!row.hasCaseStudy && (
+                            <span
+                              title='Não vai aparecer no carrossel da home: falta preencher Papel, Ano ou Subtítulo do topo na aba "Visão Geral".'
+                              style={{ display: 'inline-flex', color: '#b45309', cursor: 'help' }}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                                warning
+                              </span>
+                            </span>
+                          )}
                         </>
                       )}
                     </div>

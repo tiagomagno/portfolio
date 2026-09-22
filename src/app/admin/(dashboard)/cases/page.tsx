@@ -19,6 +19,7 @@ export default async function AdminCasesPage() {
     removedAt: item.removedAt ? item.removedAt.toISOString() : null,
     featuredOnHome: item.featuredOnHome,
     homeOrder: item.homeOrder,
+    hasCaseStudy: !!(item.role && item.year && item.heroSubtitle),
   }));
 
   return (
