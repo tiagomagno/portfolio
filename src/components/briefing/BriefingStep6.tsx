@@ -7,6 +7,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { BriefingFormData, PREFERRED_CONTACT_OPTIONS } from '@/lib/briefing';
+import { useLang } from '@/context/LangContext';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -44,6 +45,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function BriefingStep6({ register, errors }: Props) {
+  const { t } = useLang();
   const { formState: { submitCount }, watch } = useFormContext<BriefingFormData>();
   const whatsappReg = register('whatsapp');
   const selectedContact = watch('preferredContact');
@@ -64,14 +66,14 @@ export function BriefingStep6({ register, errors }: Props) {
     err(field) ? '#ef4444' : 'var(--color-border)';
 
   const simpleFields = [
-    { id: 'name' as const,  label: 'Seu Nome / Empresa',  placeholder: 'João Silva',       type: 'text',  autoComplete: 'name',  reg: register('name') },
-    { id: 'email' as const, label: 'E-mail Profissional', placeholder: 'joao@empresa.com', type: 'email', autoComplete: 'email', reg: register('email') },
+    { id: 'name' as const,  label: t('briefing.step6.nameLabel'),  placeholder: t('briefing.step6.namePlaceholder'),  type: 'text',  autoComplete: 'name',  reg: register('name') },
+    { id: 'email' as const, label: t('briefing.step6.emailLabel'), placeholder: t('briefing.step6.emailPlaceholder'), type: 'email', autoComplete: 'email', reg: register('email') },
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Falta pouco! Como podemos contatar você?
+        {t('briefing.step6.title')}
       </h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -95,7 +97,7 @@ export function BriefingStep6({ register, errors }: Props) {
 
         {/* WhatsApp com máscara */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label htmlFor="whatsapp" style={labelStyle}>WhatsApp (com DDD)</label>
+          <label htmlFor="whatsapp" style={labelStyle}>{t('briefing.step6.whatsappLabel')}</label>
           <input
             id="whatsapp"
             type="tel"
@@ -118,7 +120,7 @@ export function BriefingStep6({ register, errors }: Props) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Forma preferida de contato</label>
+        <label style={labelStyle}>{t('briefing.step6.preferredContactLabel')}</label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
           {PREFERRED_CONTACT_OPTIONS.map((opt) => {
             const isSelected = selectedContact === opt.value;
@@ -146,7 +148,7 @@ export function BriefingStep6({ register, errors }: Props) {
                   {...register('preferredContact')}
                   className="sr-only-input"
                 />
-                {opt.label}
+                {t(`briefing.options.preferredContact.${opt.value}`)}
               </label>
             );
           })}

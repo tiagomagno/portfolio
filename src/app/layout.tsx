@@ -19,7 +19,9 @@ const manrope = Manrope({
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
+import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
+import { getSiteSettings } from '@/data/siteSettings';
 
 const DEFAULT_METADATA: Metadata = {
   title: 'Tiago Magno - UX Designer Sênior | Product Design',
@@ -61,28 +63,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return withSeoOverride(DEFAULT_METADATA, override);
 }
 
-// Schema.org Person: declara a entidade "Tiago Magno" pra buscadores tradicionais
-// e mecanismos de busca por IA (GEO) — sem isso o site tinha zero dados estruturados.
-const PERSON_JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Tiago Magno',
-  jobTitle: 'UX Designer Sênior',
-  description:
-    'UX Designer Sênior com mais de 20 anos de experiência em Product Design, UI Design, Design Systems e consultoria de produto.',
-  url: 'https://tiagosmagno.com.br',
-  image: 'https://tiagosmagno.com.br/eu.jpg',
-  email: 'mailto:tiagosilvamagno@gmail.com',
-  sameAs: ['https://www.linkedin.com/in/tiagosmagno/'],
-  address: { '@type': 'PostalAddress', addressLocality: 'Manaus', addressRegion: 'AM', addressCountry: 'BR' },
-  knowsAbout: ['UX Design', 'UI Design', 'Design Systems', 'Product Design', 'Arquitetura da Informação', 'UX Research'],
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
+
+  // Schema.org Person: declara a entidade "Tiago Magno" pra buscadores tradicionais
+  // e mecanismos de busca por IA (GEO) — sem isso o site tinha zero dados estruturados.
+  // Precisa ser calculado no server (não via SiteSettingsContext, que só resolve
+  // client-side) pra o e-mail/LinkedIn configurados em /admin/global chegarem certos
+  // no HTML inicial.
+  const PERSON_JSON_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: settings.brandName,
+    jobTitle: 'UX Designer Sênior',
+    description:
+      'UX Designer Sênior com mais de 20 anos de experiência em Product Design, UI Design, Design Systems e consultoria de produto.',
+    url: 'https://tiagosmagno.com.br',
+    image: 'https://tiagosmagno.com.br/eu.jpg',
+    email: `mailto:${settings.contactEmail}`,
+    sameAs: [settings.linkedinUrl],
+    address: { '@type': 'PostalAddress', addressLocality: 'Manaus', addressRegion: 'AM', addressCountry: 'BR' },
+    knowsAbout: ['UX Design', 'UI Design', 'Design Systems', 'Product Design', 'Arquitetura da Informação', 'UX Research'],
+  };
+
   return (
     <html lang="pt-BR" className={`${plusJakartaSans.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
@@ -101,8 +108,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LangProvider>
-            {children}
-            <WhatsAppFloat />
+            <SiteSettingsProvider>
+              {children}
+              <WhatsAppFloat />
+            </SiteSettingsProvider>
           </LangProvider>
         </ThemeProvider>
       </body>

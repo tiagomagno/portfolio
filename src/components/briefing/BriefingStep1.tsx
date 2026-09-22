@@ -2,6 +2,7 @@
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, COMPANY_STAGE_OPTIONS, TEAM_SIZE_OPTIONS } from '@/lib/briefing';
+import { useLang } from '@/context/LangContext';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -19,6 +20,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function BriefingStep1({ register, error, teamSizeError }: Props) {
+  const { t } = useLang();
   const { watch } = useFormContext<BriefingFormData>();
   const selectedStage = watch('companyStage');
   const selectedTeamSize = watch('teamSize');
@@ -26,11 +28,11 @@ export function BriefingStep1({ register, error, teamSizeError }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Como você descreveria sua empresa?
+        {t('briefing.step1.title')}
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Momento da empresa</label>
+        <label style={labelStyle}>{t('briefing.step1.companyStageLabel')}</label>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {COMPANY_STAGE_OPTIONS.map((opt) => {
             const isSelected = selectedStage === opt.value;
@@ -57,7 +59,7 @@ export function BriefingStep1({ register, error, teamSizeError }: Props) {
                   {...register('companyStage')}
                   style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.companyStage.${opt.value}`)}</span>
               </label>
             );
           })}
@@ -70,7 +72,7 @@ export function BriefingStep1({ register, error, teamSizeError }: Props) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Tamanho do time de produto, design ou engenharia</label>
+        <label style={labelStyle}>{t('briefing.step1.teamSizeLabel')}</label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
           {TEAM_SIZE_OPTIONS.map((opt) => {
             const isSelected = selectedTeamSize === opt.value;
@@ -97,7 +99,7 @@ export function BriefingStep1({ register, error, teamSizeError }: Props) {
                   {...register('teamSize')}
                   style={{ width: '15px', height: '15px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.teamSize.${opt.value}`)}</span>
               </label>
             );
           })}

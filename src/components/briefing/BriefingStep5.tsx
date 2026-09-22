@@ -2,6 +2,7 @@
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, BUDGET_RANGE_OPTIONS, ENGAGEMENT_FORMAT_OPTIONS } from '@/lib/briefing';
+import { useLang } from '@/context/LangContext';
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
@@ -35,6 +36,7 @@ interface Props {
 }
 
 export function BriefingStep5({ register, errors }: Props) {
+  const { t } = useLang();
   const { watch } = useFormContext<BriefingFormData>();
   const selectedBudget = watch('budgetRange');
   const selectedFormat = watch('engagementFormat');
@@ -42,16 +44,16 @@ export function BriefingStep5({ register, errors }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Prazo e formato de trabalho
+        {t('briefing.step5.title')}
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label htmlFor="deadline" style={labelStyle}>Prazo desejado</label>
+        <label htmlFor="deadline" style={labelStyle}>{t('briefing.step5.deadlineLabel')}</label>
         <input
           id="deadline"
           type="text"
           autoComplete="off"
-          placeholder="Ex: 30 dias, próximo trimestre…"
+          placeholder={t('briefing.step5.deadlinePlaceholder')}
           style={inputStyle}
           {...register('deadline')}
         />
@@ -63,7 +65,7 @@ export function BriefingStep5({ register, errors }: Props) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Formato de trabalho preferido</label>
+        <label style={labelStyle}>{t('briefing.step5.formatLabel')}</label>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {ENGAGEMENT_FORMAT_OPTIONS.map((opt) => {
             const isSelected = selectedFormat === opt.value;
@@ -90,7 +92,7 @@ export function BriefingStep5({ register, errors }: Props) {
                   {...register('engagementFormat')}
                   style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.engagementFormat.${opt.value}`)}</span>
               </label>
             );
           })}
@@ -103,7 +105,7 @@ export function BriefingStep5({ register, errors }: Props) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Faixa de investimento estimada (opcional)</label>
+        <label style={labelStyle}>{t('briefing.step5.budgetLabel')}</label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
           {BUDGET_RANGE_OPTIONS.map((opt) => {
             const isSelected = selectedBudget === opt.value;
@@ -130,7 +132,7 @@ export function BriefingStep5({ register, errors }: Props) {
                   {...register('budgetRange')}
                   style={{ width: '15px', height: '15px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.budgetRange.${opt.value}`)}</span>
               </label>
             );
           })}

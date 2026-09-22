@@ -1,9 +1,12 @@
 'use client';
 
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+
 export default function WhatsAppFloat() {
+  const { whatsappNumber } = useSiteSettings();
   return (
     <a
-      href="https://wa.me/5592981168163"
+      href={`https://wa.me/${whatsappNumber}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp"

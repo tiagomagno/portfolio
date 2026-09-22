@@ -2,6 +2,7 @@
 
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, PROJECT_GOAL_OPTIONS } from '@/lib/briefing';
+import { useLang } from '@/context/LangContext';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -34,13 +35,14 @@ const textareaStyle: React.CSSProperties = {
 };
 
 export function BriefingStep4({ register, error, descriptionError }: Props) {
+  const { t } = useLang();
   const { watch } = useFormContext<BriefingFormData>();
   const selected = watch('projectGoal');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        O que você espera desse projeto?
+        {t('briefing.step4.title')}
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -69,7 +71,7 @@ export function BriefingStep4({ register, error, descriptionError }: Props) {
                 {...register('projectGoal')}
                 style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
               />
-              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.projectGoal.${opt.value}`)}</span>
             </label>
           );
         })}
@@ -82,12 +84,12 @@ export function BriefingStep4({ register, error, descriptionError }: Props) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <label htmlFor="goalDescription" style={labelStyle}>
-          Descreva em poucas palavras o objetivo principal
+          {t('briefing.step4.descriptionLabel')}
         </label>
         <textarea
           id="goalDescription"
           {...register('goalDescription')}
-          placeholder="Ex: Reduzir a fricção no checkout, ou estruturar o design system antes de escalar o time."
+          placeholder={t('briefing.step4.descriptionPlaceholder')}
           style={textareaStyle}
         />
         {descriptionError && (

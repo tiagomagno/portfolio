@@ -3,6 +3,7 @@
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, PRODUCT_TYPE_OPTIONS, PRODUCT_STAGE_OPTIONS } from '@/lib/briefing';
 import { Input } from '@/components/ui/Input';
+import { useLang } from '@/context/LangContext';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -21,6 +22,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function BriefingStep2({ register, error, otherError, stageError }: Props) {
+  const { t } = useLang();
   const { watch } = useFormContext<BriefingFormData>();
   const selectedType = watch('productType');
   const selectedStage = watch('productStage');
@@ -28,11 +30,11 @@ export default function BriefingStep2({ register, error, otherError, stageError 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: 0, lineHeight: 1.2 }}>
-        Fale um pouco sobre o produto
+        {t('briefing.step2.title')}
       </h3>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Que tipo de produto é?</label>
+        <label style={labelStyle}>{t('briefing.step2.productTypeLabel')}</label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
           {PRODUCT_TYPE_OPTIONS.map((opt) => {
             const isSelected = selectedType === opt.value;
@@ -59,7 +61,7 @@ export default function BriefingStep2({ register, error, otherError, stageError 
                   {...register('productType')}
                   style={{ width: '15px', height: '15px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.productType.${opt.value}`)}</span>
               </label>
             );
           })}
@@ -74,15 +76,15 @@ export default function BriefingStep2({ register, error, otherError, stageError 
       {selectedType === 'outro' && (
         <Input
           {...register('productTypeOther')}
-          label="Qual tipo de produto?"
-          placeholder="Descreva em poucas palavras"
+          label={t('briefing.step2.productTypeOtherLabel')}
+          placeholder={t('briefing.step2.productTypeOtherPlaceholder')}
           required
           error={otherError?.message}
         />
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <label style={labelStyle}>Em que estágio ele está?</label>
+        <label style={labelStyle}>{t('briefing.step2.productStageLabel')}</label>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {PRODUCT_STAGE_OPTIONS.map((opt) => {
             const isSelected = selectedStage === opt.value;
@@ -109,7 +111,7 @@ export default function BriefingStep2({ register, error, otherError, stageError 
                   {...register('productStage')}
                   style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
                 />
-                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+                <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.productStage.${opt.value}`)}</span>
               </label>
             );
           })}

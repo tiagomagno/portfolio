@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '@/context/LangContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 import { ChevronDown, ArrowUpRight } from 'lucide-react';
@@ -14,6 +15,7 @@ const HIGHLIGHT_ITEMS = [1, 2, 3];
 
 export default function Experience() {
   const { t } = useLang();
+  const { linkedinUrl } = useSiteSettings();
 
   const items = HIGHLIGHT_ITEMS.map((n) => ({
     period: t(`experience.item${n}.period`),
@@ -138,7 +140,7 @@ export default function Experience() {
 
         <FadeIn delay={0.2}>
           <a
-            href="https://www.linkedin.com/in/tiagosmagno/"
+            href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="experience-linkedin-cta"

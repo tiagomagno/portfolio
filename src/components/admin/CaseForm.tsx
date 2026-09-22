@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -34,7 +34,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '6px' };
-const hintStyle: React.CSSProperties = { fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' };
+const hintStyle: React.CSSProperties = { fontSize: '11px', color: 'rgba(26,26,26,0.55)', margin: '6px 0 0' };
 const errorStyle: React.CSSProperties = { fontSize: '12px', color: '#b91c1c', marginTop: '4px', display: 'block' };
 
 export default function CaseForm({
@@ -77,7 +77,7 @@ export default function CaseForm({
 
   function scrollToSection(id: string) {
     setActiveSection(id);
-    document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('admin-sheet-scroll')?.scrollTo({ top: 0 });
   }
 
   async function onSubmit(data: CaseFormData) {
@@ -105,21 +105,20 @@ export default function CaseForm({
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '840px' }}>
-        <div style={{ position: 'sticky', top: 0, background: '#f5f3f0', padding: '16px 0', zIndex: 10, marginBottom: '24px' }}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '100%' }}>
+        <div style={{ position: 'sticky', top: 0, background: '#f5f3f0', padding: '16px 0', zIndex: 30, marginBottom: '24px' }}>
           <PillTabs tabs={SECTIONS} activeId={activeSection} onChange={scrollToSection} />
         </div>
 
-        <FormSection id="basico" title="Dados básicos">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="basico" title="Dados básicos" activeSection={activeSection}>
+          <Field>
             <label style={labelStyle}>Empresa / nome do case</label>
             <input {...register('empresa')} style={inputStyle} placeholder="Ex: Acme Ltda." />
             {errors.empresa && <span style={errorStyle}>{errors.empresa.message}</span>}
           </Field>
 
-          <Field style={{ marginBottom: '20px' }}>
+          <Field>
             <label style={labelStyle}>URL (slug)</label>
-            <p style={hintStyle}>Gerada automaticamente a partir do nome. Editável — mas mudar depois de publicado quebra o link atual.</p>
             <input
               {...register('slug')}
               style={inputStyle}
@@ -128,133 +127,132 @@ export default function CaseForm({
                 setValue('slug', e.target.value);
               }}
             />
+            <p style={hintStyle}>Mudar depois de publicado quebra o link atual.</p>
             {errors.slug && <span style={errorStyle}>{errors.slug.message}</span>}
           </Field>
 
-          <Field style={{ marginBottom: '20px' }}>
+          <Field>
             <label style={labelStyle}>Categorias</label>
-            <p style={hintStyle}>Usadas no filtro do portfólio e exibidas no card do case. Escolha uma ou mais.</p>
             <CategoryPicker />
+            <p style={hintStyle}>Aparecem no filtro do portfólio e no card do case.</p>
             {errors.atuacao && <span style={errorStyle}>{errors.atuacao.message as string}</span>}
           </Field>
 
-          <Field>
+          <Field full>
             <label style={labelStyle}>Produtos / entregáveis</label>
-            <p style={hintStyle}>Curtos, exibidos como resumo quando o case ainda não tem case study completo.</p>
             <StringArrayField name="produtos" placeholder="Ex: Identidade Visual" />
+            <p style={hintStyle}>Resumo exibido enquanto o case não tem case study completo.</p>
             {errors.produtos && <span style={errorStyle}>{errors.produtos.message as string}</span>}
           </Field>
         </FormSection>
 
-        <FormSection id="imagens" title="Imagens">
+        <FormSection id="imagens" title="Imagens" activeSection={activeSection}>
           <CoverAndHeroFields />
           <GalleryField />
         </FormSection>
 
-        <FormSection id="overview" title="01 · Visão Geral e Contexto de Negócio">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="overview" title="01 · Visão Geral e Contexto de Negócio" activeSection={activeSection}>
+          <Field>
             <label style={labelStyle}>Papel</label>
             <input {...register('role')} style={inputStyle} placeholder="Ex: Design e Desenvolvimento de Site" />
           </Field>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-            <Field>
-              <label style={labelStyle}>Ano</label>
-              <input {...register('year')} style={inputStyle} placeholder="Ex: 2024" />
-            </Field>
-          </div>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field>
+            <label style={labelStyle}>Ano</label>
+            <input {...register('year')} style={{ ...inputStyle, maxWidth: '160px' }} placeholder="Ex: 2024" />
+          </Field>
+          <Field full>
             <label style={labelStyle}>Subtítulo do topo (hero)</label>
             <TextArea {...register('heroSubtitle')} rows={2} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Contexto</label>
             <TextArea {...register('overview.context')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Problema de Negócio</label>
             <TextArea {...register('overview.businessProblem')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Objetivos & KPIs</label>
             <StringArrayField name="overview.goals" placeholder="Ex: Consolidar a presença digital" />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Seu Papel & Escopo</label>
             <TextArea {...register('overview.roleScope')} rows={3} />
           </Field>
-          <Field>
+          <Field full>
             <label style={labelStyle}>Restrições & Prazos</label>
             <StringArrayField name="overview.constraints" placeholder="Ex: Prazo definido previamente" />
           </Field>
         </FormSection>
 
-        <FormSection id="diagnosis" title="02 · Diagnóstico, Pesquisa e Alinhamento Estratégico">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="diagnosis" title="02 · Diagnóstico, Pesquisa e Alinhamento Estratégico" activeSection={activeSection}>
+          <Field full>
             <label style={labelStyle}>Metodologia</label>
             <TextArea {...register('diagnosis.methodology')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Por que essa abordagem?</label>
             <TextArea {...register('diagnosis.whyThisApproach')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Principal Insight</label>
             <TextArea {...register('diagnosis.insight')} rows={2} />
           </Field>
-          <Field>
+          <Field full>
             <label style={labelStyle}>Gestão de Stakeholders</label>
             <TextArea {...register('diagnosis.stakeholderManagement')} rows={3} />
           </Field>
         </FormSection>
 
-        <FormSection id="design" title="03 · Arquitetura, Decisões de Design e UI">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="design" title="03 · Arquitetura, Decisões de Design e UI" activeSection={activeSection}>
+          <Field full>
             <label style={labelStyle}>Hipótese Central</label>
             <TextArea {...register('design.hypothesis')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Alternativas Descartadas</label>
             <AlternativesField />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Edge Cases & Fluxos</label>
             <TextArea {...register('design.edgeCases')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Design System</label>
             <TextArea {...register('design.designSystem')} rows={3} />
           </Field>
-          <Field>
+          <Field full>
             <label style={labelStyle}>Validação & Usabilidade</label>
             <TextArea {...register('design.usabilityValidation')} rows={3} />
           </Field>
         </FormSection>
 
-        <FormSection id="handoff" title="04 · Viabilidade Técnica e Handoff">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="handoff" title="04 · Viabilidade Técnica e Handoff" activeSection={activeSection}>
+          <Field full>
             <label style={labelStyle}>Colaboração com Engenharia</label>
             <TextArea {...register('handoff.engineeringCollaboration')} rows={3} />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Especificação & Documentação</label>
             <TextArea {...register('handoff.specDocumentation')} rows={3} />
           </Field>
-          <Field>
+          <Field full>
             <label style={labelStyle}>Estratégia de Lançamento</label>
             <TextArea {...register('handoff.launchStrategy')} rows={3} />
           </Field>
         </FormSection>
 
-        <FormSection id="impact" title="05 · Impacto, Resultados e Aprendizados">
-          <Field style={{ marginBottom: '20px' }}>
+        <FormSection id="impact" title="05 · Impacto, Resultados e Aprendizados" activeSection={activeSection}>
+          <Field full>
             <label style={labelStyle}>Resultados Quantitativos</label>
             <MetricsField />
           </Field>
-          <Field style={{ marginBottom: '20px' }}>
+          <Field full>
             <label style={labelStyle}>Impacto Qualitativo</label>
             <TextArea {...register('impact.qualitativeImpact')} rows={3} />
           </Field>
-          <Field>
+          <Field full>
             <label style={labelStyle}>Post-mortem — o que faria diferente</label>
             <TextArea {...register('impact.postMortem')} rows={3} />
           </Field>
@@ -300,17 +298,27 @@ export default function CaseForm({
 
 /* ── Seções e campos ── */
 
-function FormSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+/** Só a seção com id === activeSection fica visível — as outras ficam com `display: none`
+ * (não desmontadas, pra não perder estado local de inputs não controlados) em vez de
+ * empilhadas com scroll, pra virar uma navegação por abas de verdade. */
+function FormSection({ id, title, activeSection, children }: { id: string; title: string; activeSection: string; children: React.ReactNode }) {
+  const active = id === activeSection;
   return (
-    <section id={`section-${id}`} style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '28px', marginBottom: '24px', scrollMarginTop: '80px' }}>
+    <section
+      id={`section-${id}`}
+      style={{ display: active ? 'block' : 'none', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '28px', marginBottom: '24px' }}
+    >
       <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 20px' }}>{title}</h2>
-      {children}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px 24px', alignItems: 'start' }}>{children}</div>
     </section>
   );
 }
 
-function Field({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return <div style={style}>{children}</div>;
+/** `full` estende o campo pelas 2 colunas do grid da seção — usado em textareas e campos de
+ * lista/tabela, que ficam espremidos demais em meia largura. Campos curtos (inputs de uma
+ * linha, selects) ficam em meia largura por padrão e se pareiam automaticamente na mesma linha. */
+function Field({ children, full, style }: { children: React.ReactNode; full?: boolean; style?: React.CSSProperties }) {
+  return <div style={{ gridColumn: full ? '1 / -1' : undefined, ...style }}>{children}</div>;
 }
 
 function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
@@ -320,33 +328,82 @@ function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
 function CategoryPicker() {
   const { watch, setValue } = useFormContext<CaseFormData>();
   const atuacao = watch('atuacao');
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, [open]);
+
   function toggle(cat: AtuacaoCategory) {
     setValue('atuacao', atuacao.includes(cat) ? atuacao.filter((c) => c !== cat) : [...atuacao, cat], { shouldValidate: true });
   }
+
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-      {ATUACAO_CATEGORIES.map((cat) => {
-        const active = atuacao.includes(cat);
-        return (
-          <button
-            key={cat}
-            type="button"
-            onClick={() => toggle(cat)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '100px',
-              border: active ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
-              background: active ? 'var(--color-primary)' : 'transparent',
-              color: active ? '#fff' : 'rgba(26,26,26,0.6)',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            {cat}
-          </button>
-        );
-      })}
+    <div ref={rootRef} style={{ position: 'relative', maxWidth: '360px' }}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          ...inputStyle,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '8px',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: atuacao.length ? '#1a1a1a' : 'rgba(26,26,26,0.45)' }}>
+          {atuacao.length ? atuacao.join(', ') : 'Selecione as categorias'}
+        </span>
+        <span style={{ fontSize: '11px', color: 'rgba(26,26,26,0.55)', flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            right: 0,
+            zIndex: 20,
+            background: '#fff',
+            border: '1px solid var(--color-border)',
+            borderRadius: '10px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            padding: '6px',
+            maxHeight: '260px',
+            overflowY: 'auto',
+          }}
+        >
+          {ATUACAO_CATEGORIES.map((cat) => {
+            const active = atuacao.includes(cat);
+            return (
+              <label
+                key={cat}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  color: '#1a1a1a',
+                  cursor: 'pointer',
+                }}
+              >
+                <input type="checkbox" checked={active} onChange={() => toggle(cat)} />
+                {cat}
+              </label>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -476,7 +533,7 @@ function CoverAndHeroFields() {
       <div style={{ marginBottom: '28px' }}>
         <ImageField
           label="Capa"
-          hint="Home, listagem do portfólio e card de próximo case. Formato recomendado: 1600×1200px (4:3)."
+          hint="Recomendado: 1600×1200px (4:3). Aparece na home e nos cards do portfólio."
           value={coverImage || null}
           uploading={uploadingField === 'coverImage'}
           onUpload={(file) => handleSingleUpload('coverImage', file)}
@@ -486,7 +543,6 @@ function CoverAndHeroFields() {
 
       <div>
         <span style={labelStyle}>Imagem de topo</span>
-        <p style={hintStyle}>Banner do topo da página de detalhamento: imagem (1920×1080px, 16:9) ou uma cor sólida. Se nenhuma for definida, usa a capa.</p>
         <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
           {(['image', 'color'] as const).map((mode) => (
             <button
@@ -535,6 +591,7 @@ function CoverAndHeroFields() {
             />
           </div>
         )}
+        <p style={hintStyle}>Recomendado: 1920×1080px (16:9). Sem imagem nem cor, usa a capa.</p>
         {message && <span style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', marginTop: '8px', display: 'block' }}>{message}</span>}
       </div>
     </>
@@ -581,9 +638,8 @@ function GalleryField() {
   }
 
   return (
-    <div style={{ marginTop: '28px' }}>
+    <div style={{ marginTop: '28px', gridColumn: '1 / -1' }}>
       <span style={labelStyle}>Galeria</span>
-      <p style={hintStyle}>Posts, mockup do site, telas do app etc. Formato recomendado: 1200×900px (4:3) por imagem.</p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {gallery.map((item, i) => (
           <div key={item.url + i} style={{ position: 'relative', aspectRatio: '4 / 3', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--color-border)', opacity: item.active ? 1 : 0.4 }}>
@@ -619,6 +675,7 @@ function GalleryField() {
         <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleGalleryUpload(e.target.files)} style={{ display: 'none' }} disabled={uploading} />
       </label>
       {message && <span style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', marginLeft: '12px' }}>{message}</span>}
+      <p style={hintStyle}>Recomendado: 1200×900px (4:3) por imagem.</p>
     </div>
   );
 }

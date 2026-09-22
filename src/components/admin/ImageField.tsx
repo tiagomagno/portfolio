@@ -23,8 +23,7 @@ export default function ImageField({
 
   return (
     <div>
-      {label && <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '4px' }}>{label}</span>}
-      {hint && <p style={{ fontSize: '12px', color: 'rgba(26,26,26,0.55)', margin: '0 0 12px' }}>{hint}</p>}
+      {label && <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>{label}</span>}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         {preview && (
           <div style={{ position: 'relative', width: '160px', aspectRatio: '4 / 3', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0 }}>
@@ -65,6 +64,7 @@ export default function ImageField({
           )}
         </div>
       </div>
+      {hint && <p style={{ fontSize: '11px', color: 'rgba(26,26,26,0.55)', margin: '8px 0 0' }}>{hint}</p>}
     </div>
   );
 }

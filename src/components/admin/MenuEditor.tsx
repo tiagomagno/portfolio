@@ -11,7 +11,8 @@ interface MenuItemRow {
   visible: boolean;
 }
 
-export default function AdminMenuPage() {
+/** Itens de navegação do header (model MenuItem). */
+export default function MenuEditor() {
   const [items, setItems] = useState<MenuItemRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [newItem, setNewItem] = useState({ labelPt: '', labelEn: '', href: '' });
@@ -74,12 +75,7 @@ export default function AdminMenuPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Menu</h1>
-      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
-        Itens de navegação do cabeçalho do site.
-      </p>
-
-      <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '24px' }}>
+      <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px' }}>
         {items.map((item, i) => (
           <div
             key={item.id}
@@ -89,6 +85,7 @@ export default function AdminMenuPage() {
               gap: '12px',
               padding: '12px 16px',
               borderBottom: i < items.length - 1 ? '1px solid var(--color-border)' : 'none',
+              flexWrap: 'wrap',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -111,13 +108,13 @@ export default function AdminMenuPage() {
               value={item.href}
               onChange={(e) => updateItem(item.id, { href: e.target.value })}
               placeholder="Link"
-              style={{ ...inputStyle, flex: 1 }}
+              style={{ ...inputStyle, flex: 1, minWidth: '140px' }}
             />
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'rgba(26,26,26,0.65)', whiteSpace: 'nowrap' }}>
               <input type="checkbox" checked={item.visible} onChange={(e) => updateItem(item.id, { visible: e.target.checked })} />
               Visível
             </label>
-            <button onClick={() => remove(item.id)} style={{ background: 'none', border: 'none', color: '#d92d20', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={() => remove(item.id)} type="button" style={{ background: 'none', border: 'none', color: '#d92d20', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
               Remover
             </button>
           </div>
@@ -125,7 +122,7 @@ export default function AdminMenuPage() {
         {items.length === 0 && <p style={{ padding: '16px', fontSize: '13px', color: 'rgba(26,26,26,0.55)' }}>Nenhum item ainda.</p>}
       </div>
 
-      <div style={{ background: '#fff', border: '1px dashed var(--color-border)', borderRadius: '12px', padding: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div style={{ background: '#fff', border: '1px dashed var(--color-border)', borderRadius: '12px', padding: '16px', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
         <input
           value={newItem.labelPt}
           onChange={(e) => setNewItem((p) => ({ ...p, labelPt: e.target.value }))}
@@ -142,11 +139,12 @@ export default function AdminMenuPage() {
           value={newItem.href}
           onChange={(e) => setNewItem((p) => ({ ...p, href: e.target.value }))}
           placeholder="Link (ex: /#contact)"
-          style={{ ...inputStyle, flex: 1 }}
+          style={{ ...inputStyle, flex: 1, minWidth: '140px' }}
         />
         <button
           onClick={addItem}
           disabled={saving}
+          type="button"
           style={{ padding: '10px 18px', borderRadius: '8px', border: 'none', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}
         >
           + Adicionar

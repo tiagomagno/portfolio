@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 const NAV = [
-  { href: '/admin/menu', label: 'Menu' },
-  { href: '/admin/sections', label: 'Home' },
-  { href: '/admin/textos', label: 'Textos' },
+  { href: '/admin/global', label: 'Global' },
+  { href: '/admin/pages', label: 'Pages' },
   { href: '/admin/cases', label: 'Cases' },
   { href: '/admin/leads', label: 'Leads' },
 ];

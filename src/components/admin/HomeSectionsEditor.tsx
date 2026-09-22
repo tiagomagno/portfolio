@@ -9,7 +9,8 @@ interface SectionRow {
   visible: boolean;
 }
 
-export default function AdminSectionsPage() {
+/** Ordem/visibilidade das seções da Home (model HomeSection). */
+export default function HomeSectionsEditor() {
   const [sections, setSections] = useState<SectionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,11 +56,6 @@ export default function AdminSectionsPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#1a1a1a', margin: '0 0 4px' }}>Seções da Home</h1>
-      <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: '0 0 24px' }}>
-        Ordem em que as seções aparecem na página inicial, e quais ficam visíveis.
-      </p>
-
       <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
         {sections.map((s, i) => (
           <div
@@ -90,6 +86,7 @@ export default function AdminSectionsPage() {
         <button
           onClick={save}
           disabled={saving}
+          type="button"
           style={{ padding: '12px 24px', borderRadius: '8px', border: 'none', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
         >
           {saving ? 'Salvando...' : 'Salvar'}

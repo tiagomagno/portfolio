@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useLang } from '@/context/LangContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 import { Check, Send } from 'lucide-react';
@@ -17,8 +18,16 @@ const TEXT_ON_DARK_DIM = 'rgba(255,255,255,0.75)';
 const TEXT_ON_DARK_MUTED = 'rgba(255,255,255,0.55)';
 const BORDER_ON_DARK = 'rgba(255,255,255,0.15)';
 
-export default function Contact() {
+/** Formata "5592981168163" como "+55 92 98116-8163" — best-effort, só pra exibição. */
+function formatWhatsapp(digits: string): string {
+  const m = digits.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
+  if (!m) return digits;
+  return `+${m[1]} ${m[2]} ${m[3]}-${m[4]}`;
+}
+
+export default function Contact({ recipientEmail }: { recipientEmail: string }) {
   const { t } = useLang();
+  const { contactEmail, whatsappNumber, linkedinUrl } = useSiteSettings();
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [secondsLeft, setSecondsLeft] = useState(SUCCESS_AUTO_RETURN_SECONDS);
 
@@ -132,19 +141,21 @@ export default function Contact() {
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   E-MAIL
                 </span>
-                <span style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)' }}>tiagosilvamagno@gmail.com</span>
+                <span style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)' }}>{contactEmail}</span>
               </div>
               <div>
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   WHATSAPP
                 </span>
-                <span style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)' }}>+55 92 98116-8163</span>
+                <span style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)' }}>{formatWhatsapp(whatsappNumber)}</span>
               </div>
               <div>
                 <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                   LINKEDIN
                 </span>
-                <a href="https://www.linkedin.com/in/tiagosmagno/" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>linkedin.com/in/tiagosmagno</a>
+                <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ color: TEXT_ON_DARK_DIM, fontSize: 'var(--fs-body-lg)', textDecoration: 'none' }}>
+                  {linkedinUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                </a>
               </div>
             </div>
           </div>
@@ -267,7 +278,7 @@ export default function Contact() {
                   {t('contact.form.desc')}
                 </p>
                 <form
-                  action="https://formsubmit.co/tiagosilvamagno@gmail.com"
+                  action={`https://formsubmit.co/${recipientEmail}`}
                   method="POST"
                   onSubmit={handleSubmit}
                   style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}

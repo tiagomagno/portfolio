@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronLeft, ChevronRight, CheckCircle, Loader2 } from 'lucide-react';
+import { useLang } from '@/context/LangContext';
 import {
   briefingSchema,
   type BriefingFormData,
@@ -25,16 +26,11 @@ import { BriefingStep4 } from './BriefingStep4';
 import { BriefingStep5 } from './BriefingStep5';
 import { BriefingStep6 } from './BriefingStep6';
 
-const STEPS = [
-  { id: 1, key: 'step1', title: 'Empresa' },
-  { id: 2, key: 'step2', title: 'Produto' },
-  { id: 3, key: 'step3', title: 'Desafio' },
-  { id: 4, key: 'step4', title: 'Objetivo' },
-  { id: 5, key: 'step5', title: 'Prazo' },
-  { id: 6, key: 'step6', title: 'Contato' },
-];
+const STEP_KEYS = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'] as const;
 
-export function BriefingForm() {
+export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
+  const { t } = useLang();
+  const STEPS = STEP_KEYS.map((key, i) => ({ id: i + 1, key, title: t(`briefing.steps.${key}.title`) }));
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -138,7 +134,7 @@ export function BriefingForm() {
         body: JSON.stringify({ name: data.name, email: data.email, ...leadFields }),
       }).catch(() => {});
 
-      const res = await fetch('https://formsubmit.co/ajax/tiagosilvamagno@gmail.com', {
+      const res = await fetch(`https://formsubmit.co/ajax/${recipientEmail}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(emailParams),
@@ -170,10 +166,10 @@ export function BriefingForm() {
           <CheckCircle size={36} />
         </div>
         <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)', marginBottom: '12px' }}>
-          Obrigado! Recebemos seu briefing.
+          {t('briefing.steps.successTitle')}
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
-          O retorno acontece em até 24 horas úteis, pra conversarmos sobre escopo e próximos passos.
+          {t('briefing.steps.successText')}
         </p>
         <Link
           href="/"
@@ -184,7 +180,7 @@ export function BriefingForm() {
             fontSize: '15px', textDecoration: 'none',
           }}
         >
-          Voltar para Home
+          {t('briefing.steps.backToHome')}
         </Link>
       </div>
     );
@@ -197,7 +193,7 @@ export function BriefingForm() {
         {/* Progress bar */}
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '8px' }}>
-            <span>Etapa {currentStep} de {totalSteps}</span>
+            <span>{t('briefing.steps.progress').replace('{current}', String(currentStep)).replace('{total}', String(totalSteps))}</span>
             <span>{Math.round(progressPercent)}%</span>
           </div>
           <div
@@ -205,7 +201,7 @@ export function BriefingForm() {
             aria-valuemin={0}
             aria-valuemax={totalSteps}
             aria-valuenow={currentStep}
-            aria-valuetext={`Etapa ${currentStep} de ${totalSteps}: ${currentStepTitle}`}
+            aria-valuetext={`${t('briefing.steps.progress').replace('{current}', String(currentStep)).replace('{total}', String(totalSteps))}: ${currentStepTitle}`}
             style={{ height: '4px', borderRadius: '100px', background: 'var(--color-border)', overflow: 'hidden' }}
           >
             <div style={{
@@ -217,7 +213,7 @@ export function BriefingForm() {
 
         {/* Anúncio de mudança de etapa pra leitores de tela (WCAG 4.1.3) */}
         <div aria-live="polite" className="sr-only">
-          Etapa {currentStep} de {totalSteps}: {currentStepTitle}
+          {t('briefing.steps.progress').replace('{current}', String(currentStep)).replace('{total}', String(totalSteps))}: {currentStepTitle}
         </div>
 
         {/* Step content */}
@@ -254,7 +250,7 @@ export function BriefingForm() {
               marginTop: '24px', padding: '16px', borderRadius: '14px',
               border: '1px solid #ef4444', background: 'rgba(239,68,68,0.08)', color: '#f87171',
             }}>
-            <p style={{ fontWeight: 600, marginBottom: '4px' }}>Erro ao enviar</p>
+            <p style={{ fontWeight: 600, marginBottom: '4px' }}>{t('briefing.steps.errorTitle')}</p>
             <p style={{ fontSize: '13px' }}>{errorMessage}</p>
           </div>
         )}
@@ -277,7 +273,7 @@ export function BriefingForm() {
             }}
           >
             <ChevronLeft size={18} />
-            Voltar
+            {t('briefing.steps.back')}
           </button>
 
           {currentStep < totalSteps ? (
@@ -290,7 +286,7 @@ export function BriefingForm() {
                 color: '#fff', background: 'var(--color-primary-text)', border: 'none', cursor: 'pointer',
               }}
             >
-              Próximo
+              {t('briefing.steps.next')}
               <ChevronRight size={18} />
             </button>
           ) : (
@@ -306,8 +302,8 @@ export function BriefingForm() {
               }}
             >
               {isSubmitting ? (
-                <><Loader2 size={18} className="animate-spin" />Enviando...</>
-              ) : 'Enviar briefing'}
+                <><Loader2 size={18} className="animate-spin" />{t('briefing.steps.submitting')}</>
+              ) : t('briefing.steps.submit')}
             </button>
           )}
         </div>

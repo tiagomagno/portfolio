@@ -1,11 +1,13 @@
 'use client';
 
 import { useLang } from '@/context/LangContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Menu, X, ChevronRight, MoreVertical } from 'lucide-react';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
+  const { brandName } = useSiteSettings();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
@@ -194,7 +196,7 @@ export default function Header() {
           {/* Logo (centro) */}
           <a href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '32px', textDecoration: 'none' }}>
             <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '19px', letterSpacing: '-0.01em', color: 'var(--color-text)', whiteSpace: 'nowrap' }}>
-              Tiago Magno
+              {brandName}
             </span>
           </a>
 
@@ -293,7 +295,7 @@ export default function Header() {
             }}
           >
             <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
-              Tiago Magno
+              {brandName}
             </span>
           </a>
 
@@ -437,7 +439,7 @@ export default function Header() {
         >
           <a href="/" onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none' }}>
             <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
-              Tiago Magno
+              {brandName}
             </span>
           </a>
           <button

@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import Divider from '@/components/Divider';
 import { prisma } from '@/lib/prisma';
 import { getVisibleCases } from '@/data/cases';
+import { getSiteSettings } from '@/data/siteSettings';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -71,7 +72,7 @@ async function getSectionOrder(): Promise<string[]> {
 }
 
 export default async function Home() {
-  const [order, cases] = await Promise.all([getSectionOrder(), getVisibleCases()]);
+  const [order, cases, settings] = await Promise.all([getSectionOrder(), getVisibleCases(), getSiteSettings()]);
 
   return (
     <>
@@ -85,6 +86,8 @@ export default async function Home() {
         {order.map((key, i) => {
           const section = key === 'cases'
             ? <Cases key={key} items={cases} />
+            : key === 'contact'
+            ? <Contact key={key} recipientEmail={settings.contactFormRecipientEmail} />
             : (() => {
                 const Section = SECTION_COMPONENTS[key];
                 return Section ? <Section key={key} /> : null;

@@ -22,8 +22,10 @@ export default function PillTabs({
     <div
       role="tablist"
       style={{
-        display: 'inline-flex',
-        flexWrap: 'wrap',
+        display: 'flex',
+        flexWrap: 'nowrap',
+        overflowX: 'auto',
+        maxWidth: '100%',
         gap: '4px',
         padding: '4px',
         borderRadius: '999px',
@@ -45,11 +47,13 @@ export default function PillTabs({
             onClick={() => onChange(tab.id)}
             style={{
               position: 'relative',
-              padding: '10px 22px',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+              padding: '6px 10px',
               borderRadius: '999px',
               border: 'none',
               background: 'transparent',
-              fontSize: '14px',
+              fontSize: '12px',
               fontWeight: 700,
               cursor: 'pointer',
               color: active ? '#fff' : 'rgba(26,26,26,0.6)',

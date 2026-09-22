@@ -1,9 +1,11 @@
 import { BriefingForm } from '@/components/briefing/BriefingForm';
+import BriefingIntro from '@/components/briefing/BriefingIntro';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import FadeIn from '@/components/ui/FadeIn';
 import { Metadata } from 'next';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
+import { getSiteSettings } from '@/data/siteSettings';
 
 const DEFAULT_METADATA: Metadata = {
   title: 'Briefing - Tiago Magno',
@@ -16,7 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return withSeoOverride(DEFAULT_METADATA, override);
 }
 
-export default function BriefingPage() {
+export default async function BriefingPage() {
+  const settings = await getSiteSettings();
+
   return (
     <>
       <Header />
@@ -40,53 +44,13 @@ export default function BriefingPage() {
             padding: '48px 32px 80px',
           }}
         >
-          {/* Header text */}
           <FadeIn delay={0.1}>
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <span
-                style={{
-                  display: 'block',
-                  marginBottom: '12px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.15em',
-                  color: 'var(--color-primary-text)',
-                }}
-              >
-                Vamos Começar
-              </span>
-              <h1
-                style={{
-                  fontSize: 'clamp(28px, 5vw, 48px)',
-                  fontWeight: 900,
-                  color: 'var(--color-text)',
-                  lineHeight: 1.1,
-                  marginBottom: '16px',
-                }}
-              >
-                Vamos entender o seu{' '}
-                <span>desafio</span>
-              </h1>
-              <p
-                style={{
-                  fontSize: 'clamp(14px, 2vw, 17px)',
-                  color: 'var(--color-text-dim)',
-                  lineHeight: 1.7,
-                  maxWidth: '560px',
-                  margin: '0 auto',
-                }}
-              >
-                Responda algumas perguntas sobre sua empresa, seu produto e o momento atual.
-                Isso ajuda a preparar uma conversa mais objetiva sobre como posso contribuir.
-                Depois do envio, o retorno acontece em até 24 horas úteis.
-              </p>
-            </div>
+            <BriefingIntro />
           </FadeIn>
 
           {/* Form: sem card — flui direto no corpo da página */}
           <FadeIn delay={0.25}>
-            <BriefingForm />
+            <BriefingForm recipientEmail={settings.briefingFormRecipientEmail} />
           </FadeIn>
         </div>
       </main>

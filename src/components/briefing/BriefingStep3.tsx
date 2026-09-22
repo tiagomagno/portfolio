@@ -3,6 +3,7 @@
 import { UseFormRegister, FieldError, useFormContext } from 'react-hook-form';
 import { BriefingFormData, MAIN_CHALLENGE_OPTIONS } from '@/lib/briefing';
 import { Input } from '@/components/ui/Input';
+import { useLang } from '@/context/LangContext';
 
 interface Props {
   register: UseFormRegister<BriefingFormData>;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function BriefingStep3({ register, error, otherError }: Props) {
+  const { t } = useLang();
   const { watch } = useFormContext<BriefingFormData>();
   const selected = watch('mainChallenge') ?? [];
 
@@ -18,10 +20,10 @@ export function BriefingStep3({ register, error, otherError }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
       <div>
         <h3 style={{ fontSize: 'clamp(20px, 3vw, 26px)', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px', lineHeight: 1.2 }}>
-          Qual o principal desafio hoje?
+          {t('briefing.step3.title')}
         </h3>
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', margin: 0 }}>
-          Selecione todos que se aplicam.
+          {t('briefing.step3.subtitle')}
         </p>
       </div>
 
@@ -51,7 +53,7 @@ export function BriefingStep3({ register, error, otherError }: Props) {
                 {...register('mainChallenge')}
                 style={{ width: '16px', height: '16px', flexShrink: 0, accentColor: '#ff5625', cursor: 'pointer' }}
               />
-              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{opt.label}</span>
+              <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t(`briefing.options.mainChallenge.${opt.value}`)}</span>
             </label>
           );
         })}
@@ -60,8 +62,8 @@ export function BriefingStep3({ register, error, otherError }: Props) {
       {selected.includes('outro') && (
         <Input
           {...register('mainChallengeOther')}
-          label="Qual outro desafio?"
-          placeholder="Descreva em poucas palavras"
+          label={t('briefing.step3.otherLabel')}
+          placeholder={t('briefing.step3.otherPlaceholder')}
           required
           error={otherError?.message}
         />
