@@ -52,7 +52,7 @@ export default function BriefingStep2({ register, error, otherError, stageError 
                   cursor: 'pointer',
                   fontSize: '13px',
                   color: isSelected ? 'var(--color-text)' : 'var(--color-text-muted)',
-                  transition: 'all 0.15s',
+                  transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
                 }}
               >
                 <input
@@ -102,7 +102,7 @@ export default function BriefingStep2({ register, error, otherError, stageError 
                   cursor: 'pointer',
                   fontSize: '14px',
                   color: isSelected ? 'var(--color-text)' : 'var(--color-text-muted)',
-                  transition: 'all 0.15s',
+                  transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
                 }}
               >
                 <input

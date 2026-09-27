@@ -12,15 +12,16 @@
   --container-max: 80vw;
 
   /* ── Typography Scale ── */
-  --fs-h1:          clamp(36px, 5vw, 60px);
-  --fs-h2:          clamp(28px, 4vw, 44px);
-  --fs-card-title:  18px;
-  --fs-body-lg:     16px;
-  --fs-btn:         14px;
-  --fs-body:        14px;
-  --fs-small:       12px;
-  --fs-eyebrow:     11px;
-  --fs-tiny:        10px;
+  /* Em rem pra acompanhar o tamanho de texto configurado pelo usuário no navegador. */
+  --fs-h1:          clamp(2.75rem, 7vw, 5.25rem);
+  --fs-h2:          clamp(1.75rem, 4vw, 2.75rem);
+  --fs-card-title:  1.125rem;
+  --fs-body-lg:     1rem;
+  --fs-btn:         0.875rem;
+  --fs-body:        0.875rem;
+  --fs-small:       0.75rem;
+  --fs-eyebrow:     0.75rem;
+  --fs-tiny:        0.625rem;
 
   /* ── Letter spacing ── */
   --ls-eyebrow: 0.15em;
@@ -34,6 +35,8 @@
      puro (~3.2:1) reprova WCAG AA para texto — só é seguro em usos decorativos
      (glows, bordas, hovers), que continuam com a cor vibrante original. */
   --color-primary-text: #c9431a;
+  /* Hover dos botões primários: mais escuro (não mais claro) pra manter o contraste do texto branco. */
+  --color-primary-text-hover: #a83614;
   --color-accent: #ffb5a0;
   --color-bg: #ffffff;
   --color-bg-low: #ffffff;
@@ -57,6 +60,7 @@
   --color-primary-hover: #e84e20;
   /* No tema escuro o laranja original já passa em AA (~5.9:1 sobre #131313) */
   --color-primary-text: #ff5625;
+  --color-primary-text-hover: #e84e20;
   --color-accent: #ffb5a0;
   --color-bg: #131313;
   --color-bg-low: #0e0e0e;
@@ -80,8 +84,10 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -96,6 +102,16 @@ body {
 
 h1, h2, h3, h4, h5, h6, button {
   font-family: var(--font-headline);
+}
+
+/* Tracking acompanha o tamanho: títulos grandes fecham, texto pequeno fica como está. */
+.section-container h2 {
+  letter-spacing: -0.02em;
+}
+@media (max-width: 767px) {
+  .section-container h2 {
+    letter-spacing: -0.01em;
+  }
 }
 
 /* Compensa o header fixo para scroll com âncoras */
@@ -168,16 +184,16 @@ section[id] {
 /* Mobile typography scale overrides */
 @media (max-width: 767px) {
   :root {
-    --fs-h1:         clamp(32px, 9vw, 44px);
-    --fs-h2:         clamp(24px, 7vw, 32px);
-    --fs-card-title: 15px;
-    --fs-body-lg:    14px;
-    --fs-body:       13px;
-    --fs-small:      11px;
+    --fs-h1:         clamp(2rem, 9vw, 2.75rem);
+    --fs-h2:         clamp(1.5rem, 7vw, 2rem);
+    --fs-card-title: 0.9375rem;
+    --fs-body-lg:    1rem;
+    --fs-body:       0.9375rem;
+    --fs-small:      0.75rem;
 
     /* Espaçamento entre seções em mobile: 24px de respiro em cada seção +
        24px no Divider entre elas, no lugar dos 96px/48px do desktop. */
-    --section-pad-y: 24px;
+    --section-pad-y: 40px;
     --divider-pad-y: 24px;
   }
 }
@@ -316,6 +332,28 @@ section[id] {
 }
 
 /* ============================================
+   BOTÕES — feedback de hover e clique
+   ============================================ */
+.cta-primary {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease-out;
+}
+.cta-ghost {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease-out;
+}
+.cta-primary:active,
+.cta-ghost:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cta-primary:hover {
+    background-color: var(--color-primary-text-hover) !important;
+  }
+  .cta-ghost:hover {
+    border-color: rgba(26, 26, 26, 0.45) !important;
+  }
+}
+
+/* ============================================
    ANIMATE
    ============================================ */
 @keyframes pulse-glow {
@@ -325,4 +363,37 @@ section[id] {
 
 .animate-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ============================================
+   MATERIAIS: preferências de transparência e contraste
+   ============================================ */
+@media (prefers-reduced-transparency: reduce) {
+  .site-header {
+    background: var(--color-bg) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .drawer-scrim {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+@media (prefers-contrast: more) {
+  .site-header {
+    border-bottom-color: var(--color-text) !important;
+  }
+}
+
+/* Alvo de toque de 44px sem mudar o tamanho visual (28px) do seletor de idioma. */
+.lang-btn {
+  position: relative;
+}
+.lang-btn::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+.lang-btn:active {
+  transform: scale(0.92);
 }

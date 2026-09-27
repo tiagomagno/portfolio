@@ -29,7 +29,10 @@ export default function WhatsAppFloat() {
         className="whatsapp-float"
       >
         <style>{`
-          .whatsapp-float:hover { transform: scale(1.08); }
+          @media (hover: hover) and (pointer: fine) {
+            .whatsapp-float:hover { transform: scale(1.08); }
+          }
+          .whatsapp-float:active { transform: scale(0.95); }
           @media (max-width: 767px) {
             .whatsapp-float { display: none !important; }
           }

@@ -169,19 +169,30 @@ export default function HeroBackground() {
       }
     }
 
+    let intersectionObserver: IntersectionObserver | null = null;
+
     if (reducedMotion) {
       // Sem animação: desenha um único frame estático e para por aí.
       renderFrame(0);
     } else {
+      // Só anima enquanto o Hero está na tela: fora dela o loop para e não gasta GPU.
+      let visible = true;
       const loop = (now: number) => {
         renderFrame(now - startTime);
-        frameId = requestAnimationFrame(loop);
+        frameId = visible ? requestAnimationFrame(loop) : 0;
       };
       frameId = requestAnimationFrame(loop);
+
+      intersectionObserver = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !frameId) frameId = requestAnimationFrame(loop);
+      });
+      intersectionObserver.observe(canvas);
     }
 
     return () => {
       if (frameId) cancelAnimationFrame(frameId);
+      intersectionObserver?.disconnect();
       resizeObserver.disconnect();
     };
   }, []);

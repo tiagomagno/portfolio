@@ -7,20 +7,22 @@ export default function FadeIn({
   children,
   delay = 0,
   direction = 'up',
+  duration = 0.55,
   className = '',
   style = {}
 }: {
   children: ReactNode,
   delay?: number,
   direction?: 'up' | 'down' | 'left' | 'right' | 'none',
+  duration?: number,
   className?: string,
   style?: React.CSSProperties
 }) {
   const directions = {
-    up: { y: 50, x: 0 },
-    down: { y: -50, x: 0 },
-    left: { x: 50, y: 0 },
-    right: { x: -50, y: 0 },
+    up: { y: 16, x: 0 },
+    down: { y: -16, x: 0 },
+    left: { x: 16, y: 0 },
+    right: { x: -16, y: 0 },
     none: { x: 0, y: 0 }
   };
 
@@ -38,7 +40,7 @@ export default function FadeIn({
       initial={{ opacity: 0, ...directions[direction] }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: '-10%' }}
-      transition={{ duration: 1.0, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
       style={style}
     >

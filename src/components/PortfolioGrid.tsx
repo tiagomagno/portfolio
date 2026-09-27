@@ -25,9 +25,11 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
             style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '48px' }}
           >
             <style>{`
-              .filter-pill[data-active="false"]:hover {
-                background: rgba(26,26,26,0.07) !important;
-                color: rgba(26,26,26,0.85) !important;
+              @media (hover: hover) and (pointer: fine) {
+                .filter-pill[data-active="false"]:hover {
+                  background: rgba(26,26,26,0.07) !important;
+                  color: rgba(26,26,26,0.85) !important;
+                }
               }
             `}</style>
             <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '4px' }}>
@@ -55,15 +57,35 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
           @media (max-width: 560px) {
             .portfolio-full-grid { grid-template-columns: 1fr; }
           }
-          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
+          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+          .portfolio-card-v2-link:active { transform: scale(0.98); }
+          .filter-pill:active { transform: scale(0.97); }
+          /* Cinza por padrão em mouse, cor no hover: camada cinza com mix-blend-mode: saturation
+             cujo opacity anima (compositor), em vez de animar filter na imagem. */
+          .portfolio-card-v2-image { isolation: isolate; }
           .portfolio-card-v2-image img {
-            filter: saturate(0) contrast(1.02);
-            transition: filter 0.5s ease, transform 0.5s ease;
+            transition: transform 0.5s ease;
           }
-          .portfolio-card-v2-link:hover .portfolio-card-v2-image img,
-          .portfolio-card-v2-static:hover .portfolio-card-v2-image img {
-            filter: saturate(1) contrast(1);
-            transform: scale(1.04);
+          @media (hover: hover) and (pointer: fine) {
+            .portfolio-card-v2-image::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: #808080;
+              mix-blend-mode: saturation;
+              opacity: 1;
+              pointer-events: none;
+              transition: opacity 0.5s ease;
+            }
+            .portfolio-card-v2-link:hover .portfolio-card-v2-image::after,
+            .portfolio-card-v2-link:focus-visible .portfolio-card-v2-image::after,
+            .portfolio-card-v2-static:hover .portfolio-card-v2-image::after {
+              opacity: 0;
+            }
+            .portfolio-card-v2-link:hover .portfolio-card-v2-image img,
+            .portfolio-card-v2-static:hover .portfolio-card-v2-image img {
+              transform: scale(1.04);
+            }
           }
         `}</style>
 
@@ -113,7 +135,7 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
         padding: '8px 18px',
         borderRadius: '100px',
         cursor: 'pointer',
-        transition: 'all 0.15s',
+        transition: 'background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.12s',
         whiteSpace: 'nowrap',
       }}
     >

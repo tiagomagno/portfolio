@@ -139,7 +139,7 @@ export function BriefingStep6({ register, errors }: Props) {
                   fontSize: '14px',
                   fontWeight: isSelected ? 600 : 400,
                   color: isSelected ? '#ff5625' : 'var(--color-text-muted)',
-                  transition: 'all 0.15s',
+                  transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
                 }}
               >
                 <input

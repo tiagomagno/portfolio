@@ -15,6 +15,81 @@ export default function Header() {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
 
+  // ── Gesto de fechar o drawer arrastando pra esquerda ──
+  // Acompanha o dedo 1:1 (transform direto no elemento, sem re-render a cada move), resiste
+  // com elástico se arrastar pro lado errado e, ao soltar, decide pela posição PROJETADA com a
+  // velocidade (um "flick" curto basta) e anima o restante já na velocidade do dedo.
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
+  const [drawerCloseMs, setDrawerCloseMs] = useState(200);
+  const drag = useRef({ id: -1, startX: 0, startY: 0, lastX: 0, lastT: 0, velocity: 0, axis: 'none' as 'none' | 'x' | 'y', dx: 0 });
+
+  const handleDrawerPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drawerOpen || drag.current.id !== -1) return; // ignora dedos extras no meio do arrasto
+    drag.current = { id: e.pointerId, startX: e.clientX, startY: e.clientY, lastX: e.clientX, lastT: e.timeStamp, velocity: 0, axis: 'none', dx: 0 };
+  };
+
+  const handleDrawerPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    const el = drawerRef.current;
+    if (!el || e.pointerId !== d.id || d.axis === 'y') return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    if (d.axis === 'none') {
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; // histerese antes de escolher a direção
+      if (Math.abs(dy) > Math.abs(dx)) {
+        d.axis = 'y'; // rolagem vertical da lista: deixa o navegador cuidar
+        return;
+      }
+      d.axis = 'x';
+      d.startX += Math.sign(dx) * 10; // só o que passou da histerese conta, sem "pulo" e sem perder o movimento inicial
+      el.setPointerCapture(e.pointerId);
+      el.style.transition = 'none';
+      if (scrimRef.current) scrimRef.current.style.transition = 'none';
+    }
+    const width = el.offsetWidth;
+    const pull = e.clientX - d.startX;
+    // Pra esquerda segue o dedo; pra direita (fora do limite) resiste progressivamente.
+    const offset = pull <= 0 ? pull : (pull * width * 0.55) / (width + 0.55 * pull);
+    d.dx = offset;
+    el.style.transform = `translateX(${offset}px)`;
+    if (scrimRef.current) scrimRef.current.style.opacity = String(1 - Math.min(Math.max(-offset / width, 0), 1));
+    const dt = e.timeStamp - d.lastT;
+    if (dt > 4) {
+      d.velocity = (e.clientX - d.lastX) / dt; // px/ms
+      d.lastT = e.timeStamp;
+      d.lastX = e.clientX;
+    }
+  };
+
+  const finishDrawerDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (e.pointerId !== d.id) return;
+    drag.current = { ...d, id: -1 };
+    const el = drawerRef.current;
+    if (!el || d.axis !== 'x') return;
+    if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+
+    const width = el.offsetWidth;
+    const velocity = e.timeStamp - d.lastT > 100 ? 0 : d.velocity; // dedo parado antes de soltar = sem inércia
+    const projected = d.dx + velocity * 499; // projeção de momento (desaceleração 0.998, como o scroll do iOS)
+    const shouldClose = projected < -width * 0.5;
+    const target = shouldClose ? -width : 0;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ms = reduceMotion ? 0 : Math.round(Math.min(Math.max(Math.abs(target - d.dx) / Math.max(Math.abs(velocity), 0.5), 150), 320));
+    const transition = `${ms}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+    el.style.transition = `transform ${transition}`;
+    if (scrimRef.current) scrimRef.current.style.transition = `opacity ${transition}`;
+
+    if (shouldClose) {
+      setDrawerCloseMs(ms);
+      setDrawerOpen(false);
+    } else {
+      el.style.transform = 'translateX(0)';
+      if (scrimRef.current) scrimRef.current.style.opacity = '1';
+    }
+  };
+
   // Lock body scroll when drawer is open
   useEffect(() => {
     if (drawerOpen) {
@@ -111,12 +186,13 @@ export default function Header() {
           zIndex: 250,
           display: 'flex',
           flexDirection: 'column',
-          gap: '6px',
+          gap: '16px',
         }}
       >
         {langs.map(({ value, label }) => (
           <button
             key={value}
+            className="lang-btn"
             onClick={() => setLang(value)}
             aria-label={label}
             aria-pressed={lang === value}
@@ -133,7 +209,7 @@ export default function Header() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.15s',
+              transition: 'background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.12s',
               boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             }}
           >
@@ -150,13 +226,14 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 100,
-          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
-          background: scrolled ? 'var(--color-bg)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-          transition: 'background 0.25s, border-color 0.25s',
+          borderBottom: '1px solid transparent',
+          background: scrolled ? 'color-mix(in srgb, var(--color-bg) 72%, transparent)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+          boxShadow: scrolled ? '0 10px 30px -18px rgba(0,0,0,0.18)' : 'none',
+          transition: 'background-color 0.25s, box-shadow 0.25s',
         }}
-        className="hidden-mobile"
+        className="hidden-mobile site-header"
       >
         <div
           className="section-container"
@@ -173,7 +250,7 @@ export default function Header() {
         >
           {/* Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-            <style>{`.nav-link:hover { color: var(--color-primary) !important; } .nav-cta:hover { background: var(--color-primary-hover) !important; }`}</style>
+            <style>{`@media (hover: hover) and (pointer: fine) { .nav-link:hover { color: var(--color-primary) !important; } }`}</style>
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
@@ -204,7 +281,7 @@ export default function Header() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '16px' }}>
             <a
               href="/briefing"
-              className="nav-cta"
+              className="nav-cta cta-primary"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -216,7 +293,6 @@ export default function Header() {
                 padding: '10px 18px',
                 borderRadius: '8px',
                 textDecoration: 'none',
-                transition: 'background 0.15s',
               }}
             >
               {t('nav.startProject')}
@@ -234,13 +310,14 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 200,
-          borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
-          background: scrolled ? 'var(--color-bg)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-          transition: 'background 0.25s, border-color 0.25s',
+          borderBottom: '1px solid transparent',
+          background: scrolled ? 'color-mix(in srgb, var(--color-bg) 72%, transparent)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+          boxShadow: scrolled ? '0 10px 30px -18px rgba(0,0,0,0.18)' : 'none',
+          transition: 'background-color 0.25s, box-shadow 0.25s',
         }}
-        className="show-mobile"
+        className="show-mobile site-header"
       >
         <div
           style={{
@@ -385,24 +462,35 @@ export default function Header() {
       )}
 
       {/* ── Mobile Drawer Overlay ── */}
-      {drawerOpen && (
-        <div
-          className="show-mobile"
-          onClick={() => setDrawerOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 190,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-          }}
-        />
-      )}
+      <div
+        ref={scrimRef}
+        className="show-mobile drawer-scrim"
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 190,
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(4px)',
+          opacity: drawerOpen ? 1 : 0,
+          visibility: drawerOpen ? 'visible' : 'hidden',
+          transition: `opacity ${drawerOpen ? 280 : drawerCloseMs}ms ease-out, visibility 0s linear ${drawerOpen ? 0 : drawerCloseMs}ms`,
+        }}
+      />
 
       {/* ── Mobile Drawer ── */}
       <div
         id="mobile-drawer"
+        ref={drawerRef}
         className="show-mobile"
+        onPointerDown={handleDrawerPointerDown}
+        onPointerMove={handleDrawerPointerMove}
+        onPointerUp={finishDrawerDrag}
+        onPointerCancel={finishDrawerDrag}
+        onTransitionEnd={(e) => {
+          if (e.target === e.currentTarget && !drawerOpen) setDrawerCloseMs(200);
+        }}
         role="dialog"
         aria-modal="true"
         aria-label={t('nav.openMenu')}
@@ -421,7 +509,8 @@ export default function Header() {
           flexDirection: 'column',
           padding: '0 0 32px',
           transform: drawerOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
+          transition: `transform ${drawerOpen ? '280ms' : `${drawerCloseMs}ms`} cubic-bezier(0.32, 0.72, 0, 1)`,
+          touchAction: 'pan-y',
           overflowY: 'auto',
         }}
       >
