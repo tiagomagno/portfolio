@@ -91,14 +91,18 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     };
   }, []);
 
+  // As 3 cópias têm conteúdo idêntico, então saltar exatamente 1/3 é invisível. Também roda
+  // durante o arrasto e a inércia (não só depois de parar) pra o usuário nunca chegar na borda
+  // das cópias; nesse caso a base do arrasto sofre o mesmo salto, senão o próximo movimento
+  // devolveria o carrossel pra posição antiga.
   const wrapIfNeeded = () => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
     const third = track.scrollWidth / 3;
-    if (track.scrollLeft < third * 0.5) {
-      track.scrollLeft += third;
-    } else if (track.scrollLeft > third * 1.5) {
-      track.scrollLeft -= third;
+    const shift = track.scrollLeft < third * 0.5 ? third : track.scrollLeft > third * 1.5 ? -third : 0;
+    if (shift !== 0) {
+      track.scrollLeft += shift;
+      dragStartScroll.current += shift;
     }
   };
 
@@ -111,7 +115,11 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
     const cardStep = (track.scrollWidth / 3) / setCount;
-    track.scrollTo({ left: track.scrollLeft + direction * cardStep * itemsPerView, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    // Sem snap, a posição depois de um arrasto livre é qualquer uma; a seta alinha à grade dos
+    // cards (no mobile a grade começa 24px antes do card, igual à posição inicial).
+    const gridOffset = itemsPerView === 1 ? 24 : 0;
+    const base = Math.round((track.scrollLeft + gridOffset) / cardStep) * cardStep - gridOffset;
+    track.scrollTo({ left: base + direction * cardStep * itemsPerView, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -142,6 +150,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
       trackRef.current.classList.add('is-dragging');
     }
     trackRef.current.scrollLeft = dragStartScroll.current - delta;
+    wrapIfNeeded();
 
     // Velocidade instantânea (px/ms) desde a última amostra — descarta amostras com dt
     // ~0 (alguns navegadores disparam pointermove duplicado no mesmo frame) pra não gerar
@@ -160,11 +169,13 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     if (trackRef.current.hasPointerCapture(e.pointerId)) {
       trackRef.current.releasePointerCapture(e.pointerId);
     }
-    trackRef.current.classList.remove('is-dragging');
     activePointerId.current = null;
 
     // Inércia: continua deslizando na direção do arrasto, desacelerando, em vez de
     // travar seco no ponto exato em que o botão do mouse foi solto.
+    // A classe is-dragging (que desliga o scroll-snap) fica até a inércia acabar: com o snap
+    // religado durante o deslize, cada scrollLeft escrito aqui era corrigido pelo snap do
+    // navegador e os dois brigavam, deixando o movimento entrecortado.
     const track = trackRef.current;
     let velocity = dragVelocity.current;
     const glide = (lastTime: number) => (time: number) => {
@@ -172,13 +183,17 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
       velocity *= Math.pow(0.88, dt / 16);
       if (Math.abs(velocity) < 0.02) {
         momentumFrame.current = null;
+        track.classList.remove('is-dragging');
         return;
       }
       track.scrollLeft -= velocity * dt;
+      wrapIfNeeded();
       momentumFrame.current = requestAnimationFrame(glide(time));
     };
     if (Math.abs(velocity) > 0.05 && !prefersReducedMotion()) {
       momentumFrame.current = requestAnimationFrame(glide(performance.now()));
+    } else {
+      track.classList.remove('is-dragging');
     }
   };
 
@@ -260,11 +275,16 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
           gap: 16px;
           overflow-x: auto;
           overflow-y: hidden;
-          scroll-snap-type: x proximity;
           scrollbar-width: none;
           -webkit-user-drag: none;
         }
         .cases-carousel-track::-webkit-scrollbar { display: none; }
+        /* Snap só em toque, onde o navegador já faz arrasto e inércia nativos. Com mouse o arrasto
+           é nosso (JS + inércia) e o snap "puxando" o carrossel pras bordas dos cards brigava com
+           o movimento e o deixava travado. */
+        @media (pointer: coarse) {
+          .cases-carousel-track { scroll-snap-type: x proximity; }
+        }
         .cases-carousel-track.is-dragging { scroll-snap-type: none; user-select: none; cursor: grabbing; }
         .cases-carousel-track.is-dragging * { pointer-events: none; }
         .cases-carousel-track img { -webkit-user-drag: none; user-drag: none; }
@@ -340,11 +360,13 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
           {trackItems.map((item, idx) => {
             return (
               <div key={`${item.id}-${idx}`} className="cases-carousel-card">
-                <FadeIn delay={0.02 * (idx % setCount)} style={{ height: '100%' }}>
+                {/* Sem FadeIn aqui de propósito: dezenas de reveals dentro do scroller disputam a
+                    thread principal enquanto o usuário arrasta, e o carrossel já se move por si. */}
+                <div style={{ height: '100%' }}>
                   <Link href={`/portfolio/${item.slug}`} className="portfolio-card-v2-link">
                       <PortfolioCard item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} />
                     </Link>
-                  </FadeIn>
+                  </div>
                 </div>
               );
             })}
