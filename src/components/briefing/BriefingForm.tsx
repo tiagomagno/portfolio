@@ -188,7 +188,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '40px' }}>
+      <form onSubmit={handleSubmit(onSubmit)} className="briefing-form" style={{ padding: '40px' }}>
 
         {/* Progress bar */}
         <div style={{ marginBottom: '32px' }}>
@@ -290,6 +290,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
             <button
               type="button"
               onClick={goNext}
+              className="cta-primary"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,
@@ -303,6 +304,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
             <button
               type="submit"
               disabled={isSubmitting}
+              className="cta-primary"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 padding: '12px 28px', borderRadius: '14px', fontSize: '15px', fontWeight: 700,

@@ -315,6 +315,7 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
                   {/* Submit */}
                   <button
                     type="submit"
+                    className="cta-primary"
                     disabled={status === 'sending'}
                     style={{
                       background: 'var(--color-primary-text)',

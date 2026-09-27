@@ -138,6 +138,9 @@ export default function Hero() {
                 40% { transform: translateY(6px); }
                 60% { transform: translateY(3px); }
               }
+              @media (prefers-reduced-motion: reduce) {
+                .scroll-dot { animation: none !important; }
+              }
             `}</style>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0.5 }}>
               <div style={{
@@ -150,7 +153,7 @@ export default function Hero() {
                 justifyContent: 'center',
                 paddingTop: '6px'
               }}>
-                <div style={{
+                <div className="scroll-dot" style={{
                   width: '4px',
                   height: '6px',
                   background: '#1a1a1a',

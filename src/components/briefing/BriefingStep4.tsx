@@ -62,7 +62,7 @@ export function BriefingStep4({ register, error, descriptionError }: Props) {
                 cursor: 'pointer',
                 fontSize: '14px',
                 color: isSelected ? 'var(--color-text)' : 'var(--color-text-muted)',
-                transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
+                transition: 'background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.12s',
               }}
             >
               <input

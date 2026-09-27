@@ -340,16 +340,38 @@ section[id] {
 .cta-ghost {
   transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease-out;
 }
-.cta-primary:active,
-.cta-ghost:active {
+.cta-primary:active:not(:disabled),
+.cta-ghost:active:not(:disabled) {
   transform: scale(0.97);
 }
 @media (hover: hover) and (pointer: fine) {
-  .cta-primary:hover {
+  .cta-primary:hover:not(:disabled) {
     background-color: var(--color-primary-text-hover) !important;
   }
-  .cta-ghost:hover {
+  .cta-ghost:hover:not(:disabled) {
     border-color: rgba(26, 26, 26, 0.45) !important;
+  }
+}
+
+/* Opções de múltipla escolha do briefing: confirmam o toque logo ao pressionar. */
+.briefing-form label:has(> input[type='radio']):active,
+.briefing-form label:has(> input[type='checkbox']):active {
+  transform: scale(0.98);
+}
+
+/* Reduced motion: sem deslocamento por hover (sobe, zoom, escala); cor, opacidade e sombra
+   continuam. O feedback de pressionar (scale de 2 a 3%) fica, por ser resposta ao toque. */
+@media (prefers-reduced-motion: reduce) {
+  .service-card:hover,
+  .whatsapp-float:hover {
+    transform: none !important;
+  }
+  .portfolio-card-v2-link:hover .portfolio-card-v2-image img,
+  .portfolio-card-v2-static:hover .portfolio-card-v2-image img {
+    transform: none !important;
+  }
+  .view-all-link:hover .view-all-arrow {
+    transform: none !important;
   }
 }
 
