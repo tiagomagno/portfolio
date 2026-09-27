@@ -18,13 +18,14 @@ export default function FadeIn({
   className?: string,
   style?: React.CSSProperties
 }) {
-  const directions = {
-    up: { y: 16, x: 0 },
-    down: { y: -16, x: 0 },
-    left: { x: 16, y: 0 },
-    right: { x: -16, y: 0 },
-    none: { x: 0, y: 0 }
-  };
+  const offsets = {
+    up: [0, 16],
+    down: [0, -16],
+    left: [16, 0],
+    right: [-16, 0],
+    none: [0, 0],
+  } as const;
+  const [offsetX, offsetY] = offsets[direction];
 
   // Sempre renderiza a mesma árvore (motion.div) no servidor e no cliente:
   // ramificar em prefers-reduced-motion aqui causava um mismatch de hidratação
@@ -34,11 +35,15 @@ export default function FadeIn({
   // Anima só opacity/transform (propriedades compositadas pela GPU) — animar `filter`
   // força repaint na thread principal a cada frame, reprovado pelo Lighthouse como
   // "animação não composta" nas várias instâncias de FadeIn da página.
+  // O deslocamento é uma string `transform` (e não os atalhos x/y do Framer): os atalhos rodam
+  // na thread principal e perdem quadros sob carga; a string `transform` é animada pelo
+  // navegador (WAAPI). transitionEnd volta a `none` pra não deixar um translate(0,0) em repouso,
+  // que criaria contexto de empilhamento e bloco de contenção pros filhos.
   return (
     <motion.div
       data-fade-in
-      initial={{ opacity: 0, ...directions[direction] }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      initial={{ opacity: 0, transform: `translate(${offsetX}px, ${offsetY}px)` }}
+      whileInView={{ opacity: 1, transform: 'translate(0px, 0px)', transitionEnd: { transform: 'none' } }}
       viewport={{ once: true, margin: '-10%' }}
       transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
