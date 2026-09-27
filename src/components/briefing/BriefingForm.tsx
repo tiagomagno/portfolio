@@ -255,6 +255,16 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
           </div>
         )}
 
+        {currentStep === totalSteps && (
+          <p style={{ fontSize: '12px', lineHeight: 1.5, color: 'var(--color-text-muted)', marginTop: '24px' }}>
+            {t('contact.form.consentBefore')}
+            <Link href="/privacidade" style={{ color: 'inherit', textDecoration: 'underline' }}>
+              {t('contact.form.consentLink')}
+            </Link>
+            {t('contact.form.consentAfter')}
+          </p>
+        )}
+
         {/* Navigation */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',

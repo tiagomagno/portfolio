@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import FadeIn from './ui/FadeIn';
@@ -108,19 +109,6 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
           {/* Left */}
           <FadeIn delay={0.1} direction="right">
           <div className="contact-left-col">
-            <span
-              style={{
-                fontSize: 'var(--fs-eyebrow)',
-                fontWeight: 700,
-                color: 'var(--color-primary)',
-                letterSpacing: 'var(--ls-eyebrow)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '16px',
-              }}
-            >
-              {t('contact.eyebrow')}
-            </span>
             <h2
               style={{
                 fontSize: 'var(--fs-h2)',
@@ -315,6 +303,14 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
                       {t('contact.form.error')}
                     </p>
                   )}
+
+                  <p style={{ fontSize: '12px', lineHeight: 1.5, color: TEXT_ON_DARK_MUTED, margin: 0 }}>
+                    {t('contact.form.consentBefore')}
+                    <Link href="/privacidade" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                      {t('contact.form.consentLink')}
+                    </Link>
+                    {t('contact.form.consentAfter')}
+                  </p>
 
                   {/* Submit */}
                   <button

@@ -28,7 +28,10 @@ export default function Footer() {
             @media (max-width: 640px) {
               .footer-row { justify-content: center !important; text-align: center; }
             }
-            .footer-social:hover { color: #fff !important; }
+            @media (hover: hover) and (pointer: fine) {
+              .footer-social:hover { color: #fff !important; }
+            }
+            .footer-social:active { transform: scale(0.92); }
           `}</style>
 
           <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none' }}>
@@ -45,7 +48,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
                 className="footer-social"
-                style={{ color: 'rgba(255,255,255,0.55)', display: 'flex', transition: 'color 0.15s' }}
+                style={{ color: 'rgba(255,255,255,0.55)', display: 'flex', transition: 'color 0.15s, transform 0.12s' }}
               >
                 <Linkedin size={18} strokeWidth={1.75} />
               </a>
@@ -55,7 +58,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 className="footer-social"
-                style={{ color: 'rgba(255,255,255,0.55)', display: 'flex', transition: 'color 0.15s' }}
+                style={{ color: 'rgba(255,255,255,0.55)', display: 'flex', transition: 'color 0.15s, transform 0.12s' }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -67,7 +70,10 @@ export default function Footer() {
             </div>
 
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '12px', margin: 0 }}>
-              © {year} {brandName} · {t('footer.rights')}
+              © {year} {brandName} · {t('footer.rights')} ·{' '}
+              <Link href="/privacidade" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                {t('footer.privacy')}
+              </Link>
             </p>
           </div>
         </div>
