@@ -6,9 +6,9 @@ import { getSession } from '@/lib/session';
 const SEO_DEFAULTS: Record<string, { label: string; titlePt: string; descriptionPt: string; keywordsPt: string }> = {
   home: {
     label: 'Home',
-    titlePt: 'Tiago Magno - UX Designer Sênior | Product Design',
+    titlePt: 'Tiago Magno - Product Designer | Senior UX/UI Designer',
     descriptionPt:
-      'Transformo interações complexas em experiências digitais eficientes, escaláveis e centradas no usuário, conectando estratégia, UX, tecnologia e dados.',
+      'Product Designer com mais de 20 anos em UX/UI. Atuo entre usuários, negócio e tecnologia para transformar problemas complexos em produtos simples e viáveis.',
     keywordsPt: 'UX Designer, Product Designer, UX Design, Product Design, Design Thinking, UI Design, Design System',
   },
   portfolio: {

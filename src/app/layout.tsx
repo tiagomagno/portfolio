@@ -24,9 +24,9 @@ import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 import { getSiteSettings } from '@/data/siteSettings';
 
 const DEFAULT_METADATA: Metadata = {
-  title: 'Tiago Magno - UX Designer Sênior | Product Design',
+  title: 'Tiago Magno - Product Designer | Senior UX/UI Designer',
   description:
-    'Transformo interações complexas em experiências digitais eficientes, escaláveis e centradas no usuário, conectando estratégia, UX, tecnologia e dados.',
+    'Product Designer com mais de 20 anos em UX/UI. Atuo entre usuários, negócio e tecnologia para transformar problemas complexos em produtos simples e viáveis.',
   keywords: ['UX Designer', 'Product Designer', 'UX Design', 'Product Design', 'Design Thinking', 'UI Design', 'Design System'],
   authors: [{ name: 'Tiago Magno' }],
   metadataBase: new URL('https://tiagosmagno.com.br'),
@@ -34,9 +34,9 @@ const DEFAULT_METADATA: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://tiagosmagno.com.br',
-    title: 'Tiago Magno - UX Designer Sênior | Product Design',
+    title: 'Tiago Magno - Product Designer | Senior UX/UI Designer',
     description:
-      'Transformo interações complexas em experiências digitais eficientes e centradas no usuário.',
+      'Product Designer com mais de 20 anos em UX/UI, transformando problemas complexos em produtos simples e viáveis.',
     siteName: 'Tiago Magno',
     images: [{
       url: '/eu.jpg',
@@ -79,9 +79,9 @@ export default async function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: settings.brandName,
-    jobTitle: 'UX Designer Sênior',
+    jobTitle: 'Product Designer',
     description:
-      'UX Designer Sênior com mais de 20 anos de experiência em Product Design, UI Design, Design Systems e consultoria de produto.',
+      'Product Designer e Senior UX/UI Designer com mais de 20 anos de experiência em UX, UI, Design Systems, prototipação e produtos digitais.',
     url: 'https://tiagosmagno.com.br',
     image: 'https://tiagosmagno.com.br/eu.jpg',
     email: `mailto:${settings.contactEmail}`,
