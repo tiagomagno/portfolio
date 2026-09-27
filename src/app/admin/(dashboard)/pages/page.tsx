@@ -8,6 +8,7 @@ const PAGES = [
   { id: 'cases', href: '/admin/pages/cases', title: 'Página Cases', desc: 'Hero, "Próximo Passo" e SEO da listagem de cases (/portfolio).' },
   { id: 'case-detail', href: '/admin/pages/case-detail', title: 'Página Detalhamento dos Cases', desc: 'Textos padrão de exibição de qualquer case (/portfolio/[slug]).' },
   { id: 'briefing', href: '/admin/pages/briefing', title: 'Página Briefing', desc: 'Textos do formulário, destinatário do e-mail e SEO.' },
+  { id: 'privacy', href: '/admin/pages/privacy', title: 'Página Privacidade', desc: 'Texto da Política de Privacidade (/privacidade).' },
 ];
 
 export default function AdminPagesIndex() {

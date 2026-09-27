@@ -62,6 +62,11 @@ export default function AdminPagesCases() {
             lang={lang}
           />
           <TextGroupEditor
+            title="Filtros e contagem"
+            filter={(item) => item.key.startsWith('cases.count.') || item.key === 'cases.filterAll'}
+            lang={lang}
+          />
+          <TextGroupEditor
             title="Próximo Passo"
             filter={(item) => item.key.startsWith('portfolioPage.cta.')}
             lang={lang}
