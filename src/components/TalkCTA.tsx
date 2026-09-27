@@ -22,27 +22,15 @@ export default function TalkCTA() {
               padding: '48px 32px',
             }}
           >
-            <span
-              style={{
-                fontSize: 'var(--fs-eyebrow)',
-                fontWeight: 700,
-                color: 'var(--color-primary-text)',
-                letterSpacing: 'var(--ls-eyebrow)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '12px',
-              }}
-            >
-              {t('work.cta.eyebrow')}
-            </span>
             <h3 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
               {t('work.cta.title')}
             </h3>
-            <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '440px' }}>
+            <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '560px' }}>
               {t('work.cta.text')}
             </p>
             <a
-              href="/briefing"
+              href="#contact"
+              className="cta-primary"
               style={{
                 display: 'inline-block',
                 background: 'var(--color-primary-text)',

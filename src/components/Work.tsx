@@ -14,6 +14,8 @@ export default function Work() {
     { title: t('work.svc2.title'), label: t('work.svc2.label') },
     { title: t('work.svc3.title'), label: t('work.svc3.label') },
     { title: t('work.svc4.title'), label: t('work.svc4.label') },
+    { title: t('work.svc5.title'), label: t('work.svc5.label') },
+    { title: t('work.svc6.title'), label: t('work.svc6.label') },
   ];
 
   return (
@@ -52,29 +54,21 @@ export default function Work() {
           .service-card {
             transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
           }
-          .service-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.1);
-            border-color: rgba(26,26,26,0.3);
+          @media (hover: hover) and (pointer: fine) {
+            .service-card:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+              border-color: rgba(26,26,26,0.3);
+            }
+          }
+          .service-card:active {
+            transform: scale(0.98);
           }
         `}</style>
 
         <div className="work-section-grid">
           {/* Left column: text */}
           <FadeIn delay={0.1} direction="up" className="work-text">
-            <span
-              style={{
-                fontSize: 'var(--fs-eyebrow)',
-                fontWeight: 700,
-                color: 'var(--color-primary-text)',
-                letterSpacing: 'var(--ls-eyebrow)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '14px',
-              }}
-            >
-              {t('work.eyebrow')}
-            </span>
             <h2
               style={{
                 fontSize: 'var(--fs-h2)',
@@ -95,7 +89,7 @@ export default function Work() {
           <FadeIn delay={0.15} direction="up" className="work-cta-wrap" style={{ marginTop: '28px' }}>
             <a
               href="/briefing"
-              className="work-cta-button"
+              className="work-cta-button cta-primary"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',

@@ -14,13 +14,15 @@ const DEFAULT_MENU_ITEMS = [
 
 const DEFAULT_HOME_SECTIONS = [
   { key: 'hero', label: 'Hero (topo)' },
+  { key: 'intro', label: 'Introdução', visible: false },
+  { key: 'work', label: 'O que faço' },
+  { key: 'cases', label: 'Cases em Destaque' },
+  { key: 'services', label: 'Como trabalho' },
+  { key: 'positioning', label: 'Posicionamento', visible: false },
   { key: 'about', label: 'Sobre' },
   { key: 'stats', label: 'Números' },
-  { key: 'work', label: 'Atuação Profissional' },
-  { key: 'experience', label: 'Experiência' },
-  { key: 'cases', label: 'Cases em Destaque' },
-  { key: 'skills', label: 'Competências' },
-  { key: 'services', label: 'Processo' },
+  { key: 'experience', label: 'Trajetória' },
+  { key: 'skills', label: 'Competências', visible: false },
   { key: 'talkCta', label: 'CTA — Vamos Conversar' },
   { key: 'contact', label: 'Contato' },
 ];
@@ -51,7 +53,7 @@ async function main() {
     await prisma.homeSection.upsert({
       where: { key: s.key },
       update: {},
-      create: { key: s.key, label: s.label, order: i },
+      create: { key: s.key, label: s.label, order: i, visible: s.visible ?? true },
     });
   }
   console.log(`${DEFAULT_HOME_SECTIONS.length} seções da home seedadas`);

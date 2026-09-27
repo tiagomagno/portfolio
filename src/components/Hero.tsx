@@ -26,7 +26,8 @@ export default function Hero() {
             .hero-cta-group {
               width: 100%;
             }
-            .hero-cta-primary {
+            .hero-cta-primary,
+            .hero-cta-secondary {
               width: 100%;
               justify-content: center;
             }
@@ -50,8 +51,8 @@ export default function Hero() {
             minHeight: '100vh',
           }}
         >
-          <div className="hero-inner" style={{ maxWidth: '760px' }}>
-            <FadeIn delay={0.1}>
+          <div className="hero-inner" style={{ maxWidth: '960px' }}>
+            <FadeIn delay={0.05} duration={0.4} direction="none">
               <h1
                 style={{
                   fontSize: 'var(--fs-h1)',
@@ -67,13 +68,13 @@ export default function Hero() {
               </h1>
             </FadeIn>
 
-            <FadeIn delay={0.2}>
+            <FadeIn delay={0.1} duration={0.4} direction="none">
               <p
                 style={{
                   fontSize: 'var(--fs-body-lg)',
                   lineHeight: 1.7,
                   color: 'rgba(26,26,26,1)',
-                  maxWidth: '480px',
+                  maxWidth: '560px',
                   margin: '0 0 40px',
                 }}
               >
@@ -81,11 +82,11 @@ export default function Hero() {
               </p>
             </FadeIn>
 
-            <FadeIn delay={0.3}>
+            <FadeIn delay={0.15} duration={0.4} direction="none">
               <div className="hero-cta-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '14px' }}>
                 <a
-                  href="/briefing"
-                  className="hero-cta-primary"
+                  href="#cases"
+                  className="hero-cta-primary cta-primary"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -98,11 +99,30 @@ export default function Hero() {
                     padding: '15px 32px',
                     borderRadius: '10px',
                     textDecoration: 'none',
-                    transition: 'background 0.2s',
                   }}
                 >
                   {t('hero.cta.primary')}
                   <ArrowRight size={16} />
+                </a>
+                <a
+                  href="#about"
+                  className="hero-cta-secondary cta-ghost"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'transparent',
+                    color: '#1a1a1a',
+                    fontFamily: 'var(--font-headline)',
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    padding: '15px 32px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(26,26,26,0.2)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {t('hero.cta.secondary')}
                 </a>
               </div>
             </FadeIn>

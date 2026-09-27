@@ -10,6 +10,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CATEGORY_KEYS } from '@/lib/translations';
 import { SURFACE } from '@/lib/surfaces';
 
+// Movimento mínimo (px) pra um toque virar arrasto; abaixo disso ainda conta como clique no card.
+const DRAG_THRESHOLD = 10;
+
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
 function useItemsPerView() {
@@ -106,7 +111,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
     const cardStep = (track.scrollWidth / 3) / setCount;
-    track.scrollTo({ left: track.scrollLeft + direction * cardStep * itemsPerView, behavior: 'smooth' });
+    track.scrollTo({ left: track.scrollLeft + direction * cardStep * itemsPerView, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -132,7 +137,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     if (!isDragging.current || !trackRef.current) return;
     const delta = e.clientX - dragStartX.current;
     dragDistance.current = Math.abs(delta);
-    if (dragDistance.current > 6 && activePointerId.current !== null && !trackRef.current.hasPointerCapture(activePointerId.current)) {
+    if (dragDistance.current > DRAG_THRESHOLD && activePointerId.current !== null && !trackRef.current.hasPointerCapture(activePointerId.current)) {
       trackRef.current.setPointerCapture(activePointerId.current);
       trackRef.current.classList.add('is-dragging');
     }
@@ -172,7 +177,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
       track.scrollLeft -= velocity * dt;
       momentumFrame.current = requestAnimationFrame(glide(time));
     };
-    if (Math.abs(velocity) > 0.05) {
+    if (Math.abs(velocity) > 0.05 && !prefersReducedMotion()) {
       momentumFrame.current = requestAnimationFrame(glide(performance.now()));
     }
   };
@@ -182,7 +187,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   // o click sintético do <Link> só depois de já ter "arrastado" alguns pixels, fazendo o
   // card parecer não-clicável. Só suprime o click quando o arrasto foi real.
   const handleTrackClickCapture = (e: React.MouseEvent) => {
-    if (dragDistance.current > 6) {
+    if (dragDistance.current > DRAG_THRESHOLD) {
       e.preventDefault();
       e.stopPropagation();
     }
@@ -224,11 +229,15 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                   fontWeight: 900,
                   color: '#1a1a1a',
                   lineHeight: 1.1,
-                  margin: 0,
+                  margin: '0 0 16px',
+                  maxWidth: '760px',
                 }}
               >
                 {t('cases.heading')}
               </h2>
+              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
+                {t('cases.intro')}
+              </p>
             </div>
 
             {setCount > 1 && (
@@ -281,15 +290,36 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             mask-image: none;
           }
         }
-        .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; }
+        .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+        .portfolio-card-v2-link:active { transform: scale(0.98); }
+        /* Cinza por padrão em mouse, cor no hover. A desaturação vem de uma camada cinza com
+           mix-blend-mode: saturation por cima da imagem; só o opacity dela anima (compositor),
+           em vez de animar filter na imagem inteira. */
+        .portfolio-card-v2-image { isolation: isolate; }
         .portfolio-card-v2-image img {
-          filter: saturate(0) contrast(1.02);
-          transition: filter 0.5s ease, transform 0.5s ease;
+          transition: transform 0.5s ease;
         }
-        .portfolio-card-v2-link:hover .portfolio-card-v2-image img {
-          filter: saturate(1) contrast(1);
-          transform: scale(1.04);
+        @media (hover: hover) and (pointer: fine) {
+          .portfolio-card-v2-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #808080;
+            mix-blend-mode: saturation;
+            opacity: 1;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+          }
+          .portfolio-card-v2-link:hover .portfolio-card-v2-image::after,
+          .portfolio-card-v2-link:focus-visible .portfolio-card-v2-image::after {
+            opacity: 0;
+          }
+          .portfolio-card-v2-link:hover .portfolio-card-v2-image img {
+            transform: scale(1.04);
+          }
         }
+        .carousel-arrow { transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), opacity 0.15s; }
+        .carousel-arrow:active:not(:disabled) { transform: scale(0.95); }
       `}</style>
 
       {/* Full-bleed: sai do section-container de propósito, pra a máscara de
@@ -327,11 +357,13 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             <style>{`
               .view-all-link { display: inline-flex; align-items: center; gap: 6px; }
               .view-all-link .view-all-arrow { transition: transform 0.2s; display: inline-block; }
-              .view-all-link:hover .view-all-arrow { transform: translateX(4px); }
+              @media (hover: hover) and (pointer: fine) {
+                .view-all-link:hover .view-all-arrow { transform: translateX(4px); }
+              }
             `}</style>
             <Link
               href="/portfolio"
-              className="view-all-link"
+              className="view-all-link cta-ghost"
               style={{
                 fontSize: '14px',
                 fontWeight: 700,
@@ -357,10 +389,11 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
     <button
       onClick={onClick}
       disabled={disabled}
+      className="carousel-arrow"
       aria-label={direction === 'left' ? 'Anterior' : 'Próximo'}
       style={{
-        width: '40px',
-        height: '40px',
+        width: '44px',
+        height: '44px',
         borderRadius: '50%',
         border: '1px solid rgba(26,26,26,0.15)',
         background: '#fff',
@@ -369,7 +402,6 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
         justifyContent: 'center',
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.35 : 1,
-        transition: 'opacity 0.15s',
       }}
     >
       {direction === 'left' ? (

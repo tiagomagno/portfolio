@@ -8,7 +8,7 @@ import { SURFACE } from '@/lib/surfaces';
 export default function About() {
   const { t } = useLang();
 
-  const tags = [t('about.tag1'), t('about.tag2'), t('about.tag3'), t('about.tag4')];
+  const paragraphs = [1, 2, 3, 4, 5].map((n) => t(`about.p${n}`));
 
   return (
     <section id="about" style={{ background: SURFACE.raised, padding: 'var(--section-pad-y) 0' }}>
@@ -22,9 +22,6 @@ export default function About() {
           }
           @media (max-width: 900px) {
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
-          }
-          @media (max-width: 767px) {
-            .about-tags { flex-direction: column !important; align-items: flex-start !important; }
           }
         `}</style>
 
@@ -82,33 +79,20 @@ export default function About() {
             </FadeIn>
 
             <FadeIn delay={0.2}>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, marginBottom: '20px' }}>
-                {t('about.p1')}
-              </p>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, marginBottom: '32px' }}>
-                {t('about.p2')}
-              </p>
-            </FadeIn>
-
-            <FadeIn delay={0.3}>
-              <div className="about-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: 'rgba(26,26,26,0.7)',
-                      background: 'rgba(26,26,26,0.025)',
-                      border: 'none',
-                      padding: '6px 14px',
-                      borderRadius: '100px',
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              {paragraphs.map((text, i) => (
+                <p
+                  key={i}
+                  style={{
+                    fontSize: i === 0 ? 'clamp(1.125rem, 1.6vw, 1.25rem)' : 'var(--fs-body-lg)',
+                    fontWeight: i === 0 ? 500 : 400,
+                    color: i === 0 ? '#1a1a1a' : 'rgba(26,26,26,1)',
+                    lineHeight: i === 0 ? 1.6 : 1.7,
+                    margin: i === paragraphs.length - 1 ? 0 : i === 0 ? '0 0 24px' : '0 0 18px',
+                  }}
+                >
+                  {text}
+                </p>
+              ))}
             </FadeIn>
           </div>
         </div>

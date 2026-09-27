@@ -10,7 +10,6 @@ export default function Stats() {
   const stats = [
     { value: t('hero.stat2.value'), label: t('hero.stat2.label') },
     { value: t('about.badge.number'), label: t('about.badge.label') },
-    { value: t('hero.stat3.value'), label: t('hero.stat3.label') },
     { value: t('stats.stat4.value'), label: t('stats.stat4.label') },
   ];
 
@@ -20,7 +19,7 @@ export default function Stats() {
         <style>{`
           .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
           }
           .stats-grid > div {
@@ -32,8 +31,9 @@ export default function Stats() {
             padding-left: 0;
           }
           @media (max-width: 700px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
-            .stats-grid > div:nth-child(2n+1) { border-left: none; padding-left: 0; }
+            .stats-grid { gap: 12px; }
+            .stats-grid > div { padding-left: 12px; }
+            .stats-grid > div:first-child { padding-left: 0; }
           }
         `}</style>
 
