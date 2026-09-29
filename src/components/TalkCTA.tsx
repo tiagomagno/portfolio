@@ -22,10 +22,10 @@ export default function TalkCTA() {
               padding: '48px 32px',
             }}
           >
-            <h3 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
+            <h3 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 0 12px' }}>
               {t('work.cta.title')}
             </h3>
-            <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '560px' }}>
+            <p style={{ fontSize: '16px', color: 'var(--color-text)', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '560px' }}>
               {t('work.cta.text')}
             </p>
             <a
@@ -38,7 +38,7 @@ export default function TalkCTA() {
                 fontSize: '14px',
                 fontWeight: 700,
                 padding: '15px 32px',
-                borderRadius: '10px',
+                borderRadius: '999px',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
               }}

@@ -19,7 +19,7 @@ export default function Work() {
   ];
 
   return (
-    <section id="work" style={{ background: SURFACE.base, padding: 'var(--section-pad-y) 0' }}>
+    <section id="work" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .work-section-grid {
@@ -58,7 +58,7 @@ export default function Work() {
             .service-card:hover {
               transform: translateY(-3px);
               box-shadow: 0 14px 28px rgba(0,0,0,0.1);
-              border-color: rgba(26,26,26,0.3);
+              border-color: rgba(255,255,255,0.3);
             }
           }
           .service-card:active {
@@ -73,14 +73,14 @@ export default function Work() {
               style={{
                 fontSize: 'var(--fs-h2)',
                 fontWeight: 900,
-                color: '#1a1a1a',
+                color: 'var(--color-text)',
                 lineHeight: 1.15,
                 margin: '0 0 16px',
               }}
             >
               {t('work.title')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: 0, maxWidth: '420px' }}>
+            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text)', lineHeight: 1.7, margin: 0, maxWidth: '420px' }}>
               {t('work.subtitle')}
             </p>
           </FadeIn>
@@ -100,7 +100,7 @@ export default function Work() {
                 fontWeight: 700,
                 fontSize: '14px',
                 padding: '14px 28px',
-                borderRadius: '10px',
+                borderRadius: '999px',
                 textDecoration: 'none',
               }}
             >
@@ -132,7 +132,7 @@ export default function Work() {
                       style={{
                         fontSize: '17px',
                         fontWeight: 700,
-                        color: '#1a1a1a',
+                        color: 'var(--color-text)',
                         margin: '0 8px 8px 0',
                       }}
                     >
@@ -142,7 +142,7 @@ export default function Work() {
                       style={{
                         fontSize: '13px',
                         lineHeight: 1.6,
-                        color: 'rgba(26,26,26,0.62)',
+                        color: 'rgba(255,255,255,0.62)',
                         margin: 0,
                         flex: 1,
                       }}

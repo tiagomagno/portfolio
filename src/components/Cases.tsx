@@ -8,7 +8,6 @@ import { useLang } from '@/context/LangContext';
 import type { PortfolioItem } from '@/data/portfolio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CATEGORY_KEYS } from '@/lib/translations';
-import { SURFACE } from '@/lib/surfaces';
 
 // Movimento mínimo (px) pra um toque virar arrasto; abaixo disso ainda conta como clique no card.
 const DRAG_THRESHOLD = 10;
@@ -17,19 +16,20 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
-function useItemsPerView() {
-  const [itemsPerView, setItemsPerView] = useState(2);
+// Modos: celular (1 card por vez, sem peek), tablet (2 cards cheios, sem peek) e desktop (2 cheios + peeks).
+type CarouselMode = 'phone' | 'tablet' | 'desktop';
+function useItemsPerView(): { itemsPerView: number; mode: CarouselMode } {
+  const [mode, setMode] = useState<CarouselMode>('desktop');
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      if (w <= 560) setItemsPerView(1);
-      else setItemsPerView(2);
+      setMode(w <= 560 ? 'phone' : w <= 1024 ? 'tablet' : 'desktop');
     };
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-  return itemsPerView;
+  return { itemsPerView: mode === 'phone' ? 1 : 2, mode };
 }
 
 export default function Cases({ items }: { items: PortfolioItem[] }) {
@@ -46,7 +46,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     return selected.length > 0 ? selected : pool;
   }, [items]);
 
-  const itemsPerView = useItemsPerView();
+  const { itemsPerView, mode } = useItemsPerView();
 
   // Carrossel infinito: o track renderiza a lista 3x (anterior/atual/próxima),
   // sempre parte no início da cópia do meio e, ao chegar perto do fim de uma
@@ -82,8 +82,8 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     if (!track || setCount === 0) return;
     const third = track.scrollWidth / 3;
     const cardStep = third / setCount;
-    track.scrollLeft = itemsPerView === 1 ? third - 24 : third - cardStep;
-  }, [setCount, itemsPerView]);
+    track.scrollLeft = mode === 'desktop' ? third - cardStep : third - 24;
+  }, [setCount, mode]);
 
   useEffect(() => {
     return () => {
@@ -117,7 +117,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     const cardStep = (track.scrollWidth / 3) / setCount;
     // Sem snap, a posição depois de um arrasto livre é qualquer uma; a seta alinha à grade dos
     // cards (no mobile a grade começa 24px antes do card, igual à posição inicial).
-    const gridOffset = itemsPerView === 1 ? 24 : 0;
+    const gridOffset = mode === 'desktop' ? 0 : 24;
     const base = Math.round((track.scrollLeft + gridOffset) / cardStep) * cardStep - gridOffset;
     track.scrollTo({ left: base + direction * cardStep * itemsPerView, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
@@ -209,7 +209,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   };
 
   return (
-    <section id="cases" style={{ background: SURFACE.base, padding: 'var(--section-pad-y) 0' }}>
+    <section id="cases" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
 
         {/* Header */}
@@ -242,7 +242,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                 style={{
                   fontSize: 'var(--fs-h2)',
                   fontWeight: 900,
-                  color: '#1a1a1a',
+                  color: 'var(--color-text)',
                   lineHeight: 1.1,
                   margin: '0 0 16px',
                   maxWidth: '760px',
@@ -250,7 +250,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
               >
                 {t('cases.heading')}
               </h2>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
                 {t('cases.intro')}
               </p>
             </div>
@@ -279,6 +279,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
           -webkit-user-drag: none;
         }
         .cases-carousel-track::-webkit-scrollbar { display: none; }
+        ${mode === 'tablet' ? '.cases-carousel-track { scroll-padding: 0 24px; }' : ''}
         /* Snap só em toque, onde o navegador já faz arrasto e inércia nativos. Com mouse o arrasto
            é nosso (JS + inércia) e o snap "puxando" o carrossel pras bordas dos cards brigava com
            o movimento e o deixava travado. */
@@ -291,7 +292,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
         .cases-carousel-card {
           /* ${itemsPerView} colunas cheias + 1 coluna esmaecida ("peek") de cada lado,
              todas do mesmo tamanho — ${itemsPerView + 2} colunas iguais ao todo. */
-          flex: 0 0 calc((100% - 16px * (${itemsPerView + 2} - 1)) / ${itemsPerView + 2});
+          flex: 0 0 ${mode === 'tablet' ? 'calc((100vw - 48px - 16px) / 2)' : `calc((100% - 16px * (${itemsPerView + 2} - 1)) / ${itemsPerView + 2})`};
           scroll-snap-align: start;
         }
         /* Mobile (1 item por vez): card ocupa 100% da tela respeitando as mesmas
@@ -344,7 +345,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
 
       {/* Full-bleed: sai do section-container de propósito, pra a máscara de
           esmaecimento nas bordas usar 100% da largura da tela. */}
-      <div className="cases-carousel-viewport">
+      <div className="cases-carousel-viewport" style={mode === 'tablet' ? { WebkitMaskImage: 'none', maskImage: 'none' } : undefined}>
         <div
           ref={trackRef}
           className="cases-carousel-track"
@@ -391,8 +392,8 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                 fontWeight: 700,
                 color: 'var(--color-primary-text)',
                 padding: '13px 24px',
-                borderRadius: '10px',
-                border: '1px solid rgba(26,26,26,0.15)',
+                borderRadius: '999px',
+                border: '1px solid rgba(255,255,255,0.15)',
                 textDecoration: 'none',
               }}
             >
@@ -417,8 +418,8 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
         width: '44px',
         height: '44px',
         borderRadius: '50%',
-        border: '1px solid rgba(26,26,26,0.15)',
-        background: '#fff',
+        border: '1px solid rgba(255,255,255,0.15)',
+        background: '#1a1a1a',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -427,9 +428,9 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
       }}
     >
       {direction === 'left' ? (
-        <ChevronLeft size={20} color="rgba(26,26,26,0.7)" />
+        <ChevronLeft size={20} color="rgba(255,255,255,0.7)" />
       ) : (
-        <ChevronRight size={20} color="rgba(26,26,26,0.7)" />
+        <ChevronRight size={20} color="rgba(255,255,255,0.7)" />
       )}
     </button>
   );

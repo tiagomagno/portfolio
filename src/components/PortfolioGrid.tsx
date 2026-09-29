@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ATUACAO_CATEGORIES, type AtuacaoCategory, type PortfolioItem } from '@/data/portfolio';
 import { useLang } from '@/context/LangContext';
 import { CATEGORY_KEYS } from '@/lib/translations';
-import { SURFACE } from '@/lib/surfaces';
 import FadeIn from './ui/FadeIn';
 import PortfolioCard from './PortfolioCard';
 
@@ -17,7 +16,7 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
   const filtered = activeFilter ? items.filter((item) => item.atuacao.includes(activeFilter)) : items;
 
   return (
-    <section style={{ background: SURFACE.raised, padding: '60px 0 100px' }}>
+    <section style={{ background: 'transparent', padding: '24px 0 100px' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.05}>
           <div
@@ -27,19 +26,19 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
             <style>{`
               @media (hover: hover) and (pointer: fine) {
                 .filter-pill[data-active="false"]:hover {
-                  background: rgba(26,26,26,0.07) !important;
-                  color: rgba(26,26,26,0.85) !important;
+                  background: rgba(255,255,255,0.07) !important;
+                  color: rgba(255,255,255,0.85) !important;
                 }
               }
             `}</style>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: '4px' }}>
               {t('portfolioPage.filterLabel')}
             </span>
             <FilterPill label={t('cases.filterAll')} active={activeFilter === null} onClick={() => setActiveFilter(null)} />
             {ATUACAO_CATEGORIES.map((cat) => (
               <FilterPill key={cat} label={tCategory(cat)} active={activeFilter === cat} onClick={() => setActiveFilter(cat)} />
             ))}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'rgba(26,26,26,0.65)', whiteSpace: 'nowrap' }}>
+            <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'rgba(255,255,255,0.65)', whiteSpace: 'nowrap' }}>
               {filtered.length} {filtered.length === 1 ? t('cases.count.singular') : t('cases.count.plural')}
             </span>
           </div>
@@ -129,7 +128,7 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
       style={{
         fontSize: '12px',
         fontWeight: 600,
-        color: active ? '#fff' : 'rgba(26,26,26,0.6)',
+        color: active ? '#000' : 'rgba(255,255,255,0.6)',
         background: active ? 'var(--color-primary-text)' : 'transparent',
         border: active ? '1px solid var(--color-primary-text)' : 'none',
         padding: '8px 18px',

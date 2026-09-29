@@ -4,8 +4,6 @@ import Footer from '@/components/Footer';
 import PortfolioHero from '@/components/PortfolioHero';
 import PortfolioGrid from '@/components/PortfolioGrid';
 import PortfolioCTA from '@/components/PortfolioCTA';
-import SectionDivider from '@/components/ui/SectionDivider';
-import { SURFACE } from '@/lib/surfaces';
 import { getVisibleCases } from '@/data/cases';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
@@ -31,10 +29,8 @@ export default async function PortfolioPage() {
       <Header />
       <main id="main-content">
         <PortfolioHero />
-        <SectionDivider from={SURFACE.base} to={SURFACE.raised} />
         <PortfolioGrid items={items} />
         <PortfolioCTA />
-        <SectionDivider from={SURFACE.base} to={SURFACE.footer} />
       </main>
       <Footer />
     </>

@@ -68,7 +68,7 @@ export default function About() {
                 style={{
                   fontSize: 'var(--fs-h2)',
                   fontWeight: 900,
-                  color: '#1a1a1a',
+                  color: 'var(--color-text)',
                   lineHeight: 1.1,
                   margin: '0 0 24px',
                   whiteSpace: 'pre-line',
@@ -85,7 +85,7 @@ export default function About() {
                   style={{
                     fontSize: i === 0 ? 'clamp(1.125rem, 1.6vw, 1.25rem)' : 'var(--fs-body-lg)',
                     fontWeight: i === 0 ? 500 : 400,
-                    color: i === 0 ? '#1a1a1a' : 'rgba(26,26,26,1)',
+                    color: 'var(--color-text)',
                     lineHeight: i === 0 ? 1.6 : 1.7,
                     margin: i === paragraphs.length - 1 ? 0 : i === 0 ? '0 0 24px' : '0 0 18px',
                   }}

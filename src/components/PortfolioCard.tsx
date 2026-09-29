@@ -34,7 +34,7 @@ export default function PortfolioCard({
           />
         ) : (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Camera size={32} color="rgba(26,26,26,0.15)" />
+            <Camera size={32} color="rgba(255,255,255,0.15)" />
           </div>
         )}
 
@@ -59,10 +59,10 @@ export default function PortfolioCard({
       </div>
 
       <div style={{ marginTop: '14px' }}>
-        <span style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(26,26,26,0.65)', marginBottom: '4px' }}>
+        <span style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>
           {item.atuacao.map(categoryLabel).join(' · ')}
         </span>
-        <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#1a1a1a', margin: 0, lineHeight: 1.3 }}>
+        <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text)', margin: 0, lineHeight: 1.3 }}>
           {item.empresa}
         </h3>
       </div>

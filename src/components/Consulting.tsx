@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
-import { SURFACE } from '@/lib/surfaces';
-import { ArrowRight, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 const PILLARS = ['diagnostico', 'execucao', 'escala'] as const;
+// Cada pilar cobre uma fase do processo: Problema (Descobrir + Definir), Solução (Desenvolver + Entregar) e Evolução.
+const PHASE_KEY = { diagnostico: 'case.phase.problem', execucao: 'case.phase.solution', escala: 'case.phase.evolution' } as const;
 
 export default function Consulting() {
   const { t } = useLang();
@@ -14,26 +14,17 @@ export default function Consulting() {
   const CARDS = PILLARS.map((id) => ({
     id,
     label: t(`consulting.pillars.${id}.label`),
+    phase: t(PHASE_KEY[id]),
     title: t(`consulting.pillars.${id}.title`),
     desc: t(`consulting.pillars.${id}.desc`),
     items: [1, 2, 3].map((n) => t(`consulting.pillars.${id}.item${n}`)),
   }));
 
   return (
-    <section id="consulting" style={{ background: SURFACE.raised, padding: '140px 0 96px' }}>
+    <section id="consulting" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '40px' }}>
-          <Link href="/" style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(26,26,26,0.4)', textDecoration: 'none', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-            {t('breadcrumb.home')}
-          </Link>
-          <span style={{ fontSize: '10px', color: 'rgba(244,108,28,0.4)' }}>›</span>
-          <span style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(26,26,26,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-            {t('consulting.eyebrow')}
-          </span>
-        </div>
-
         <FadeIn delay={0.1}>
-          <div style={{ maxWidth: '640px', marginBottom: '64px' }}>
+          <div style={{ maxWidth: '680px', marginBottom: '56px' }}>
             <span
               style={{
                 fontSize: 'var(--fs-eyebrow)',
@@ -47,46 +38,9 @@ export default function Consulting() {
             >
               {t('consulting.eyebrow')}
             </span>
-            <h1
-              style={{
-                fontSize: 'var(--fs-h2)',
-                fontWeight: 900,
-                color: '#1a1a1a',
-                lineHeight: 1.1,
-                margin: '0 0 20px',
-                whiteSpace: 'pre-line',
-              }}
-            >
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: 0, whiteSpace: 'pre-line' }}>
               {t('consulting.title')}
-            </h1>
-            <p
-              style={{
-                fontSize: 'var(--fs-body-lg)',
-                lineHeight: 1.7,
-                color: 'rgba(26,26,26,1)',
-                margin: '0 0 32px',
-              }}
-            >
-              {t('consulting.subtitle')}
-            </p>
-            <a
-              href="/briefing"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'var(--color-primary-text)',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: '14px',
-                padding: '15px 32px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-              }}
-            >
-              {t('consulting.cta')}
-              <ArrowRight size={16} />
-            </a>
+            </h2>
           </div>
         </FadeIn>
 
@@ -105,7 +59,7 @@ export default function Consulting() {
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: #ffffff;
+            background: #1a1a1a;
             border: 1px solid var(--color-border);
             display: flex;
             align-items: center;
@@ -151,11 +105,14 @@ export default function Consulting() {
                       }}
                     >
                       {card.label}
+                      <span style={{ marginLeft: '10px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--color-text-muted)', border: '1px solid var(--color-border-subtle)', borderRadius: '999px', padding: '2px 9px' }}>
+                        {card.phase}
+                      </span>
                     </span>
-                    <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 8px' }}>
                       {card.title}
                     </h3>
-                    <p style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 16px', maxWidth: '560px' }}>
+                    <p style={{ fontSize: '14px', color: 'var(--color-text)', lineHeight: 1.7, margin: '0 0 16px', maxWidth: '560px' }}>
                       {card.desc}
                     </p>
 
@@ -172,7 +129,7 @@ export default function Consulting() {
                           }}
                         >
                           <Check size={16} color="var(--color-primary-text)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.5 }}>{item}</span>
+                          <span style={{ fontSize: '14px', color: 'var(--color-text)', lineHeight: 1.5 }}>{item}</span>
                         </div>
                       ))}
                     </div>
@@ -183,36 +140,6 @@ export default function Consulting() {
           })}
         </div>
 
-        <div style={{ borderTop: '1px solid var(--color-border)', marginTop: '80px', paddingTop: '64px' }}>
-          <FadeIn delay={0.1}>
-            <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-              <h2 style={{ fontSize: 'clamp(26px, 4.5vw, 44px)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
-                {t('consulting.closing.title')}
-              </h2>
-              <p style={{ fontSize: '16px', color: 'rgba(26,26,26,1)', lineHeight: 1.6, margin: '0 auto 28px', maxWidth: '440px' }}>
-                {t('consulting.closing.text')}
-              </p>
-              <a
-                href="/briefing"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'var(--color-primary-text)',
-                  color: '#fff',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  padding: '18px 40px',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                }}
-              >
-                {t('consulting.cta')}
-                <ArrowRight size={18} />
-              </a>
-            </div>
-          </FadeIn>
-        </div>
       </div>
     </section>
   );

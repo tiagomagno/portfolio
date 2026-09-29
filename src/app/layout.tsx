@@ -93,7 +93,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" className={`${plusJakartaSans.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#000000" />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

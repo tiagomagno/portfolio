@@ -48,7 +48,7 @@ export default function Stats() {
                   style={{
                     fontSize: '12px',
                     fontWeight: 600,
-                    color: 'rgba(26,26,26,1)',
+                    color: 'var(--color-text)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.06em',
                     marginTop: '8px',

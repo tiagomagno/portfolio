@@ -33,7 +33,7 @@ export default function WhatsAppFloat() {
             .whatsapp-float:hover { transform: scale(1.08); }
           }
           .whatsapp-float:active { transform: scale(0.95); }
-          @media (max-width: 767px) {
+          @media (max-width: 1024px) {
             .whatsapp-float { display: none !important; }
           }
         `}</style>

@@ -3,14 +3,18 @@
 import { useLang } from '@/context/LangContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Menu, X, ChevronRight, MoreVertical } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ArrowRight, Download, Menu, X, ChevronRight, MoreVertical } from 'lucide-react';
+import Logo from './ui/Logo';
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
-  const { brandName } = useSiteSettings();
+  const { brandName, resumeUrl } = useSiteSettings();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [activeSection, setActiveSection] = useState('hero');
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
@@ -129,7 +133,34 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Item ativo do menu: na home, a seção mais próxima do topo; nas demais páginas, a rota atual.
+  useEffect(() => {
+    if (pathname !== '/') return;
+    const ids = ['hero', 'cases', 'services', 'about', 'contact'];
+    const update = () => {
+      let current = 'hero';
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) current = id;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = 'contact';
+      setActiveSection(current);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, [pathname]);
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' && activeSection === 'hero'
+    : href === '/#cases' ? pathname.startsWith('/portfolio') || (pathname === '/' && activeSection === 'cases')
+    : href.startsWith('/#') ? pathname === '/' && activeSection === href.slice(2)
+    : pathname === href;
+
+  const cvLabel = lang === 'en-US' ? 'Download résumé' : 'Baixar currículo';
+
   const defaultNavLinks = [
+    { href: '/', label: lang === 'en-US' ? 'Home' : 'Início' },
     { href: '/#about', label: t('nav.about') },
     { href: '/#cases', label: t('nav.cases') },
     { href: '/consultoria', label: t('nav.consultoria') },
@@ -170,7 +201,7 @@ export default function Header() {
       {/* ── Floating language switcher — lives on the page edge, not inside the header row.
           Em mobile some daqui: vira uma opção no menu de 3 pontinhos da barra superior. ── */}
       <style>{`
-        @media (max-width: 767px) {
+        @media (max-width: 1024px) {
           .lang-switcher {
             display: none !important;
           }
@@ -243,26 +274,35 @@ export default function Header() {
             padding: '0 24px',
             height: '72px',
             display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
+            gridTemplateColumns: 'auto 1fr auto',
             alignItems: 'center',
             gap: '24px',
           }}
         >
-          {/* Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          {/* Logo (esquerda) */}
+          <a href="/" style={{ display: 'flex', alignItems: 'center', height: '32px', textDecoration: 'none' }}>
+            <Logo height={26} alt={brandName} />
+          </a>
+
+          {/* Links (centro) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '28px' }}>
             <style>{`@media (hover: hover) and (pointer: fine) { .nav-link:hover { color: var(--color-primary) !important; } }`}</style>
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
                 href={href}
                 className="nav-link"
+                aria-current={isActive(href) ? 'page' : undefined}
                 style={{
+                  borderBottom: isActive(href) ? '2px solid var(--color-primary)' : '2px solid transparent',
+                  paddingBottom: '6px',
                   color: 'var(--color-text)',
                   fontSize: '13px',
                   fontWeight: 500,
                   textDecoration: 'none',
                   letterSpacing: '0.02em',
                   transition: 'color 0.15s',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {label}
@@ -270,15 +310,29 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Logo (centro) */}
-          <a href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '32px', textDecoration: 'none' }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '19px', letterSpacing: '-0.01em', color: 'var(--color-text)', whiteSpace: 'nowrap' }}>
-              {brandName}
-            </span>
-          </a>
-
-          {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '16px' }}>
+          {/* Actions (direita) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px' }}>
+            <a
+              href={resumeUrl}
+              download
+              className="cta-ghost"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: 'var(--color-text)',
+                fontSize: '13px',
+                fontWeight: 700,
+                padding: '10px 18px',
+                borderRadius: '999px',
+                border: '1px solid rgba(255,255,255,0.2)',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {cvLabel}
+              <Download size={15} />
+            </a>
             <a
               href="/briefing"
               className="nav-cta cta-primary"
@@ -291,8 +345,9 @@ export default function Header() {
                 fontSize: '13px',
                 fontWeight: 700,
                 padding: '10px 18px',
-                borderRadius: '8px',
+                borderRadius: '999px',
                 textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
             >
               {t('nav.startProject')}
@@ -371,9 +426,7 @@ export default function Header() {
               textDecoration: 'none',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
-              {brandName}
-            </span>
+            <Logo height={20} alt={brandName} />
           </a>
 
           {/* Language menu (3 pontinhos) */}
@@ -527,9 +580,7 @@ export default function Header() {
           }}
         >
           <a href="/" onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', height: '20px', textDecoration: 'none' }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>
-              {brandName}
-            </span>
+            <Logo height={18} alt={brandName} />
           </a>
           <button
             ref={closeButtonRef}
@@ -594,7 +645,7 @@ export default function Header() {
               fontSize: '14px',
               fontWeight: 700,
               padding: '14px 20px',
-              borderRadius: '10px',
+              borderRadius: '999px',
               textDecoration: 'none',
             }}
           >
@@ -606,11 +657,11 @@ export default function Header() {
 
       {/* Responsive visibility styles */}
       <style>{`
-        @media (min-width: 768px) {
+        @media (min-width: 1025px) {
           .hidden-mobile { display: block !important; }
           .show-mobile { display: none !important; }
         }
-        @media (max-width: 767px) {
+        @media (max-width: 1024px) {
           .hidden-mobile { display: none !important; }
           .show-mobile { display: flex !important; }
           .show-mobile[style*="flex-direction: column"] { display: flex !important; }

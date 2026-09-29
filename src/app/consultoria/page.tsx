@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Consulting from '@/components/Consulting';
+import Hero from '@/components/Hero';
+import ConsultingServices from '@/components/ConsultingServices';
+import ConsultingProcess from '@/components/ConsultingProcess';
+import ConsultingImpact from '@/components/ConsultingImpact';
+import { CasesAndAbout } from '@/components/ConsultingExtras';
 import Faq from '@/components/Faq';
+import CtaFooter from '@/components/CtaFooter';
+import { GRADIENT } from '@/lib/surfaces';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
 const DEFAULT_METADATA: Metadata = {
@@ -16,15 +21,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return withSeoOverride(DEFAULT_METADATA, override);
 }
 
+// Página de venda da consultoria: hero → serviços → processo (detalhado) → impacto real
+// → portfólio + sobre (lado a lado) → FAQ → CTA/rodapé da home.
 export default function ConsultoriaPage() {
   return (
     <>
       <Header />
       <main id="main-content">
-        <Consulting />
-        <Faq />
+        <div style={{ background: GRADIENT.ltr }}>
+          <Hero variant="consulting" />
+        </div>
+        <div style={{ background: GRADIENT.rtl }}>
+          <ConsultingServices />
+        </div>
+        <div style={{ background: GRADIENT.ltr }}>
+          <ConsultingProcess />
+        </div>
+        <div style={{ background: GRADIENT.rtl }}>
+          <ConsultingImpact />
+        </div>
+        <div style={{ background: GRADIENT.ltr }}>
+          <CasesAndAbout />
+        </div>
+        <div style={{ background: GRADIENT.rtl }}>
+          <Faq />
+        </div>
+        <CtaFooter />
       </main>
-      <Footer />
     </>
   );
 }

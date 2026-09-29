@@ -2,7 +2,6 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
-import { SURFACE } from '@/lib/surfaces';
 import { Plus } from 'lucide-react';
 
 const QUESTION_KEYS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'] as const;
@@ -16,7 +15,7 @@ export default function Faq() {
   }));
 
   return (
-    <section id="faq" style={{ background: SURFACE.base, padding: '96px 0' }}>
+    <section id="faq" style={{ background: 'transparent', padding: '96px 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .faq-item {
@@ -67,7 +66,7 @@ export default function Faq() {
             >
               {t('faq.eyebrow')}
             </span>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: '0 0 12px' }}>
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 0 12px' }}>
               {t('faq.title')}
             </h2>
             <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>

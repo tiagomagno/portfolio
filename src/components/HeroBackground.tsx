@@ -211,7 +211,7 @@ export default function HeroBackground() {
           pointerEvents: 'none',
         }}
       />
-      {/* Véu claro: garante legibilidade do texto (canto esquerdo/inferior) sem
+      {/* Véu escuro: garante legibilidade do texto (canto esquerdo/inferior) sem
           apagar o efeito nas áreas mais vazias da hero. */}
       <div
         aria-hidden="true"
@@ -221,7 +221,7 @@ export default function HeroBackground() {
           zIndex: 0,
           pointerEvents: 'none',
           background:
-            'linear-gradient(115deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 32%, rgba(255,255,255,0.25) 60%, rgba(255,255,255,0.55) 100%)',
+            'linear-gradient(115deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 32%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.55) 100%)',
         }}
       />
     </>

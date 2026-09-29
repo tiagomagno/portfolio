@@ -41,7 +41,7 @@ export default function Experience() {
 
         <FadeIn delay={0.1}>
           <div style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.15, margin: 0, maxWidth: '760px' }}>
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: 0, maxWidth: '760px' }}>
               {t('experience.title')}
             </h2>
           </div>
@@ -62,10 +62,10 @@ export default function Experience() {
                 >
                   {t(`experience.item${n}.period`)}
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 8px' }}>
                   {t(`experience.item${n}.title`)}
                 </h3>
-                <p style={{ fontSize: '14px', color: 'rgba(26,26,26,1)', lineHeight: 1.65, margin: 0 }}>
+                <p style={{ fontSize: '14px', color: 'var(--color-text)', lineHeight: 1.65, margin: 0 }}>
                   {t(`experience.item${n}.desc`)}
                 </p>
               </div>
@@ -88,8 +88,8 @@ export default function Experience() {
               fontWeight: 700,
               color: 'var(--color-primary-text)',
               padding: '13px 24px',
-              borderRadius: '10px',
-              border: '1px solid rgba(26,26,26,0.15)',
+              borderRadius: '999px',
+              border: '1px solid rgba(255,255,255,0.15)',
               textDecoration: 'none',
             }}
           >

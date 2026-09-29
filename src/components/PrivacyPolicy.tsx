@@ -42,25 +42,25 @@ export default function PrivacyPolicy() {
           >
             {t('privacy.eyebrow')}
           </span>
-          <h1 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.1, margin: '0 0 12px' }}>
+          <h1 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: '0 0 12px' }}>
             {t('privacy.title')}
           </h1>
-          <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.65)', margin: '0 0 48px' }}>{t('privacy.updated')}</p>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', margin: '0 0 48px' }}>{t('privacy.updated')}</p>
 
           {BLOCKS.map((block) => (
             <div key={block.id} style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1a1a1a', letterSpacing: 0, margin: '0 0 12px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-text)', letterSpacing: 0, margin: '0 0 12px' }}>
                 {t(`privacy.${block.id}.heading`)}
               </h2>
               {range(block.paragraphs).map((n) => (
-                <p key={n} style={{ fontSize: 'var(--fs-body-lg)', lineHeight: 1.7, color: 'rgba(26,26,26,1)', margin: '0 0 12px' }}>
+                <p key={n} style={{ fontSize: 'var(--fs-body-lg)', lineHeight: 1.7, color: 'var(--color-text)', margin: '0 0 12px' }}>
                   {text(`privacy.${block.id}.p${n}`)}
                 </p>
               ))}
               {block.items > 0 && (
                 <ul style={{ margin: '0 0 12px', paddingLeft: '20px' }}>
                   {range(block.items).map((n) => (
-                    <li key={n} style={{ fontSize: 'var(--fs-body-lg)', lineHeight: 1.7, color: 'rgba(26,26,26,1)', marginBottom: '6px' }}>
+                    <li key={n} style={{ fontSize: 'var(--fs-body-lg)', lineHeight: 1.7, color: 'var(--color-text)', marginBottom: '6px' }}>
                       {text(`privacy.${block.id}.i${n}`)}
                     </li>
                   ))}

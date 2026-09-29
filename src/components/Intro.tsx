@@ -71,18 +71,18 @@ export default function Intro() {
 
           <div>
             <FadeIn delay={0.15}>
-              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.1, margin: '0 0 24px' }}>
+              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: '0 0 24px' }}>
                 {t('intro.title')}
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 20px' }}>
+              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text)', lineHeight: 1.7, margin: '0 0 20px' }}>
                 {t('intro.p1')}
               </p>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'rgba(26,26,26,1)', lineHeight: 1.7, margin: '0 0 20px' }}>
+              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text)', lineHeight: 1.7, margin: '0 0 20px' }}>
                 {t('intro.p2')}
               </p>
-              <p style={{ fontSize: 'var(--fs-body-lg)', color: '#1a1a1a', fontWeight: 700, lineHeight: 1.7, margin: 0 }}>
+              <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text)', fontWeight: 700, lineHeight: 1.7, margin: 0 }}>
                 {t('intro.p3')}
               </p>
             </FadeIn>

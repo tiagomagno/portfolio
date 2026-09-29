@@ -23,7 +23,7 @@ export default function Skills() {
   }));
 
   return (
-    <section id="skills" style={{ background: SURFACE.raised, padding: '96px 0' }}>
+    <section id="skills" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1}>
           <div style={{ marginBottom: '48px' }}>
@@ -40,7 +40,7 @@ export default function Skills() {
             >
               {t('skills.eyebrow')}
             </span>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: '#1a1a1a', lineHeight: 1.1, margin: 0 }}>
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: 0 }}>
               {t('skills.title')}
             </h2>
           </div>
@@ -76,10 +76,10 @@ export default function Skills() {
                   <group.Icon size={28} color="var(--color-primary-text)" strokeWidth={1.75} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 8px' }}>
                     {group.label}
                   </h3>
-                  <p style={{ fontSize: '14px', color: 'rgba(26,26,26,0.6)', lineHeight: 1.7, margin: 0 }}>
+                  <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: 0 }}>
                     {group.items}
                   </p>
                 </div>

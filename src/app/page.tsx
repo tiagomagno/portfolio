@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import IntroSplash from '@/components/IntroSplash';
 import Hero from '@/components/Hero';
 import Intro from '@/components/Intro';
 import Positioning from '@/components/Positioning';
@@ -7,16 +8,21 @@ import Stats from '@/components/Stats';
 import Work from '@/components/Work';
 import Experience from '@/components/Experience';
 import Cases from '@/components/Cases';
+import LabsGrid from '@/components/LabsGrid';
+import Profile from '@/components/Profile';
+import AboutBento from '@/components/AboutBento';
 import TalkCTA from '@/components/TalkCTA';
 import Skills from '@/components/Skills';
 import Services from '@/components/Services';
 import Faq from '@/components/Faq';
 import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import CtaFooter from '@/components/CtaFooter';
 import { prisma } from '@/lib/prisma';
 import { getVisibleCases } from '@/data/cases';
 import { getSiteSettings } from '@/data/siteSettings';
 import { translations } from '@/lib/translations';
+import { getLabItems } from '@/data/labs';
+import { GRADIENT } from '@/lib/surfaces';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -28,14 +34,28 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
   work: Work,
   experience: Experience,
   cases: Cases,
+  labs: LabsGrid,
+  profile: Profile,
+  aboutBento: AboutBento,
   talkCta: TalkCTA,
   skills: Skills,
   services: Services,
   faq: Faq,
   contact: Contact,
+  ctaFooter: CtaFooter,
 };
 
-const DEFAULT_ORDER = ['hero', 'work', 'cases', 'services', 'about', 'stats', 'experience', 'talkCta', 'contact'];
+// Direção do gradiente de fundo das seções pretas (as demais têm fundo sólido próprio).
+const SECTION_GRADIENT: Record<string, string> = {
+  hero: GRADIENT.ltr,
+  cases: GRADIENT.rtl,
+  services: GRADIENT.ltr,
+  aboutBento: GRADIENT.rtl,
+  labs: GRADIENT.ltr,
+  ctaFooter: GRADIENT.rtl,
+};
+
+const DEFAULT_ORDER = ['hero', 'cases', 'services', 'aboutBento', 'labs', 'ctaFooter'];
 
 // Schema.org HowTo para a seção "Como trabalho" (AEO). Os passos vêm das mesmas chaves
 // process.step* que a seção usa, já com as edições feitas em /admin (PageContent, versão PT).
@@ -53,8 +73,8 @@ async function getProcessHowToJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: 'Como funciona o processo de design de produto do Tiago Magno',
-    description: 'Do problema à evolução do produto, em cinco etapas.',
-    step: [1, 2, 3, 4, 5].map((n) => ({
+    description: 'Do problema à solução, em quatro etapas.',
+    step: [1, 2, 3, 4].map((n) => ({
       '@type': 'HowToStep',
       name: pick(`process.step${n}.title`),
       text: pick(`process.step${n}.desc`),
@@ -78,10 +98,11 @@ async function getSectionOrder(): Promise<string[]> {
 }
 
 export default async function Home() {
-  const [order, cases, settings, howTo] = await Promise.all([getSectionOrder(), getVisibleCases(), getSiteSettings(), getProcessHowToJsonLd()]);
+  const [order, cases, settings, howTo, labItems] = await Promise.all([getSectionOrder(), getVisibleCases(), getSiteSettings(), getProcessHowToJsonLd(), getLabItems()]);
 
   return (
     <>
+      <IntroSplash />
       <Header />
       <main id="main-content">
         <script
@@ -92,6 +113,8 @@ export default async function Home() {
         {order.map((key) => {
           const section = key === 'cases'
             ? <Cases key={key} items={cases} />
+            : key === 'labs'
+            ? <LabsGrid key={key} items={labItems} />
             : key === 'contact'
             ? <Contact key={key} recipientEmail={settings.contactFormRecipientEmail} />
             : (() => {
@@ -99,10 +122,9 @@ export default async function Home() {
                 return Section ? <Section key={key} /> : null;
               })();
           if (!section) return null;
-          return <div key={key}>{section}</div>;
+          return <div key={key} style={{ background: SECTION_GRADIENT[key] }}>{section}</div>;
         })}
       </main>
-      <Footer />
     </>
   );
 }

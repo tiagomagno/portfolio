@@ -29,7 +29,8 @@ export default function PillTabs({
         gap: '4px',
         padding: '4px',
         borderRadius: '999px',
-        background: 'rgba(26,26,26,0.04)',
+        background: 'var(--pill-bg, rgba(255,255,255,0.04))',
+        isolation: 'isolate',
       }}
     >
       <style>{`
@@ -56,7 +57,7 @@ export default function PillTabs({
               fontSize: '12px',
               fontWeight: 700,
               cursor: 'pointer',
-              color: active ? '#fff' : 'rgba(26,26,26,0.6)',
+              color: active ? 'var(--pill-active-text, #000)' : 'var(--pill-inactive-text, rgba(255,255,255,0.6))',
               transition: 'color 0.25s',
               WebkitTapHighlightColor: 'transparent',
             }}
@@ -69,7 +70,7 @@ export default function PillTabs({
                   position: 'absolute',
                   inset: 0,
                   borderRadius: '999px',
-                  background: '#1a1a1a',
+                  background: 'var(--color-text)',
                   zIndex: -1,
                 }}
               />

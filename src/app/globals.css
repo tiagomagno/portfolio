@@ -34,18 +34,18 @@
      onde ele carrega texto ou fica atrás de texto branco (botões). O --color-primary
      puro (~3.2:1) reprova WCAG AA para texto — só é seguro em usos decorativos
      (glows, bordas, hovers), que continuam com a cor vibrante original. */
-  --color-primary-text: #c9431a;
+  --color-primary-text: #ff5625;
   /* Hover dos botões primários: mais escuro (não mais claro) pra manter o contraste do texto branco. */
-  --color-primary-text-hover: #a83614;
+  --color-primary-text-hover: #e84e20;
   --color-accent: #ffb5a0;
-  --color-bg: #ffffff;
-  --color-bg-low: #ffffff;
-  --color-bg-card: #ffffff;
-  --color-bg-high: #f0f0f0;
-  --color-border: #e2e2e2;
-  --color-border-subtle: #d0d0d0;
-  --color-text: #1a1a1a;
-  --color-text-muted: #5a5a5a;
+  --color-bg: #000000;
+  --color-bg-low: #000000;
+  --color-bg-card: #1a1a1a;
+  --color-bg-high: #262626;
+  --color-border: #2e2e2e;
+  --color-border-subtle: #3a3a3a;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a8a8a8;
   --color-text-dim: #71717A;
 
   /* Padding vertical padrão das seções e do Divider entre elas — reduzidos em
@@ -108,7 +108,7 @@ h1, h2, h3, h4, h5, h6, button {
 .section-container h2 {
   letter-spacing: -0.02em;
 }
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .section-container h2 {
     letter-spacing: -0.01em;
   }
@@ -182,7 +182,7 @@ section[id] {
    RESPONSIVE LAYOUT
    ============================================ */
 /* Mobile typography scale overrides */
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   :root {
     --fs-h1:         clamp(2rem, 9vw, 2.75rem);
     --fs-h2:         clamp(1.5rem, 7vw, 2rem);
@@ -193,12 +193,12 @@ section[id] {
 
     /* Espaçamento entre seções em mobile: 24px de respiro em cada seção +
        24px no Divider entre elas, no lugar dos 96px/48px do desktop. */
-    --section-pad-y: 40px;
+    --section-pad-y: 72px;
     --divider-pad-y: 24px;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .section-container {
     max-width: 100% !important;
     padding-left: 24px !important;
@@ -349,7 +349,7 @@ section[id] {
     background-color: var(--color-primary-text-hover) !important;
   }
   .cta-ghost:hover:not(:disabled) {
-    border-color: rgba(26, 26, 26, 0.45) !important;
+    border-color: rgba(255,255,255,0.45) !important;
   }
 }
 

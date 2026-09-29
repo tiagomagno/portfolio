@@ -1,0 +1,100 @@
+'use client';
+
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { useLang } from '@/context/LangContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import FadeIn from './ui/FadeIn';
+import FooterBar from './FooterBar';
+import WhatsappIcon from './ui/WhatsappIcon';
+import { GRADIENT } from '@/lib/surfaces';
+
+// CTA + rodapé numa seção só (home). Sem formulário: o contato é direto por WhatsApp
+// (botão aqui + botão flutuante), e o e-mail/WhatsApp/LinkedIn ficam como links no rodapé.
+// Também responde pelo âncora #contact do menu.
+export default function CtaFooter() {
+  const { t } = useLang();
+  const { brandName, contactEmail, linkedinUrl, whatsappNumber } = useSiteSettings();
+  const year = new Date().getFullYear();
+  const whatsappHref = `https://wa.me/${whatsappNumber}`;
+
+  return (
+    <footer
+      id="contact"
+      style={{
+        background: GRADIENT.rtl,
+        padding: 'var(--section-pad-y) 0 32px',
+      }}
+    >
+      <style>{`
+        @media (max-width: 640px) { .ctaf-btns { flex-direction: column; } .ctaf-btns a { width: 100%; justify-content: center; } }
+        @media (hover: hover) and (pointer: fine) { .ctaf-whatsapp:hover { background: #3be07b !important; } }
+      `}</style>
+
+      <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
+        <FadeIn delay={0.1} direction="up">
+          <div style={{ textAlign: 'center', paddingBottom: '72px' }}>
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 auto 16px', maxWidth: '760px' }}>
+              {t('work.cta.title')}
+            </h2>
+            <p style={{ fontSize: '16px', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: '0 auto 32px', maxWidth: '560px' }}>
+              {t('work.cta.text')}
+            </p>
+            <div className="ctaf-btns" style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a
+                href="/briefing"
+                className="cta-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'var(--color-primary-text-hover)',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  height: '52px',
+                  boxSizing: 'border-box',
+                  padding: '0 32px',
+                  border: '1px solid transparent',
+                  borderRadius: '999px',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t('nav.startProject')}
+                <ArrowRight size={16} />
+              </a>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ctaf-whatsapp"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#25D366',
+                  color: '#062b14',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  height: '52px',
+                  boxSizing: 'border-box',
+                  padding: '0 32px',
+                  border: '1px solid transparent',
+                  borderRadius: '999px',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <WhatsappIcon size={18} />
+                {t('work.cta.button')}
+              </a>
+            </div>
+          </div>
+        </FadeIn>
+
+        <FooterBar />
+      </div>
+    </footer>
+  );
+}
