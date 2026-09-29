@@ -2,13 +2,31 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import Logo from '@/components/ui/Logo';
 
 const NAV = [
-  { href: '/admin/global', label: 'Global' },
-  { href: '/admin/pages', label: 'Pages' },
+  { href: '/admin/pages', label: 'Seções' },
   { href: '/admin/cases', label: 'Cases' },
   { href: '/admin/leads', label: 'Leads' },
 ];
+
+// O site público passou pro tema escuro (tokens em globals.css); o admin continua claro.
+const ADMIN_VARS = {
+  '--color-bg': '#ffffff',
+  '--color-bg-low': '#ffffff',
+  '--color-bg-card': '#ffffff',
+  '--color-bg-high': '#f0f0f0',
+  '--color-border': '#e2e2e2',
+  '--color-border-subtle': '#d0d0d0',
+  '--color-text': '#1a1a1a',
+  '--color-text-muted': '#5a5a5a',
+  '--color-primary-text': '#c9431a',
+  '--color-primary-text-hover': '#a83614',
+  '--pill-bg': 'rgba(26,26,26,0.05)',
+  '--pill-active-text': '#ffffff',
+  '--pill-inactive-text': 'rgba(26,26,26,0.6)',
+  color: '#1a1a1a',
+} as React.CSSProperties;
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,7 +39,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f3f0' }}>
+    <div style={{ minHeight: '100vh', background: '#f5f3f0', ...ADMIN_VARS }}>
       {/* Ícones do admin (CasesTable) usam Material Symbols. Carregado só aqui —
           não no layout raiz — pra não pesar o carregamento das páginas públicas
           com um recurso bloqueando a renderização (era o maior gargalo do PageSpeed). */}
@@ -39,7 +57,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: '#1a1a1a' }}>Tiago Magno</span>
+          <Logo height={22} />
           <nav style={{ display: 'flex', gap: '4px' }}>
             {NAV.map((item) => {
               const active = pathname?.startsWith(item.href);

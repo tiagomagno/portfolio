@@ -10,6 +10,8 @@ const EDITABLE_FIELDS = [
   'linkedinUrl',
   'contactFormRecipientEmail',
   'briefingFormRecipientEmail',
+  'resumeUrl',
+  'logoUrl',
 ] as const;
 
 export async function GET() {

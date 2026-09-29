@@ -7,6 +7,10 @@ export interface SiteSettingsData {
   linkedinUrl: string;
   contactFormRecipientEmail: string;
   briefingFormRecipientEmail: string;
+  /** Currículo (PDF) do botão do header. */
+  resumeUrl: string;
+  /** Logo customizada (vazio = logo padrão). */
+  logoUrl: string;
 }
 
 /** Idênticos aos defaults do schema — usados sempre que a linha "global" ainda não existe
@@ -18,6 +22,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettingsData = {
   linkedinUrl: 'https://www.linkedin.com/in/tiagosmagno/',
   contactFormRecipientEmail: 'tiagosilvamagno@gmail.com',
   briefingFormRecipientEmail: 'tiagosilvamagno@gmail.com',
+  resumeUrl: '/curriculo-tiago-magno.pdf',
+  logoUrl: '',
 };
 
 /** Sempre falha em silêncio (retorna os defaults) — mesmo padrão de caseAssets.ts/
@@ -34,6 +40,8 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       linkedinUrl: row.linkedinUrl,
       contactFormRecipientEmail: row.contactFormRecipientEmail,
       briefingFormRecipientEmail: row.briefingFormRecipientEmail,
+      resumeUrl: row.resumeUrl,
+      logoUrl: row.logoUrl,
     };
   } catch (err) {
     console.error('getSiteSettings falhou:', err);

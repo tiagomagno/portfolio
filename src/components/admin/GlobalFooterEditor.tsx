@@ -6,15 +6,14 @@ import SiteSettingsForm from './SiteSettingsForm';
 import TextGroupEditor from './TextGroupEditor';
 
 const TABS = [
-  { id: 'redes', label: 'Redes sociais' },
-  { id: 'contato', label: 'Form. de contato' },
+  { id: 'contatos', label: 'Contatos' },
   { id: 'copyright', label: 'Copyright' },
 ];
 
-/** Editor do Footer, aberto dentro do Sheet de /admin/global — mesmo padrão de abas do
- * GlobalHeaderEditor/CaseForm (PillTabs + display:none na seção inativa). */
+/** Editor do Footer (Seções → Global). Os contatos daqui alimentam o rodapé, o botão flutuante do WhatsApp,
+ * os botões de contato do CTA e os dados estruturados (JSON-LD). */
 export default function GlobalFooterEditor() {
-  const [tab, setTab] = useState('redes');
+  const [tab, setTab] = useState('contatos');
   const [lang, setLang] = useState<'pt' | 'en'>('pt');
 
   return (
@@ -23,25 +22,15 @@ export default function GlobalFooterEditor() {
         <PillTabs tabs={TABS} activeId={tab} onChange={setTab} />
       </div>
 
-      <div style={{ display: tab === 'redes' ? 'block' : 'none' }}>
-        <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.65)', margin: 0, lineHeight: 1.6 }}>
-          Os ícones de LinkedIn e WhatsApp exibidos no rodapé usam os mesmos valores configurados em Global → Seção de Contatos — editar lá atualiza o rodapé também.
-        </p>
-      </div>
-
-      <div style={{ display: tab === 'contato' ? 'block' : 'none' }}>
+      <div style={{ display: tab === 'contatos' ? 'block' : 'none' }}>
         <SiteSettingsForm
           fields={[
-            {
-              key: 'contactFormRecipientEmail',
-              label: 'E-mail de destino',
-              hint: 'Pra onde vai o formulário de contato da home. O destinatário do Briefing é configurado separadamente em Pages → Briefing.',
-              placeholder: 'voce@exemplo.com',
-            },
+            { key: 'contactEmail', label: 'E-mail de contato', placeholder: 'voce@exemplo.com' },
+            { key: 'whatsappNumber', label: 'WhatsApp', hint: 'Só dígitos, com DDI e DDD (ex: 5592981168163). Usado no rodapé, no botão flutuante e no botão “Entre em contato”.', placeholder: '5592981168163' },
+            { key: 'linkedinUrl', label: 'LinkedIn', placeholder: 'https://www.linkedin.com/in/seu-usuario/' },
           ]}
         />
       </div>
-
       <div style={{ display: tab === 'copyright' ? 'block' : 'none' }}>
         <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
           {(['pt', 'en'] as const).map((l) => (

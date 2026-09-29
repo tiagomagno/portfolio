@@ -38,7 +38,7 @@ export default function AdminPagesPrivacy() {
         </div>
         <TextGroupEditor
           title="Política de Privacidade (/privacidade)"
-          hint="Use {email} onde o e-mail de contato (configurado em Global) deve aparecer."
+          hint="Use {email} onde o e-mail de contato (configurado em Seções → Global · Footer) deve aparecer."
           filter={(item) => item.group === 'privacy'}
           lang={lang}
         />

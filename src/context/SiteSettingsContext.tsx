@@ -7,6 +7,8 @@ export interface PublicSiteSettings {
   contactEmail: string;
   whatsappNumber: string;
   linkedinUrl: string;
+  resumeUrl: string;
+  logoUrl: string;
 }
 
 /** Idênticos aos defaults do schema (src/data/siteSettings.ts) — usados até o fetch resolver. */
@@ -15,6 +17,8 @@ const DEFAULT_SETTINGS: PublicSiteSettings = {
   contactEmail: 'tiagosilvamagno@gmail.com',
   whatsappNumber: '5592981168163',
   linkedinUrl: 'https://www.linkedin.com/in/tiagosmagno/',
+  resumeUrl: '/curriculo-tiago-magno.pdf',
+  logoUrl: '',
 };
 
 const SiteSettingsContext = createContext<PublicSiteSettings>(DEFAULT_SETTINGS);

@@ -4,26 +4,30 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 const DEFAULT_MENU_ITEMS = [
-  { labelPt: 'Sobre', labelEn: 'About', href: '/#about' },
-  { labelPt: 'Serviços', labelEn: 'Services', href: '/#work' },
-  { labelPt: 'Cases', labelEn: 'Cases', href: '/#cases' },
+  { labelPt: 'Início', labelEn: 'Home', href: '/' },
+  { labelPt: 'Portfólio', labelEn: 'Portfolio', href: '/#cases' },
   { labelPt: 'Processo', labelEn: 'Process', href: '/#services' },
+  { labelPt: 'Sobre', labelEn: 'About', href: '/#about' },
   { labelPt: 'Consultoria', labelEn: 'Consulting', href: '/consultoria' },
   { labelPt: 'Contato', labelEn: 'Contact', href: '/#contact' },
 ];
 
 const DEFAULT_HOME_SECTIONS = [
   { key: 'hero', label: 'Hero (topo)' },
-  { key: 'intro', label: 'Introdução', visible: false },
+  { key: 'intro', label: 'Introdução' },
   { key: 'work', label: 'O que faço' },
   { key: 'cases', label: 'Cases em Destaque' },
+  { key: 'aboutBento', label: 'Sobre (bento)' },
+  { key: 'profile', label: 'Sobre + Qualidades', visible: false },
+  { key: 'labs', label: 'Lab' },
   { key: 'services', label: 'Como trabalho' },
-  { key: 'positioning', label: 'Posicionamento', visible: false },
+  { key: 'positioning', label: 'Posicionamento' },
   { key: 'about', label: 'Sobre' },
   { key: 'stats', label: 'Números' },
   { key: 'experience', label: 'Trajetória' },
-  { key: 'skills', label: 'Competências', visible: false },
+  { key: 'skills', label: 'Competências' },
   { key: 'talkCta', label: 'CTA — Vamos Conversar' },
+  { key: 'ctaFooter', label: 'CTA + Rodapé' },
   { key: 'contact', label: 'Contato' },
 ];
 

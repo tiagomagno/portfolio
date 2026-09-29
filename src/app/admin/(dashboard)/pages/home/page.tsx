@@ -11,19 +11,22 @@ import type { ContentItem } from '@/components/admin/TextGroupEditor';
 // Na ordem em que aparecem na página. Os filtros são por chave (não só por grupo) porque alguns
 // textos ficam em chaves de outra seção (ex.: o CTA final usa work.cta.*, os Números usam
 // hero.stat2, about.badge e stats.stat4). Renomear as chaves deixaria órfãs as edições já salvas.
-const SECTIONS: { title: string; filter: (item: ContentItem) => boolean }[] = [
-  { title: 'Hero Section', filter: (i) => i.group === 'hero' && !i.key.startsWith('hero.stat') },
-  { title: 'Introdução', filter: (i) => i.group === 'intro' },
-  { title: 'O que faço', filter: (i) => i.group === 'work' && !i.key.startsWith('work.cta.') && !i.key.startsWith('work.item') },
-  { title: 'Cases', filter: (i) => ['cases.eyebrow', 'cases.heading', 'cases.intro', 'cases.viewAll'].includes(i.key) },
-  { title: 'Como trabalho', filter: (i) => i.group === 'process' },
-  { title: 'Posicionamento', filter: (i) => i.group === 'positioning' },
-  { title: 'Sobre', filter: (i) => i.group === 'about' && !i.key.startsWith('about.badge') },
-  { title: 'Números', filter: (i) => i.group === 'stats' || i.key.startsWith('hero.stat') || i.key.startsWith('about.badge') },
-  { title: 'Trajetória', filter: (i) => i.group === 'experience' },
-  { title: 'Competências', filter: (i) => i.group === 'skills' },
-  { title: 'CTA final', filter: (i) => i.key.startsWith('work.cta.') },
-  { title: 'Contato', filter: (i) => i.group === 'contact' },
+const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => boolean }[] = [
+  { title: 'Hero', hint: 'Título, nome, texto e botões do topo da Home.', filter: (i) => i.group === 'hero' && !i.key.startsWith('hero.stat') },
+  { title: 'Cases (portfólio)', filter: (i) => ['cases.eyebrow', 'cases.heading', 'cases.intro', 'cases.viewAll'].includes(i.key) },
+  { title: 'Processo (Problema → Solução)', filter: (i) => i.group === 'process' },
+  { title: 'Sobre mim', hint: 'Título da seção, nome e textos (Sobre em blocos).', filter: (i) => i.key === 'aboutBento.title' || i.key === 'about.eyebrow' || i.key === 'about.heading' || i.key === 'about.newPhoto.alt' || /^about\.p[1-5]$/.test(i.key) },
+  { title: 'Sobre: números', hint: 'Os três números do bloco.', filter: (i) => i.key.startsWith('about.badge') || i.key.startsWith('hero.stat') || i.key.startsWith('stats.stat4') },
+  { title: 'Sobre: habilidades', hint: 'Rótulos dos grupos e as listas de habilidades (a Home mostra só algumas etiquetas de cada grupo).', filter: (i) => i.group === 'skills' || ['aboutBento.skill2', 'aboutBento.skill5', 'aboutBento.skillAi', 'aboutBento.toolsList', 'aboutBento.aiList'].includes(i.key) },
+  { title: 'Sobre: tipos de projetos', filter: (i) => i.key === 'aboutBento.areas' || i.key === 'aboutBento.areasList' },
+  { title: 'Sobre: trajetória', filter: (i) => i.group === 'experience' || i.key === 'aboutBento.timeline' },
+  { title: 'Design Lab', hint: 'Título, subtítulo e filtros. Os projetos do Lab são cadastrados em Seções → Conteúdo → Design Lab.', filter: (i) => i.group === 'labs' },
+  { title: 'CTA final + rodapé', hint: 'Também usado no fim das páginas Consultoria e Cases.', filter: (i) => i.key.startsWith('work.cta.') || i.group === 'footer' },
+  // Seções antigas: não aparecem na Home hoje, mas os textos ficam guardados caso sejam reativadas em Seções.
+  { title: 'Introdução (seção antiga)', filter: (i) => i.group === 'intro' },
+  { title: 'O que faço (seção antiga)', filter: (i) => i.group === 'work' && !i.key.startsWith('work.cta.') && !i.key.startsWith('work.item') },
+  { title: 'Posicionamento (seção antiga)', filter: (i) => i.group === 'positioning' },
+  { title: 'Contato / formulário (seção antiga)', filter: (i) => i.group === 'contact' },
 ];
 
 type Tab = 'sections' | 'texts' | 'seo';
@@ -77,7 +80,7 @@ export default function AdminPagesHome() {
             ))}
           </div>
           {SECTIONS.map((s) => (
-            <TextGroupEditor key={s.title} title={s.title} filter={s.filter} lang={lang} />
+            <TextGroupEditor key={s.title} title={s.title} hint={s.hint} filter={s.filter} lang={lang} />
           ))}
         </div>
       )}

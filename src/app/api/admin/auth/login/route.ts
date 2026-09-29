@@ -3,17 +3,23 @@ import { prisma } from '@/lib/prisma';
 import { createSessionToken, verifyPassword, SESSION_COOKIE, SESSION_TTL_SECONDS } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
-  const { email, password } = await request.json();
+  // Aceita só o nome de usuário (ex.: "admin") ou o e-mail completo (compatível com o cadastro existente).
+  const body = await request.json();
+  const login = body.username ?? body.email;
+  const password = body.password;
 
-  if (typeof email !== 'string' || typeof password !== 'string') {
+  if (typeof login !== 'string' || typeof password !== 'string') {
     return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 });
   }
 
-  const user = await prisma.adminUser.findUnique({ where: { email: email.toLowerCase().trim() } });
+  const id = login.toLowerCase().trim();
+  const user = await prisma.adminUser.findFirst({
+    where: id.includes('@') ? { email: id } : { OR: [{ email: id }, { email: { startsWith: `${id}@` } }] },
+  });
   const valid = user ? await verifyPassword(password, user.passwordHash) : false;
 
   if (!user || !valid) {
-    return NextResponse.json({ error: 'E-mail ou senha inválidos' }, { status: 401 });
+    return NextResponse.json({ error: 'Usuário ou senha inválidos' }, { status: 401 });
   }
 
   const token = await createSessionToken({ sub: user.id, email: user.email });

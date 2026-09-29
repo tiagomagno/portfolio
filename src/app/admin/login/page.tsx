@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function AdminLogin() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ export default function AdminLogin() {
       const res = await fetch('/api/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -35,7 +35,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f3f0', padding: '24px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f3f0', padding: '24px', color: '#1a1a1a', ['--color-border' as string]: '#e2e2e2', ['--color-text' as string]: '#1a1a1a' }}>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -55,11 +55,13 @@ export default function AdminLogin() {
           <p style={{ fontSize: '13px', color: 'rgba(26,26,26,0.55)', margin: 0 }}>Gerenciar imagens dos cases e leads</p>
         </div>
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', fontWeight: 600, color: '#1a1a1a' }}>
-          E-mail
+          Usuário
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            name="username"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             autoFocus
             style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '14px' }}

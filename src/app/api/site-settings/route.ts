@@ -11,5 +11,7 @@ export async function GET() {
     contactEmail: settings.contactEmail,
     whatsappNumber: settings.whatsappNumber,
     linkedinUrl: settings.linkedinUrl,
+    resumeUrl: settings.resumeUrl,
+    logoUrl: settings.logoUrl,
   });
 }

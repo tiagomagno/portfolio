@@ -112,6 +112,10 @@ model SiteSettings {
   contactFormRecipientEmail   String @default("tiagosilvamagno@gmail.com")
   /// Destinatário do formulário de Briefing (FormSubmit).
   briefingFormRecipientEmail  String @default("tiagosilvamagno@gmail.com")
+  /// Currículo (PDF) do botão "Baixar currículo" do header — URL de upload ou link externo.
+  resumeUrl                   String @default("/curriculo-tiago-magno.pdf")
+  /// Logo do site (header, rodapé, splash). Vazio = logo padrão da marca.
+  logoUrl                     String @default("")
   updatedAt                   DateTime @updatedAt
 }
 
@@ -175,4 +179,19 @@ model SeoMeta {
   canonicalUrl  String?
   noIndex       Boolean  @default(false)
   updatedAt     DateTime @updatedAt
+}
+
+/// Projetos do Design Lab (home), editados em Seções → Conteúdo → Design Lab. Sem linhas, o site usa os padrões de src/data/labs.ts.
+model LabItem {
+  id      String  @id @default(cuid())
+  title   String
+  tagline String  @db.Text
+  /// "MVP no ar" | "Em desenvolvimento" | "Protótipo" | "Em breve"
+  status  String  @default("Protótipo")
+  /// Link do produto; vazio = card sem botão "Acessar".
+  href    String  @default("")
+  /// Imagem do card (upload); vazio = card sem imagem.
+  image   String  @default("")
+  order   Int     @default(0)
+  visible Boolean @default(true)
 }
