@@ -16,7 +16,10 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
-// Modos: celular (1 card por vez, sem peek), tablet (2 cards cheios, sem peek) e desktop (2 cheios + peeks).
+// Modos: celular (1 card por vez, sem peek), tablet (2 cards cheios, sem peek) e desktop (3 cheios + peeks).
+// Cards cheios no desktop (centralizados; os vizinhos aparecem só como faixa nas bordas).
+const DESKTOP_FULL_CARDS = 3;
+
 type CarouselMode = 'phone' | 'tablet' | 'desktop';
 function useItemsPerView(): { itemsPerView: number; mode: CarouselMode } {
   const [mode, setMode] = useState<CarouselMode>('desktop');
@@ -29,7 +32,7 @@ function useItemsPerView(): { itemsPerView: number; mode: CarouselMode } {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-  return { itemsPerView: mode === 'phone' ? 1 : 2, mode };
+  return { itemsPerView: mode === 'phone' ? 1 : mode === 'tablet' ? 2 : DESKTOP_FULL_CARDS, mode };
 }
 
 export default function Cases({ items }: { items: PortfolioItem[] }) {
@@ -72,17 +75,26 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   const lastMoveX = useRef(0);
   const momentumFrame = useRef<number | null>(null);
 
-  // Posiciona o track no início da cópia do meio. Em telas com peek (2/3 colunas
-  // cheias), desloca uma coluna pra trás, assim já nasce com uma coluna esmaecida
-  // "espiando" nos dois lados (peek — cheia — cheia — cheia — peek), em vez de
-  // começar exatamente no início de um card. No mobile (1 card, sem peek — o card
-  // ocupa a tela toda respeitando as margens), começa direto no primeiro card.
+  // Quanto o início da grade de cards fica à direita da borda esquerda do track. No desktop os
+  // 3 cards cheios ficam centralizados, sobrando uma faixa de cada lado onde os vizinhos "espiam"
+  // (quase ocultos, esmaecidos pela máscara). No mobile/tablet o card começa 24px depois da borda.
+  const gridOffsetFor = (track: HTMLDivElement) => {
+    if (mode !== 'desktop') return 24;
+    const first = track.firstElementChild as HTMLElement | null;
+    const second = first?.nextElementSibling as HTMLElement | null;
+    if (!first || !second) return 0;
+    const cardWidth = first.offsetWidth;
+    const gap = second.offsetLeft - first.offsetLeft - cardWidth;
+    return (track.clientWidth - (DESKTOP_FULL_CARDS * cardWidth + (DESKTOP_FULL_CARDS - 1) * gap)) / 2;
+  };
+
+  // Posiciona o track no início da cópia do meio, já com os cards cheios centralizados.
   useEffect(() => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
     const third = track.scrollWidth / 3;
-    const cardStep = third / setCount;
-    track.scrollLeft = mode === 'desktop' ? third - cardStep : third - 24;
+    track.scrollLeft = third - gridOffsetFor(track);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- gridOffsetFor só depende de `mode`, já listado
   }, [setCount, mode]);
 
   useEffect(() => {
@@ -117,7 +129,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     const cardStep = (track.scrollWidth / 3) / setCount;
     // Sem snap, a posição depois de um arrasto livre é qualquer uma; a seta alinha à grade dos
     // cards (no mobile a grade começa 24px antes do card, igual à posição inicial).
-    const gridOffset = mode === 'desktop' ? 0 : 24;
+    const gridOffset = gridOffsetFor(track);
     const base = Math.round((track.scrollLeft + gridOffset) / cardStep) * cardStep - gridOffset;
     track.scrollTo({ left: base + direction * cardStep * itemsPerView, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
@@ -267,8 +279,9 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
 
       <style>{`
         .cases-carousel-viewport {
-          -webkit-mask-image: linear-gradient(to right, transparent 0, black 120px, black calc(100% - 120px), transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0, black 120px, black calc(100% - 120px), transparent 100%);
+          --cases-peek: clamp(56px, 7vw, 140px);
+          -webkit-mask-image: linear-gradient(to right, transparent 0, black calc(var(--cases-peek) + 16px), black calc(100% - var(--cases-peek) - 16px), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, black calc(var(--cases-peek) + 16px), black calc(100% - var(--cases-peek) - 16px), transparent 100%);
         }
         .cases-carousel-track {
           display: flex;
@@ -290,9 +303,9 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
         .cases-carousel-track.is-dragging * { pointer-events: none; }
         .cases-carousel-track img { -webkit-user-drag: none; user-drag: none; }
         .cases-carousel-card {
-          /* ${itemsPerView} colunas cheias + 1 coluna esmaecida ("peek") de cada lado,
-             todas do mesmo tamanho — ${itemsPerView + 2} colunas iguais ao todo. */
-          flex: 0 0 ${mode === 'tablet' ? 'calc((100vw - 48px - 16px) / 2)' : `calc((100% - 16px * (${itemsPerView + 2} - 1)) / ${itemsPerView + 2})`};
+          /* Desktop: 3 cards cheios centralizados; sobra só uma faixa (--cases-peek) de cada lado
+             pros vizinhos aparecerem quase ocultos. Largura = (100% - 2 faixas - 4 vãos) / 3. */
+          flex: 0 0 ${mode === 'tablet' ? 'calc((100vw - 48px - 16px) / 2)' : `calc((100% - 2 * var(--cases-peek) - ${DESKTOP_FULL_CARDS + 1} * 16px) / ${DESKTOP_FULL_CARDS})`};
           scroll-snap-align: start;
         }
         /* Mobile (1 item por vez): card ocupa 100% da tela respeitando as mesmas
