@@ -22,11 +22,6 @@ const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => b
   { title: 'Sobre: trajetória', filter: (i) => i.group === 'experience' || i.key === 'aboutBento.timeline' },
   { title: 'Design Lab', hint: 'Título, subtítulo e filtros. Os projetos do Lab são cadastrados em Seções → Conteúdo → Design Lab.', filter: (i) => i.group === 'labs' },
   { title: 'CTA final + rodapé', hint: 'Também usado no fim das páginas Consultoria e Cases.', filter: (i) => i.key.startsWith('work.cta.') || i.group === 'footer' },
-  // Seções antigas: não aparecem na Home hoje, mas os textos ficam guardados caso sejam reativadas em Seções.
-  { title: 'Introdução (seção antiga)', filter: (i) => i.group === 'intro' },
-  { title: 'O que faço (seção antiga)', filter: (i) => i.group === 'work' && !i.key.startsWith('work.cta.') && !i.key.startsWith('work.item') },
-  { title: 'Posicionamento (seção antiga)', filter: (i) => i.group === 'positioning' },
-  { title: 'Contato / formulário (seção antiga)', filter: (i) => i.group === 'contact' },
 ];
 
 type Tab = 'sections' | 'texts' | 'seo';

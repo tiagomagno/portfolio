@@ -20,7 +20,6 @@ const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => b
   { title: 'Impacto real', filter: (i) => i.group === 'consultingImpact' },
   { title: 'Portfólio + Sobre (blocos)', hint: 'O texto do Sobre reduzido vem de aboutBento.p1.', filter: (i) => i.group === 'consultingPage' || i.key === 'aboutBento.p1' || i.key === 'aboutBento.p2' },
   { title: 'FAQ', filter: (i) => i.group === 'faq' },
-  { title: 'Textos antigos da consultoria (não usados na página atual)', filter: (i) => i.group === 'consulting' && !i.key.startsWith('consulting.pillars.escala.') && i.key !== 'consulting.eyebrow' },
 ];
 
 type Tab = 'texts' | 'seo';

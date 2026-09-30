@@ -17,6 +17,8 @@ const TEXT_BLOCKS = [
   { prefix: 'briefing.step5.', title: 'Etapa 5 — Prazo' },
   { prefix: 'briefing.step6.', title: 'Etapa 6 — Contato' },
   { prefix: 'briefing.options.', title: 'Opções de múltipla escolha' },
+  // Reaproveitado do antigo formulário de contato da Home; o briefing usa estas 3 chaves no aceite da política de privacidade.
+  { prefix: 'contact.form.consent', title: 'Consentimento (política de privacidade)' },
 ];
 
 type Tab = 'texts' | 'recipient' | 'seo';
