@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AtuacaoCategory } from '@/data/portfolio';
 import { caseRecordToFormData, type CaseFormData } from '@/lib/caseForm';
@@ -293,16 +293,26 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                 </Td>
               </tr>
             )}
-            {filtered.map((row) => {
+            {filtered.map((row, idx) => {
+              const isInactive = !row.visible || !!row.removedAt;
+              const firstInactive = isInactive && (idx === 0 || !(!filtered[idx - 1].visible || !!filtered[idx - 1].removedAt));
+              const inactiveCount = filtered.filter((r) => !r.visible || !!r.removedAt).length;
               const canDrag = row.featuredOnHome && !row.removedAt;
               const dropping = !!dragSlug && overSlug === row.slug && dragSlug !== row.slug;
               const dropLine = dropping
                 ? `inset 0 ${featuredOrder.indexOf(dragSlug!) < featuredOrder.indexOf(row.slug) ? -2 : 2}px 0 0 var(--color-primary)`
                 : undefined;
-              const cellStyle = { boxShadow: dropLine };
+              const cellStyle = { boxShadow: dropLine, ...(isInactive ? { background: '#f1efeb' } : {}) };
               return (
+                <Fragment key={row.id}>
+                {firstInactive && (
+                  <tr>
+                    <td colSpan={8} style={{ padding: '18px 4px 6px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(26,26,26,0.5)' }}>
+                      {row.removedAt ? 'Excluídos' : 'Ocultos'} ({inactiveCount})
+                    </td>
+                  </tr>
+                )}
                 <tr
-                  key={row.id}
                   draggable={canDrag}
                   onDragStart={(e) => {
                     setDragSlug(row.slug);
@@ -340,7 +350,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                     )}
                   </Td>
                   <Td style={cellStyle}>
-                    <Thumb src={row.coverImage} alt={row.empresa} dim={!row.visible} />
+                    <Thumb src={row.coverImage} alt={row.empresa} dim={isInactive} />
                   </Td>
                   <Td style={cellStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -435,6 +445,7 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                     />
                   </Td>
                 </tr>
+                </Fragment>
               );
             })}
           </tbody>
@@ -560,6 +571,7 @@ function Thumb({ src, alt, dim }: { src: string | null; alt: string; dim: boolea
         overflow: 'hidden',
         background: 'rgba(26,26,26,0.06)',
         opacity: dim ? 0.5 : 1,
+        filter: dim ? 'grayscale(1)' : undefined,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
