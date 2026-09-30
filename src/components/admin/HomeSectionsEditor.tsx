@@ -15,6 +15,8 @@ export default function HomeSectionsEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [dragKey, setDragKey] = useState<string | null>(null);
+  const [overKey, setOverKey] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/sections')
@@ -23,11 +25,15 @@ export default function HomeSectionsEditor() {
       .finally(() => setLoading(false));
   }, []);
 
-  function move(index: number, direction: -1 | 1) {
-    const target = index + direction;
-    if (target < 0 || target >= sections.length) return;
+  /** Move a seção arrastada pra posição da seção alvo (depois dela se veio de cima, antes se veio de baixo). */
+  function moveTo(fromKey: string, toKey: string) {
+    if (fromKey === toKey) return;
+    const from = sections.findIndex((s) => s.key === fromKey);
+    const to = sections.findIndex((s) => s.key === toKey);
+    if (from < 0 || to < 0) return;
     const reordered = [...sections];
-    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+    const [item] = reordered.splice(from, 1);
+    reordered.splice(to, 0, item);
     setSections(reordered.map((s, i) => ({ ...s, order: i })));
   }
 
@@ -57,29 +63,76 @@ export default function HomeSectionsEditor() {
   return (
     <div>
       <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
-        {sections.map((s, i) => (
+        {sections.map((s, i) => {
+          const dropping = !!dragKey && overKey === s.key && dragKey !== s.key;
+          const fromIdx = sections.findIndex((x) => x.key === dragKey);
+          return (
           <div
             key={s.key}
+            draggable
+            onDragStart={(e) => {
+              setDragKey(s.key);
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/plain', s.key);
+            }}
+            onDragOver={(e) => {
+              if (!dragKey) return;
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'move';
+              if (overKey !== s.key) setOverKey(s.key);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              if (dragKey) moveTo(dragKey, s.key);
+              setDragKey(null);
+              setOverKey(null);
+            }}
+            onDragEnd={() => {
+              setDragKey(null);
+              setOverKey(null);
+            }}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
               padding: '14px 16px',
               borderBottom: i < sections.length - 1 ? '1px solid var(--color-border)' : 'none',
-              opacity: s.visible ? 1 : 0.5,
+              opacity: dragKey === s.key ? 0.4 : 1,
+              boxShadow: dropping ? `inset 0 ${fromIdx < i ? -2 : 2}px 0 0 var(--color-primary)` : undefined,
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <button onClick={() => move(i, -1)} disabled={i === 0} style={arrowStyle}>▲</button>
-              <button onClick={() => move(i, 1)} disabled={i === sections.length - 1} style={arrowStyle}>▼</button>
-            </div>
-            <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: '#1a1a1a' }}>{s.label}</span>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'rgba(26,26,26,0.65)' }}>
-              <input type="checkbox" checked={s.visible} onChange={() => toggleVisible(s.key)} />
-              Visível
-            </label>
+            <span
+              title="Arraste a linha para mudar a ordem"
+              aria-label="Arrastar para reordenar"
+              className="material-symbols-outlined"
+              style={{ fontSize: '20px', color: 'rgba(26,26,26,0.4)', cursor: 'grab' }}
+            >
+              drag_indicator
+            </span>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', minWidth: '20px' }}>{i + 1}º</span>
+            <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: '#1a1a1a', opacity: s.visible ? 1 : 0.5 }}>{s.label}</span>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                padding: '3px 10px',
+                borderRadius: '100px',
+                color: s.visible ? '#166534' : 'rgba(26,26,26,0.55)',
+                background: s.visible ? 'rgba(22,101,52,0.1)' : 'rgba(26,26,26,0.08)',
+              }}
+            >
+              {s.visible ? 'Visível' : 'Oculta'}
+            </span>
+            <button
+              type="button"
+              onClick={() => toggleVisible(s.key)}
+              style={{ padding: '6px 14px', borderRadius: '8px', border: '1px solid var(--color-border)', background: '#fff', fontSize: '12px', fontWeight: 600, color: '#1a1a1a', cursor: 'pointer', minWidth: '84px' }}
+            >
+              {s.visible ? 'Ocultar' : 'Exibir'}
+            </button>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -97,12 +150,3 @@ export default function HomeSectionsEditor() {
   );
 }
 
-const arrowStyle: React.CSSProperties = {
-  border: 'none',
-  background: 'none',
-  cursor: 'pointer',
-  fontSize: '10px',
-  color: 'rgba(26,26,26,0.5)',
-  padding: '2px 4px',
-  lineHeight: 1,
-};

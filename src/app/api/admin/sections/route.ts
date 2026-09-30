@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { HOME_SECTION_KEYS } from '@/lib/homeSections';
 
 export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
-  const sections = await prisma.homeSection.findMany({ orderBy: { order: 'asc' } });
+  // Só as seções que ainda existem no layout da Home; as antigas ficam de fora do admin.
+  const sections = await prisma.homeSection.findMany({
+    where: { key: { in: [...HOME_SECTION_KEYS] } },
+    orderBy: { order: 'asc' },
+  });
   return NextResponse.json({ sections });
 }
 

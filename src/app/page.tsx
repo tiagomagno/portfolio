@@ -23,6 +23,7 @@ import { getSiteSettings } from '@/data/siteSettings';
 import { translations } from '@/lib/translations';
 import { getLabItems } from '@/data/labs';
 import { GRADIENT } from '@/lib/surfaces';
+import { HOME_SECTION_KEYS } from '@/lib/homeSections';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -55,7 +56,7 @@ const SECTION_GRADIENT: Record<string, string> = {
   ctaFooter: GRADIENT.rtl,
 };
 
-const DEFAULT_ORDER = ['hero', 'cases', 'services', 'aboutBento', 'labs', 'ctaFooter'];
+const DEFAULT_ORDER: string[] = [...HOME_SECTION_KEYS];
 
 // Schema.org HowTo para a seção "Como trabalho" (AEO). Os passos vêm das mesmas chaves
 // process.step* que a seção usa, já com as edições feitas em /admin (PageContent, versão PT).
