@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AtuacaoCategory } from '@/data/portfolio';
 import { caseRecordToFormData, type CaseFormData } from '@/lib/caseForm';
@@ -14,6 +14,7 @@ export interface CaseRow {
   empresa: string;
   slug: string;
   atuacao: AtuacaoCategory[];
+  coverImage: string | null;
   hasCover: boolean;
   hasHero: boolean;
   galleryCount: number;
@@ -49,10 +50,14 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     () => rows.filter((r) => r.featuredOnHome && !r.hasCaseStudy).length,
     [rows]
   );
-  const featuredOrder = useMemo(
-    () => [...rows].filter((r) => r.featuredOnHome).sort((a, b) => a.homeOrder - b.homeOrder).map((r) => r.slug),
-    [rows]
-  );
+  // Ordem local (otimista) enquanto o servidor grava; deixa de valer sozinha quando `rows` é recarregado.
+  const [orderOverride, setOrderOverride] = useState<{ base: CaseRow[]; order: string[] } | null>(null);
+  const [dragSlug, setDragSlug] = useState<string | null>(null);
+  const [overSlug, setOverSlug] = useState<string | null>(null);
+  const featuredOrder = useMemo(() => {
+    if (orderOverride && orderOverride.base === rows) return orderOverride.order;
+    return [...rows].filter((r) => r.featuredOnHome).sort((a, b) => a.homeOrder - b.homeOrder).map((r) => r.slug);
+  }, [rows, orderOverride]);
 
   // Sem "excluído" no filtro padrão ('all' = ativos + desativados) — mantém o lixo fora
   // da visão principal, só aparece escolhendo "Excluído" no select de Status.
@@ -71,10 +76,10 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     return [...list].sort((a, b) => {
       if (a.visible !== b.visible) return a.visible ? -1 : 1;
       if (a.visible && a.featuredOnHome !== b.featuredOnHome) return a.featuredOnHome ? -1 : 1;
-      if (a.visible && a.featuredOnHome && b.featuredOnHome) return a.homeOrder - b.homeOrder;
+      if (a.visible && a.featuredOnHome && b.featuredOnHome) return featuredOrder.indexOf(a.slug) - featuredOrder.indexOf(b.slug);
       return 0;
     });
-  }, [rows, statusFilter, categoryFilter, coverFilter, homeFilter]);
+  }, [rows, statusFilter, categoryFilter, coverFilter, homeFilter, featuredOrder]);
 
   async function updateStatus(slug: string, visible: boolean, removed: boolean) {
     setUpdatingSlug(slug);
@@ -110,17 +115,33 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
     }
   }
 
-  async function reorderFeatured(slug: string, direction: 'up' | 'down') {
-    setUpdatingSlug(slug);
+  /** Move `from` pra posição de `to` na fila de prioridade e grava a ordem completa. */
+  async function moveFeatured(from: string, to: string) {
+    if (from === to) return;
+    const fromIndex = featuredOrder.indexOf(from);
+    const toIndex = featuredOrder.indexOf(to);
+    if (fromIndex < 0 || toIndex < 0) return;
+    const next = featuredOrder.filter((slug) => slug !== from);
+    // Arrastando pra baixo o item cai depois do alvo; pra cima, antes.
+    next.splice(fromIndex < toIndex ? next.indexOf(to) + 1 : next.indexOf(to), 0, from);
+    setOrderOverride({ base: rows, order: next });
+    setFeaturedError(null);
     try {
-      await fetch(`/api/admin/cases/${slug}/reorder`, {
-        method: 'PATCH',
+      const res = await fetch('/api/admin/cases/home-order', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ direction }),
+        body: JSON.stringify({ slugs: next }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setFeaturedError(data?.error ?? 'Não foi possível salvar a ordem.');
+        setOrderOverride(null);
+        return;
+      }
       router.refresh();
-    } finally {
-      setUpdatingSlug(null);
+    } catch {
+      setFeaturedError('Não foi possível salvar a ordem.');
+      setOrderOverride(null);
     }
   }
 
@@ -212,28 +233,29 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
         )}
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 6px', fontSize: '13px' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
-              <Th>Case</Th>
+            <tr>
+              <Th width={36}>&nbsp;</Th>
+              <Th width={64}>&nbsp;</Th>
+              <Th>
+                <ThSelect
+                  value={statusFilter}
+                  onChange={(v) => setStatusFilter(v as StatusFilter)}
+                  options={[
+                    { value: 'all', label: 'Case' },
+                    { value: 'ativo', label: 'Case · Ativos' },
+                    { value: 'desativado', label: 'Case · Desativados' },
+                    { value: 'excluido', label: 'Case · Excluídos' },
+                  ]}
+                />
+              </Th>
               <Th>
                 <ThSelect
                   value={categoryFilter}
                   onChange={(v) => setCategoryFilter(v as AtuacaoCategory | 'all')}
                   options={[{ value: 'all', label: 'Categoria' }, ...categories.map((c) => ({ value: c, label: c }))]}
-                />
-              </Th>
-              <Th align="center">
-                <ThSelect
-                  value={statusFilter}
-                  onChange={(v) => setStatusFilter(v as StatusFilter)}
-                  options={[
-                    { value: 'all', label: 'Status' },
-                    { value: 'ativo', label: 'Ativo' },
-                    { value: 'desativado', label: 'Desativado' },
-                    { value: 'excluido', label: 'Excluído' },
-                  ]}
                 />
               </Th>
               <Th align="center">
@@ -252,140 +274,169 @@ export default function CasesTable({ rows, categories }: { rows: CaseRow[]; cate
                   value={coverFilter}
                   onChange={(v) => setCoverFilter(v as CoverFilter)}
                   options={[
-                    { value: 'all', label: 'Capa' },
+                    { value: 'all', label: 'Capa / Topo' },
                     { value: 'with', label: 'Com capa' },
                     { value: 'without', label: 'Sem capa' },
                   ]}
                 />
               </Th>
-              <Th align="center">Topo</Th>
               <Th align="center">Galeria</Th>
-              <Th align="right">&nbsp;</Th>
+              <Th align="right" width={64}>&nbsp;</Th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <Td>
+                <Td>&nbsp;</Td>
+                <Td colSpan={7}>
                   <span style={{ color: 'rgba(26,26,26,0.4)' }}>Nenhum case encontrado.</span>
                 </Td>
               </tr>
             )}
-            {filtered.map((row, i) => (
-              <tr key={row.id} style={i < filtered.length - 1 ? { borderBottom: '1px solid var(--color-border)' } : undefined}>
-                <Td>
-                  <span style={{ fontWeight: 600, color: '#1a1a1a', opacity: row.visible ? 1 : 0.5 }}>{row.empresa}</span>
-                </Td>
-                <Td>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    {row.atuacao.map((cat) => (
+            {filtered.map((row) => {
+              const canDrag = row.featuredOnHome && !row.removedAt;
+              const dropping = !!dragSlug && overSlug === row.slug && dragSlug !== row.slug;
+              const dropLine = dropping
+                ? `inset 0 ${featuredOrder.indexOf(dragSlug!) < featuredOrder.indexOf(row.slug) ? -2 : 2}px 0 0 var(--color-primary)`
+                : undefined;
+              const cellStyle = { boxShadow: dropLine };
+              return (
+                <tr
+                  key={row.id}
+                  draggable={canDrag}
+                  onDragStart={(e) => {
+                    setDragSlug(row.slug);
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', row.slug);
+                  }}
+                  onDragOver={(e) => {
+                    if (!dragSlug || !canDrag) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (overSlug !== row.slug) setOverSlug(row.slug);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (dragSlug && canDrag) moveFeatured(dragSlug, row.slug);
+                    setDragSlug(null);
+                    setOverSlug(null);
+                  }}
+                  onDragEnd={() => {
+                    setDragSlug(null);
+                    setOverSlug(null);
+                  }}
+                  style={dragSlug === row.slug ? { opacity: 0.4 } : undefined}
+                >
+                  <Td first style={cellStyle} align="center">
+                    {canDrag && (
                       <span
-                        key={cat}
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          color: 'rgba(26,26,26,0.55)',
-                          background: 'rgba(26,26,26,0.06)',
-                          padding: '3px 8px',
-                          borderRadius: '100px',
-                          whiteSpace: 'nowrap',
-                        }}
+                        title="Arraste a linha para mudar a prioridade"
+                        aria-label="Arrastar para reordenar"
+                        className="material-symbols-outlined"
+                        style={{ fontSize: '20px', color: 'rgba(26,26,26,0.4)', cursor: 'grab', display: 'block' }}
                       >
-                        {cat}
+                        drag_indicator
                       </span>
-                    ))}
-                  </div>
-                </Td>
-                <Td align="center">
-                  <StatusBadge visible={row.visible} removed={!!row.removedAt} />
-                </Td>
-                <Td align="center">
-                  {!row.removedAt && (
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                      <input
-                        type="checkbox"
-                        checked={row.featuredOnHome}
-                        disabled={updatingSlug === row.slug || (!row.featuredOnHome && featuredCount >= MAX_FEATURED_ON_HOME)}
-                        onChange={(e) => toggleFeatured(row.slug, e.target.checked)}
-                        title={row.featuredOnHome ? 'Remover do carrossel da home' : 'Mostrar no carrossel da home'}
-                        style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
-                      />
-                      {row.featuredOnHome && (
-                        <>
-                          <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', minWidth: '14px' }}>
-                            {featuredOrder.indexOf(row.slug) + 1}
-                          </span>
-                          <ReorderButton
-                            direction="up"
-                            disabled={updatingSlug === row.slug || featuredOrder.indexOf(row.slug) === 0}
-                            onClick={() => reorderFeatured(row.slug, 'up')}
-                          />
-                          <ReorderButton
-                            direction="down"
-                            disabled={updatingSlug === row.slug || featuredOrder.indexOf(row.slug) === featuredOrder.length - 1}
-                            onClick={() => reorderFeatured(row.slug, 'down')}
-                          />
-                          {!row.hasCaseStudy && (
-                            <span
-                              title='Não vai aparecer no carrossel da home: falta preencher Papel, Ano ou Subtítulo do topo na aba "Visão Geral".'
-                              style={{ display: 'inline-flex', color: '#b45309', cursor: 'help' }}
-                            >
-                              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
-                                warning
-                              </span>
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                </Td>
-                <Td align="center">
-                  <Dot ok={row.hasCover} />
-                </Td>
-                <Td align="center">
-                  <Dot ok={row.hasHero} />
-                </Td>
-                <Td align="center">
-                  <span style={{ color: row.galleryCount > 0 ? '#166534' : 'rgba(26,26,26,0.4)', fontWeight: 600 }}>
-                    {row.galleryCount || '—'}
-                  </span>
-                </Td>
-                <Td align="right">
-                  <div style={{ display: 'flex', gap: '14px', justifyContent: 'flex-end' }}>
-                    {row.removedAt ? (
-                      <IconAction
-                        icon="restore"
-                        label="Restaurar"
-                        disabled={updatingSlug === row.slug}
-                        onClick={() => updateStatus(row.slug, true, false)}
-                      />
-                    ) : (
-                      <>
-                        <IconAction icon="edit" label="Editar" onClick={() => openEditSheet(row)} />
-                        <IconAction
-                          icon={row.visible ? 'visibility_off' : 'visibility'}
-                          label={row.visible ? 'Desativar' : 'Ativar'}
-                          disabled={updatingSlug === row.slug}
-                          onClick={() => updateStatus(row.slug, !row.visible, false)}
-                        />
-                        <IconAction
-                          icon="delete"
-                          label="Excluir"
-                          tone="danger"
-                          disabled={updatingSlug === row.slug}
-                          onClick={() => {
-                            if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois filtrando por Status "Excluído".`)) {
-                              updateStatus(row.slug, false, true);
-                            }
-                          }}
-                        />
-                      </>
                     )}
-                  </div>
-                </Td>
-              </tr>
-            ))}
+                  </Td>
+                  <Td style={cellStyle}>
+                    <Thumb src={row.coverImage} alt={row.empresa} dim={!row.visible} />
+                  </Td>
+                  <Td style={cellStyle}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontWeight: 600, color: '#1a1a1a', opacity: row.visible ? 1 : 0.5 }}>{row.empresa}</span>
+                      {(!row.visible || row.removedAt) && <StatusBadge visible={row.visible} removed={!!row.removedAt} />}
+                    </div>
+                  </Td>
+                  <Td style={cellStyle}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {row.atuacao.map((cat) => (
+                        <span
+                          key={cat}
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: 'rgba(26,26,26,0.55)',
+                            background: 'rgba(26,26,26,0.06)',
+                            padding: '3px 8px',
+                            borderRadius: '100px',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  </Td>
+                  <Td align="center" style={cellStyle}>
+                    {!row.removedAt && (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="checkbox"
+                          checked={row.featuredOnHome}
+                          disabled={updatingSlug === row.slug || (!row.featuredOnHome && featuredCount >= MAX_FEATURED_ON_HOME)}
+                          onChange={(e) => toggleFeatured(row.slug, e.target.checked)}
+                          title={row.featuredOnHome ? 'Remover do carrossel da home' : 'Mostrar no carrossel da home'}
+                          style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+                        />
+                        {row.featuredOnHome && (
+                          <>
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(26,26,26,0.6)', minWidth: '14px' }}>
+                              {featuredOrder.indexOf(row.slug) + 1}º
+                            </span>
+                            {!row.hasCaseStudy && (
+                              <span
+                                title='Não vai aparecer no carrossel da home: falta preencher Papel, Ano ou Subtítulo do topo na aba "Visão Geral".'
+                                style={{ display: 'inline-flex', color: '#b45309', cursor: 'help' }}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                                  warning
+                                </span>
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </Td>
+                  <Td align="center" style={cellStyle}>
+                    <CoverTopDot cover={row.hasCover} top={row.hasHero} />
+                  </Td>
+                  <Td align="center" style={cellStyle}>
+                    <span style={{ color: row.galleryCount > 0 ? '#166534' : 'rgba(26,26,26,0.4)', fontWeight: 600 }}>
+                      {row.galleryCount > 0 ? `${row.galleryCount} ${row.galleryCount === 1 ? 'item' : 'itens'}` : '—'}
+                    </span>
+                  </Td>
+                  <Td last align="right" style={cellStyle}>
+                    <ActionsMenu
+                      disabled={updatingSlug === row.slug}
+                      items={
+                        row.removedAt
+                          ? [{ icon: 'restore', label: 'Restaurar', onClick: () => updateStatus(row.slug, true, false) }]
+                          : [
+                              { icon: 'edit', label: 'Editar', onClick: () => openEditSheet(row) },
+                              {
+                                icon: row.visible ? 'visibility_off' : 'visibility',
+                                label: row.visible ? 'Desativar' : 'Ativar',
+                                onClick: () => updateStatus(row.slug, !row.visible, false),
+                              },
+                              {
+                                icon: 'delete',
+                                label: 'Excluir',
+                                tone: 'danger',
+                                onClick: () => {
+                                  if (confirm(`Excluir "${row.empresa}" do site? Pode ser restaurado depois filtrando por Status "Excluído".`)) {
+                                    updateStatus(row.slug, false, true);
+                                  }
+                                },
+                              },
+                            ]
+                      }
+                    />
+                  </Td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -436,17 +487,93 @@ function ThSelect({ value, onChange, options }: { value: string; onChange: (v: s
   );
 }
 
-function Th({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'center' | 'right' }) {
+function Th({
+  children,
+  align = 'left',
+  width,
+}: {
+  children: React.ReactNode;
+  align?: 'left' | 'center' | 'right';
+  width?: number;
+}) {
   return (
-    <th style={{ textAlign: align, padding: '12px 16px', fontSize: '11px', fontWeight: 700, color: 'rgba(26,26,26,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+    <th
+      style={{
+        textAlign: align,
+        padding: '6px 16px',
+        width,
+        fontSize: '11px',
+        fontWeight: 700,
+        color: 'rgba(26,26,26,0.5)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+      }}
+    >
       {children}
     </th>
   );
 }
 
-function Td({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'center' | 'right' }) {
+/** Célula com fundo próprio: o "card" da linha é montado pelas células (bordas nas pontas). */
+function Td({
+  children,
+  align = 'left',
+  first,
+  last,
+  colSpan,
+  style,
+}: {
+  children: React.ReactNode;
+  align?: 'left' | 'center' | 'right';
+  first?: boolean;
+  last?: boolean;
+  colSpan?: number;
+  style?: React.CSSProperties;
+}) {
   return (
-    <td style={{ textAlign: align, padding: '12px 16px' }}>{children}</td>
+    <td
+      colSpan={colSpan}
+      style={{
+        textAlign: align,
+        padding: '10px 16px',
+        background: '#fff',
+        borderTop: '1px solid var(--color-border)',
+        borderBottom: '1px solid var(--color-border)',
+        ...(first ? { borderLeft: '1px solid var(--color-border)', borderRadius: '10px 0 0 10px', paddingRight: 0 } : {}),
+        ...(last ? { borderRight: '1px solid var(--color-border)', borderRadius: '0 10px 10px 0' } : {}),
+        verticalAlign: 'middle',
+        ...style,
+      }}
+    >
+      {children}
+    </td>
+  );
+}
+
+function Thumb({ src, alt, dim }: { src: string | null; alt: string; dim: boolean }) {
+  return (
+    <div
+      style={{
+        width: '48px',
+        height: '36px',
+        borderRadius: '6px',
+        overflow: 'hidden',
+        background: 'rgba(26,26,26,0.06)',
+        opacity: dim ? 0.5 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+      ) : (
+        <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'rgba(26,26,26,0.3)' }}>
+          image
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -472,93 +599,133 @@ function StatusBadge({ visible, removed }: { visible: boolean; removed: boolean 
   );
 }
 
-function IconAction({
-  icon,
-  label,
-  onClick,
-  disabled,
-  tone = 'default',
-}: {
+interface MenuItem {
   icon: string;
   label: string;
   onClick: () => void;
-  disabled?: boolean;
   tone?: 'default' | 'danger';
-}) {
-  const color = tone === 'danger' ? '#b91c1c' : '#1a1a1a';
+}
+
+/** Menu de ações da linha. Posição fixa calculada a partir do botão, pra não ser cortado pelo scroll da tabela. */
+function ActionsMenu({ items, disabled }: { items: MenuItem[]; disabled?: boolean }) {
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+  const open = pos !== null;
+
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setPos(null);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
+    window.addEventListener('scroll', close, true);
+    window.addEventListener('resize', close);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('resize', close);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      type="button"
-      title={label}
-      aria-label={label}
-      className="admin-icon-action"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '32px',
-        height: '32px',
-        borderRadius: '50%',
-        border: tone === 'danger' ? '1px solid rgba(185,28,28,0.25)' : '1px solid var(--color-border)',
-        background: '#fff',
-        color,
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.5 : 1,
-        flexShrink: 0,
-        transition: 'background 0.15s',
-      }}
-    >
-      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-        {icon}
-      </span>
-    </button>
+    <>
+      <button
+        type="button"
+        title="Ações"
+        aria-label="Ações"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        disabled={disabled}
+        className="admin-icon-action"
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setPos(open ? null : { top: rect.bottom + 4, right: window.innerWidth - rect.right });
+        }}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '32px',
+          height: '32px',
+          borderRadius: '6px',
+          border: 'none',
+          background: open ? 'rgba(26,26,26,0.06)' : 'transparent',
+          color: '#1a1a1a',
+          cursor: disabled ? 'default' : 'pointer',
+          opacity: disabled ? 0.5 : 1,
+        }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+          more_vert
+        </span>
+      </button>
+      {open && (
+        <>
+          <div onClick={() => setPos(null)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+          <div
+            role="menu"
+            style={{
+              position: 'fixed',
+              top: pos.top,
+              right: pos.right,
+              zIndex: 41,
+              minWidth: '160px',
+              padding: '6px',
+              background: '#fff',
+              border: '1px solid var(--color-border)',
+              borderRadius: '10px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              textAlign: 'left',
+            }}
+          >
+            {items.map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                role="menuitem"
+                className="admin-icon-action"
+                onClick={() => {
+                  setPos(null);
+                  item.onClick();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  width: '100%',
+                  padding: '8px 10px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  background: 'transparent',
+                  color: item.tone === 'danger' ? '#b91c1c' : '#1a1a1a',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                  {item.icon}
+                </span>
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </>
   );
 }
 
-function ReorderButton({ direction, onClick, disabled }: { direction: 'up' | 'down'; onClick: () => void; disabled?: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      type="button"
-      title={direction === 'up' ? 'Subir prioridade' : 'Descer prioridade'}
-      aria-label={direction === 'up' ? 'Subir prioridade' : 'Descer prioridade'}
-      className="admin-icon-action"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '20px',
-        height: '20px',
-        borderRadius: '4px',
-        border: '1px solid var(--color-border)',
-        background: '#fff',
-        color: '#1a1a1a',
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.3 : 1,
-        flexShrink: 0,
-      }}
-    >
-      <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>
-        {direction === 'up' ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
-      </span>
-    </button>
-  );
-}
-
-function Dot({ ok }: { ok: boolean }) {
+/** Verde inteiro = capa e topo definidos; metade verde/metade cinza = só um deles (esquerda capa, direita topo); cinza = nenhum. */
+function CoverTopDot({ cover, top }: { cover: boolean; top: boolean }) {
+  const green = '#22c55e';
+  const gray = 'rgba(26,26,26,0.15)';
+  const background =
+    cover && top ? green : !cover && !top ? gray : `linear-gradient(90deg, ${cover ? green : gray} 50%, ${top ? green : gray} 50%)`;
+  const label = cover && top ? 'Capa e topo definidos' : !cover && !top ? 'Sem capa e sem topo' : cover ? 'Só a capa definida' : 'Só o topo definido';
   return (
     <span
-      style={{
-        display: 'inline-block',
-        width: '10px',
-        height: '10px',
-        borderRadius: '50%',
-        background: ok ? '#22c55e' : 'rgba(26,26,26,0.15)',
-      }}
-      aria-label={ok ? 'Definida' : 'Não definida'}
+      title={label}
+      aria-label={label}
+      style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '50%', background }}
     />
   );
 }

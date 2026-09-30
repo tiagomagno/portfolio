@@ -12,6 +12,7 @@ export default async function AdminCasesPage() {
     empresa: item.empresa,
     slug: item.slug,
     atuacao: parseAtuacaoList(item.atuacao) ?? [],
+    coverImage: item.coverImage,
     hasCover: !!item.coverImage,
     hasHero: !!item.heroImage,
     galleryCount: Array.isArray(item.gallery) ? (item.gallery as unknown[]).length : 0,
