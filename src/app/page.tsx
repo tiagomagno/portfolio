@@ -23,7 +23,7 @@ import { getSiteSettings } from '@/data/siteSettings';
 import { translations } from '@/lib/translations';
 import { getLabItems } from '@/data/labs';
 import { GRADIENT } from '@/lib/surfaces';
-import { HOME_SECTION_KEYS } from '@/lib/homeSections';
+import { HOME_SECTION_KEYS, mergeSectionOrder } from '@/lib/homeSections';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -33,6 +33,7 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
   about: About,
   stats: Stats,
   work: Work,
+  offer: Work,
   experience: Experience,
   cases: Cases,
   labs: LabsGrid,
@@ -50,6 +51,7 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
 const SECTION_GRADIENT: Record<string, string> = {
   hero: GRADIENT.ltr,
   cases: GRADIENT.rtl,
+  offer: GRADIENT.ltr,
   ctaFooter: GRADIENT.rtl,
 };
 
@@ -93,11 +95,13 @@ export const revalidate = 60;
 
 async function getSectionOrder(): Promise<string[]> {
   try {
-    const sections = await prisma.homeSection.findMany({ where: { visible: true }, orderBy: { order: 'asc' } });
-    if (sections.length === 0) return DEFAULT_ORDER;
-    // FAQ saiu da home (mudou pra página /consultoria) — filtra mesmo que ainda
-    // esteja salva na ordem configurada em /admin/sections de alguma instalação antiga.
-    return sections.map((s) => s.key).filter((key) => key in SECTION_COMPONENTS && key !== 'faq');
+    const rows = await prisma.homeSection.findMany({ orderBy: { order: 'asc' } });
+    if (rows.length === 0) return DEFAULT_ORDER;
+    const hidden = new Set(rows.filter((r) => !r.visible).map((r) => r.key));
+    // Só as seções do layout atual (HOME_SECTION_KEYS): linhas antigas do banco (intro, stats, faq...)
+    // não renderizam. Seções novas, ainda sem linha no banco, entram no lugar padrão e visíveis.
+    const known = new Set<string>(HOME_SECTION_KEYS);
+    return mergeSectionOrder(rows.map((r) => r.key).filter((key) => known.has(key))).filter((key) => !hidden.has(key));
   } catch {
     return DEFAULT_ORDER;
   }

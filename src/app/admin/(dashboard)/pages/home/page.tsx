@@ -14,6 +14,7 @@ import type { ContentItem, MergedBlock } from '@/components/admin/TextGroupEdito
 const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => boolean; merge?: MergedBlock }[] = [
   { title: 'Hero', hint: 'Título, nome, texto e botões do topo da Home.', filter: (i) => i.group === 'hero' && !i.key.startsWith('hero.stat') },
   { title: 'Cases (portfólio)', filter: (i) => ['cases.eyebrow', 'cases.heading', 'cases.intro', 'cases.viewAll', 'cases.viewProject'].includes(i.key) },
+  { title: 'Serviços (o que faço)', hint: 'Seis serviços: título e descrição de cada um. O título da seção também aparece na página Consultoria.', filter: (i) => /^work\.(eyebrow|title|subtitle|svc[1-6]\.(title|label))$/.test(i.key) },
   { title: 'Processo (Problema → Solução)', filter: (i) => i.group === 'process' },
   { title: 'Sobre mim', hint: 'Título da seção, rótulos e o texto de apresentação (um parágrafo por linha).', merge: { label: 'Texto de apresentação', keys: ['about.p1', 'about.p2', 'about.p3', 'about.p4', 'about.p5'] }, filter: (i) => ['about.eyebrow', 'aboutBento.title', 'about.heading', 'about.newPhoto.alt'].includes(i.key) || /^about\.p[1-5]$/.test(i.key) || /^aboutBento\.(expLabel|since|yearsCaption|skillsLabel)$/.test(i.key) },
   { title: 'Sobre: números', hint: 'Os três números do bloco.', filter: (i) => i.key.startsWith('about.badge') || i.key.startsWith('hero.stat') || i.key.startsWith('stats.stat4') },
