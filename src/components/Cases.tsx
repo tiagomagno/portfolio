@@ -16,9 +16,18 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 
 // Quantos cards ficam totalmente visíveis por vez — o resto da largura vira o
 // "peek" nas bordas (parcialmente visível, esmaecido pela máscara de gradiente).
-// Modos: celular (1 card por vez, sem peek), tablet (2 cards cheios, sem peek) e desktop (3 cheios + peeks).
-// Cards cheios no desktop (centralizados; os vizinhos aparecem só como faixa nas bordas).
-const DESKTOP_FULL_CARDS = 3;
+// Modos: celular (1 card por vez, sem peek), tablet (2 cards cheios, sem peek) e desktop (2 cheios + peeks).
+// Cards cheios no desktop (2, grandes e centralizados; os vizinhos aparecem só como faixa nas bordas).
+const DESKTOP_FULL_CARDS = 2;
+
+// Distância (card + vão) entre dois cards consecutivos. Não dá pra usar scrollWidth / 3 pra medir uma
+// cópia da lista: o último card não tem vão depois dele, então isso erra por (vão / 3) e o salto do
+// loop (e o alinhamento inicial) ficava alguns px fora do lugar.
+const cardStepOf = (track: HTMLDivElement) => {
+  const first = track.firstElementChild as HTMLElement | null;
+  const second = first?.nextElementSibling as HTMLElement | null;
+  return first && second ? second.offsetLeft - first.offsetLeft : 0;
+};
 
 type CarouselMode = 'phone' | 'tablet' | 'desktop';
 function useItemsPerView(): { itemsPerView: number; mode: CarouselMode } {
@@ -92,7 +101,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   useEffect(() => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
-    const third = track.scrollWidth / 3;
+    const third = cardStepOf(track) * setCount;
     track.scrollLeft = third - gridOffsetFor(track);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- gridOffsetFor só depende de `mode`, já listado
   }, [setCount, mode]);
@@ -110,7 +119,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   const wrapIfNeeded = () => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
-    const third = track.scrollWidth / 3;
+    const third = cardStepOf(track) * setCount;
     const shift = track.scrollLeft < third * 0.5 ? third : track.scrollLeft > third * 1.5 ? -third : 0;
     if (shift !== 0) {
       track.scrollLeft += shift;
@@ -118,7 +127,20 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
     }
   };
 
+  // Posição atual (0-based) dentro do conjunto, pra barra de progresso: o card mais próximo do
+  // início da grade, módulo o tamanho da lista (o track tem 3 cópias).
+  const [activeIndex, setActiveIndex] = useState(0);
+  const updateActiveIndex = () => {
+    const track = trackRef.current;
+    if (!track || setCount === 0) return;
+    const cardStep = cardStepOf(track);
+    const raw = Math.round((track.scrollLeft + gridOffsetFor(track)) / cardStep);
+    const next = ((raw % setCount) + setCount) % setCount;
+    setActiveIndex((prev) => (prev === next ? prev : next));
+  };
+
   const handleScroll = () => {
+    updateActiveIndex();
     if (settleTimer.current) clearTimeout(settleTimer.current);
     settleTimer.current = setTimeout(wrapIfNeeded, 120);
   };
@@ -126,7 +148,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
   const step = (direction: 1 | -1) => {
     const track = trackRef.current;
     if (!track || setCount === 0) return;
-    const cardStep = (track.scrollWidth / 3) / setCount;
+    const cardStep = cardStepOf(track);
     // Sem snap, a posição depois de um arrasto livre é qualquer uma; a seta alinha à grade dos
     // cards (no mobile a grade começa 24px antes do card, igual à posição inicial).
     const gridOffset = gridOffsetFor(track);
@@ -226,16 +248,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
 
         {/* Header */}
         <FadeIn delay={0.1}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-end',
-              gap: '24px',
-              marginBottom: '40px',
-              flexWrap: 'wrap',
-            }}
-          >
+          <div className="section-head">
             <div>
               <span
                 style={{
@@ -250,36 +263,33 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
               >
                 {t('cases.eyebrow')}
               </span>
-              <h2
-                style={{
-                  fontSize: 'var(--fs-h2)',
-                  fontWeight: 900,
-                  color: 'var(--color-text)',
-                  lineHeight: 1.1,
-                  margin: '0 0 16px',
-                  maxWidth: '760px',
-                }}
-              >
+              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
                 {t('cases.heading')}
               </h2>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
-                {t('cases.intro')}
-              </p>
             </div>
 
-            {setCount > 1 && (
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <CarouselArrow direction="left" disabled={false} onClick={() => step(-1)} />
-                <CarouselArrow direction="right" disabled={false} onClick={() => step(1)} />
-              </div>
-            )}
+            <div className="section-head-aside">
+              <p>{t('cases.intro')}</p>
+              {setCount > 1 && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <CarouselArrow direction="left" disabled={false} onClick={() => step(-1)} />
+                  <CarouselArrow direction="right" disabled={false} onClick={() => step(1)} />
+                </div>
+              )}
+            </div>
           </div>
         </FadeIn>
       </div>
 
       <style>{`
+        /* Imagem mais retangular que o 16/10 do mobile: no desktop a seção (título + barra + cards) cabe numa tela só. */
+        .portfolio-card-feature .portfolio-card-v2-image { aspect-ratio: 16 / 10; }
+        @media (min-width: 1025px) { .portfolio-card-feature .portfolio-card-v2-image { aspect-ratio: 2 / 1; } }
         .cases-carousel-viewport {
-          --cases-peek: clamp(56px, 7vw, 140px);
+          /* A faixa do vizinho + o vão (16px) ocupam exatamente a margem lateral do conteúdo (a folga
+             fora do container + os 24px de padding dele), então os cards cheios ficam alinhados às
+             margens do site em qualquer largura (--container-max vira 100% abaixo de 1200px). */
+          --cases-peek: calc((100% - var(--container-max)) / 2 + 8px);
           -webkit-mask-image: linear-gradient(to right, transparent 0, black calc(var(--cases-peek) + 16px), black calc(100% - var(--cases-peek) - 16px), transparent 100%);
           mask-image: linear-gradient(to right, transparent 0, black calc(var(--cases-peek) + 16px), black calc(100% - var(--cases-peek) - 16px), transparent 100%);
         }
@@ -303,8 +313,8 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
         .cases-carousel-track.is-dragging * { pointer-events: none; }
         .cases-carousel-track img { -webkit-user-drag: none; user-drag: none; }
         .cases-carousel-card {
-          /* Desktop: 3 cards cheios centralizados; sobra só uma faixa (--cases-peek) de cada lado
-             pros vizinhos aparecerem quase ocultos. Largura = (100% - 2 faixas - 4 vãos) / 3. */
+          /* Desktop: 2 cards cheios centralizados; sobra só uma faixa (--cases-peek) de cada lado
+             pros vizinhos aparecerem quase ocultos. Largura = (100% - 2 faixas - 3 vãos) / 2. */
           flex: 0 0 ${mode === 'tablet' ? 'calc((100vw - 48px - 16px) / 2)' : `calc((100% - 2 * var(--cases-peek) - ${DESKTOP_FULL_CARDS + 1} * 16px) / ${DESKTOP_FULL_CARDS})`};
           scroll-snap-align: start;
         }
@@ -352,9 +362,25 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             transform: scale(1.04);
           }
         }
-        .carousel-arrow { transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), opacity 0.15s; }
+                .carousel-arrow { transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), opacity 0.15s; }
         .carousel-arrow:active:not(:disabled) { transform: scale(0.95); }
       `}</style>
+
+      {setCount > 1 && (
+        <div
+          aria-hidden
+          className="section-container"
+          style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px 20px', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)' }}
+        >
+          <span>{String(activeIndex + 1).padStart(2, '0')}</span>
+          <div style={{ position: 'relative', flex: 1, height: '1px', background: 'rgba(255,255,255,0.14)' }}>
+            <div
+              style={{ position: 'absolute', top: '-1px', left: 0, height: '3px', width: `${100 / setCount}%`, background: 'var(--color-primary)', transform: `translateX(${activeIndex * 100}%)`, transition: 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)' }}
+            />
+          </div>
+          <span>{String(setCount).padStart(2, '0')}</span>
+        </div>
+      )}
 
       {/* Full-bleed: sai do section-container de propósito, pra a máscara de
           esmaecimento nas bordas usar 100% da largura da tela. */}
@@ -378,7 +404,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                     thread principal enquanto o usuário arrasta, e o carrossel já se move por si. */}
                 <div style={{ height: '100%' }}>
                   <Link href={`/portfolio/${item.slug}`} className="portfolio-card-v2-link">
-                      <PortfolioCard item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} />
+                      <PortfolioCard item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} variant="feature" index={(idx % setCount) + 1} viewProjectLabel={t('cases.viewProject')} />
                     </Link>
                   </div>
                 </div>
