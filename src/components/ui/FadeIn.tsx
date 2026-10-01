@@ -45,7 +45,7 @@ export default function FadeIn({
       initial={{ opacity: 0, transform: `translate(${offsetX}px, ${offsetY}px)` }}
       whileInView={{ opacity: 1, transform: 'translate(0px, 0px)', transitionEnd: { transform: 'none' } }}
       viewport={{ once: true, margin: '-10%' }}
-      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration, delay, ease: [0.23, 1, 0.32, 1] }}
       className={className}
       style={style}
     >

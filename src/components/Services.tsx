@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 
 // Duas fases (problema e solução), quatro etapas. A evolução contínua fica como adendo.
 const DIAMONDS = [
@@ -13,7 +14,7 @@ export default function Services() {
   const { t } = useLang();
 
   return (
-    <section id="services" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
+    <section id="services" style={{ background: 'transparent', padding: 'calc(var(--section-pad-y) * 1.5) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <style>{`
           .process-diamonds { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
@@ -43,9 +44,9 @@ export default function Services() {
               <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
                 {t('process.eyebrow')}
               </span>
-              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
                 {t('process.title')}
-              </h2>
+              </RevealHeading>
             </div>
             <div className="section-head-aside">
               <p>{t('process.subtitle2')}</p>

@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 import { ArrowRight } from 'lucide-react';
 
 const SERVICES = [1, 2, 3, 4, 5, 6];
@@ -30,9 +31,9 @@ export default function Work() {
               <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
                 {t('work.eyebrow')}
               </span>
-              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
                 {t('work.title')}
-              </h2>
+              </RevealHeading>
             </div>
             <div className="section-head-aside">
               <p>{t('work.subtitle')}</p>

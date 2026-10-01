@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 import { splitParagraphs } from '@/lib/paragraphs';
 
 const MILESTONES = [1, 2, 3, 4, 5, 6];
@@ -90,9 +91,9 @@ export default function AboutBento() {
           <div className="section-head">
             <div>
               <span style={{ ...eyebrow, marginBottom: '14px' }}>{t('about.eyebrow')}</span>
-              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
                 {t('aboutBento.title')}
-              </h2>
+              </RevealHeading>
             </div>
             <div className="section-head-aside">
               <p>{t('about.heading')}</p>
@@ -174,7 +175,7 @@ export default function AboutBento() {
             <motion.li
               aria-hidden="true"
               className="ab-line"
-              variants={{ hidden: { scaleX: reduce ? 1 : 0 }, visible: { scaleX: 1, transition: { duration: reduce ? 0 : 1.6, ease: [0.22, 1, 0.36, 1] } } }}
+              variants={{ hidden: { scaleX: reduce ? 1 : 0 }, visible: { scaleX: 1, transition: { duration: reduce ? 0 : 1.6, ease: [0.23, 1, 0.32, 1] } } }}
             />
             {MILESTONES.map((n) => (
               <motion.li
@@ -182,7 +183,7 @@ export default function AboutBento() {
                 className="ab-step"
                 variants={{
                   hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: reduce ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] } },
+                  visible: { opacity: 1, y: 0, transition: { duration: reduce ? 0 : 0.5, ease: [0.23, 1, 0.32, 1] } },
                 }}
               >
                 <span className="ab-dot" style={{ ['--d' as string]: `${n * 0.35}s` }} />

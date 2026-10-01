@@ -15,7 +15,7 @@ const FILTERS_MIN_ITEMS = 5;
 const matches = (item: LabItem, tab: string) =>
   tab === 'all' || (tab === 'live' ? item.status === 'MVP no ar' : item.status !== 'MVP no ar');
 
-export default function LabsGrid({ items: allItems }: { items: LabItem[] }) {
+export default function LabsGrid({ items: allItems, cardClass }: { items: LabItem[]; cardClass?: string }) {
   const { t } = useLang();
   const [tab, setTab] = useState('all');
   const TABS = [
@@ -80,10 +80,10 @@ export default function LabsGrid({ items: allItems }: { items: LabItem[] }) {
             <FadeIn key={item.id} delay={0.05 * i} style={{ height: '100%' }}>
               {item.href ? (
                 <a href={item.href} target="_blank" rel="noopener noreferrer" className="labs-bento-link">
-                  <LabCard item={item} index={i} />
+                  <LabCard item={item} index={i} cardClass={cardClass} />
                 </a>
               ) : (
-                <LabCard item={item} index={i} />
+                <LabCard item={item} index={i} cardClass={cardClass} />
               )}
             </FadeIn>
           ))}
@@ -105,12 +105,12 @@ const hostOf = (href: string) => {
   try { return new URL(href).host; } catch { return ''; }
 };
 
-function LabCard({ item, index }: { item: LabItem; index: number }) {
+function LabCard({ item, index, cardClass }: { item: LabItem; index: number; cardClass?: string }) {
   const { t } = useLang();
   const frame = FRAMES[index % FRAMES.length];
   return (
     <div
-      className="labs-card theme-card-outline"
+      className={`labs-card ${cardClass ?? 'theme-card-outline'}`}
       style={{
         position: 'relative',
         overflow: 'hidden',

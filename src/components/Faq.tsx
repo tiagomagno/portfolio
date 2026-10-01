@@ -2,6 +2,7 @@
 
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 import { Plus } from 'lucide-react';
 
 const QUESTION_KEYS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'] as const;
@@ -37,10 +38,15 @@ export default function Faq() {
           .faq-item summary::-webkit-details-marker { display: none; }
           .faq-item .faq-icon {
             flex-shrink: 0;
-            transition: transform 0.2s;
+            transition: transform 220ms var(--ease-out);
             color: var(--color-primary-text);
           }
           .faq-item[open] .faq-icon { transform: rotate(45deg); }
+          /* Abre/fecha animando a altura (Chrome/Edge; nos demais navegadores abre direto). */
+          .faq-item { interpolate-size: allow-keywords; }
+          .faq-item::details-content { height: 0; overflow: clip; transition: height 260ms var(--ease-out), content-visibility 260ms allow-discrete; }
+          .faq-item[open]::details-content { height: auto; }
+          @media (prefers-reduced-motion: reduce) { .faq-item::details-content, .faq-item .faq-icon { transition: none; } }
           .faq-item .faq-answer {
             padding: 0 0 24px;
             margin: 0;
@@ -52,26 +58,28 @@ export default function Faq() {
         `}</style>
 
         <FadeIn delay={0.1}>
-          <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
-            <span
-              style={{
-                fontSize: 'var(--fs-eyebrow)',
-                fontWeight: 700,
-                color: 'var(--color-primary-text)',
-                letterSpacing: 'var(--ls-eyebrow)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '14px',
-              }}
-            >
-              {t('faq.eyebrow')}
-            </span>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 0 12px' }}>
-              {t('faq.title')}
-            </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
-              {t('faq.subtitle')}
-            </p>
+          <div className="section-head">
+            <div>
+              <span
+                style={{
+                  fontSize: 'var(--fs-eyebrow)',
+                  fontWeight: 700,
+                  color: 'var(--color-primary-text)',
+                  letterSpacing: 'var(--ls-eyebrow)',
+                  textTransform: 'uppercase',
+                  display: 'block',
+                  marginBottom: '14px',
+                }}
+              >
+                {t('faq.eyebrow')}
+              </span>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+                {t('faq.title')}
+              </RevealHeading>
+            </div>
+            <div className="section-head-aside">
+              <p>{t('faq.subtitle')}</p>
+            </div>
           </div>
         </FadeIn>
 

@@ -81,7 +81,7 @@ export default function Header() {
     const target = shouldClose ? -width : 0;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ms = reduceMotion ? 0 : Math.round(Math.min(Math.max(Math.abs(target - d.dx) / Math.max(Math.abs(velocity), 0.5), 150), 320));
-    const transition = `${ms}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+    const transition = `${ms}ms var(--ease-out)`;
     el.style.transition = `transform ${transition}`;
     if (scrimRef.current) scrimRef.current.style.transition = `opacity ${transition}`;
 
@@ -562,7 +562,7 @@ export default function Header() {
           flexDirection: 'column',
           padding: '0 0 32px',
           transform: drawerOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: `transform ${drawerOpen ? '280ms' : `${drawerCloseMs}ms`} cubic-bezier(0.32, 0.72, 0, 1)`,
+          transition: `transform ${drawerOpen ? '280ms' : `${drawerCloseMs}ms`} var(--ease-drawer)`,
           touchAction: 'pan-y',
           overflowY: 'auto',
         }}

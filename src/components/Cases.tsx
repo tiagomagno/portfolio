@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 import PortfolioCard from './PortfolioCard';
 import { useLang } from '@/context/LangContext';
 import type { PortfolioItem } from '@/data/portfolio';
@@ -44,7 +45,7 @@ function useItemsPerView(): { itemsPerView: number; mode: CarouselMode } {
   return { itemsPerView: mode === 'phone' ? 1 : mode === 'tablet' ? 2 : DESKTOP_FULL_CARDS, mode };
 }
 
-export default function Cases({ items }: { items: PortfolioItem[] }) {
+export default function Cases({ items, cardClass }: { items: PortfolioItem[]; cardClass?: string }) {
   const { t } = useLang();
   const tCategory = (cat: string) => t(CATEGORY_KEYS[cat] ?? cat);
 
@@ -263,9 +264,9 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
               >
                 {t('cases.eyebrow')}
               </span>
-              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
                 {t('cases.heading')}
-              </h2>
+              </RevealHeading>
             </div>
 
             <div className="section-head-aside">
@@ -334,14 +335,14 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             mask-image: none;
           }
         }
-        .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+        .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms var(--ease-out); }
         .portfolio-card-v2-link:active { transform: scale(0.98); }
         /* Cinza por padrão em mouse, cor no hover. A desaturação vem de uma camada cinza com
            mix-blend-mode: saturation por cima da imagem; só o opacity dela anima (compositor),
            em vez de animar filter na imagem inteira. */
         .portfolio-card-v2-image { isolation: isolate; }
         .portfolio-card-v2-image img {
-          transition: transform 0.5s ease;
+          transition: transform 350ms var(--ease-out);
         }
         @media (hover: hover) and (pointer: fine) {
           .portfolio-card-v2-image::after {
@@ -352,7 +353,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             mix-blend-mode: saturation;
             opacity: 1;
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: opacity 350ms var(--ease-out);
           }
           .portfolio-card-v2-link:hover .portfolio-card-v2-image::after,
           .portfolio-card-v2-link:focus-visible .portfolio-card-v2-image::after {
@@ -362,7 +363,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
             transform: scale(1.04);
           }
         }
-                .carousel-arrow { transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), opacity 0.15s; }
+                .carousel-arrow { transition: transform 120ms var(--ease-out), opacity 0.15s; }
         .carousel-arrow:active:not(:disabled) { transform: scale(0.95); }
       `}</style>
 
@@ -370,12 +371,12 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
         <div
           aria-hidden
           className="section-container"
-          style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px 20px', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)' }}
+          style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px 20px', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--color-text-dim)' }}
         >
           <span>{String(activeIndex + 1).padStart(2, '0')}</span>
-          <div style={{ position: 'relative', flex: 1, height: '1px', background: 'rgba(255,255,255,0.14)' }}>
+          <div style={{ position: 'relative', flex: 1, height: '1px', background: 'var(--color-border-subtle)' }}>
             <div
-              style={{ position: 'absolute', top: '-1px', left: 0, height: '3px', width: `${100 / setCount}%`, background: 'var(--color-primary)', transform: `translateX(${activeIndex * 100}%)`, transition: 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)' }}
+              style={{ position: 'absolute', top: '-1px', left: 0, height: '3px', width: `${100 / setCount}%`, background: 'var(--color-primary)', transform: `translateX(${activeIndex * 100}%)`, transition: 'transform 0.3s var(--ease-out)' }}
             />
           </div>
           <span>{String(setCount).padStart(2, '0')}</span>
@@ -404,7 +405,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                     thread principal enquanto o usuário arrasta, e o carrossel já se move por si. */}
                 <div style={{ height: '100%' }}>
                   <Link href={`/portfolio/${item.slug}`} className="portfolio-card-v2-link">
-                      <PortfolioCard item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} variant="feature" index={(idx % setCount) + 1} viewProjectLabel={t('cases.viewProject')} />
+                      <PortfolioCard cardClass={cardClass} item={item} coverImage={item.image} categoryLabel={tCategory} priority={idx === setCount} variant="feature" index={(idx % setCount) + 1} viewProjectLabel={t('cases.viewProject')} />
                     </Link>
                   </div>
                 </div>
@@ -432,7 +433,7 @@ export default function Cases({ items }: { items: PortfolioItem[] }) {
                 color: 'var(--color-primary-text)',
                 padding: '13px 24px',
                 borderRadius: '999px',
-                border: '1px solid rgba(255,255,255,0.15)',
+                border: '1px solid var(--color-border-subtle)',
                 textDecoration: 'none',
               }}
             >
@@ -457,8 +458,8 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
         width: '44px',
         height: '44px',
         borderRadius: '50%',
-        border: '1px solid rgba(255,255,255,0.15)',
-        background: '#1a1a1a',
+        border: '1px solid var(--color-border-subtle)',
+        background: 'var(--color-bg-card)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -467,9 +468,9 @@ function CarouselArrow({ direction, disabled, onClick }: { direction: 'left' | '
       }}
     >
       {direction === 'left' ? (
-        <ChevronLeft size={20} color="rgba(255,255,255,0.7)" />
+        <ChevronLeft size={20} color="var(--color-text)" />
       ) : (
-        <ChevronRight size={20} color="rgba(255,255,255,0.7)" />
+        <ChevronRight size={20} color="var(--color-text)" />
       )}
     </button>
   );

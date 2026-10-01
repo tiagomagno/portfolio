@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { useLang } from '@/context/LangContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 import FooterBar from './FooterBar';
 import WhatsappIcon from './ui/WhatsappIcon';
 import { GRADIENT } from '@/lib/surfaces';
@@ -34,9 +35,9 @@ export default function CtaFooter() {
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1} direction="up">
           <div style={{ paddingBottom: '72px' }}>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: '0 0 20px', textWrap: 'balance' }}>
+            <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: '0 0 20px', textWrap: 'balance' }}>
               {t('work.cta.title')}
-            </h2>
+            </RevealHeading>
             <p style={{ fontSize: 'clamp(1rem, 1.2vw, 1.125rem)', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: '0 0 32px', maxWidth: '620px' }}>
               {t('work.cta.text')}
             </p>

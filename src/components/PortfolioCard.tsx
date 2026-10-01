@@ -13,6 +13,7 @@ export default function PortfolioCard({
   variant = 'default',
   index,
   viewProjectLabel,
+  cardClass,
 }: {
   item: PortfolioItem;
   coverImage?: string;
@@ -24,14 +25,16 @@ export default function PortfolioCard({
   /** Posição (1-based) exibida em destaque na imagem — só no variant 'feature'. */
   index?: number;
   viewProjectLabel?: string;
+  /** Classe de tema do card (admin → Seções). Vazio = preto. */
+  cardClass?: string;
 }) {
   if (variant === 'feature') {
     const categories = item.atuacao.map(categoryLabel).join(' · ');
     const summary = portfolioSummary(item);
     return (
       <div
-        className="portfolio-card-v2 portfolio-card-feature"
-        style={{ height: '100%', display: 'flex', flexDirection: 'column', background: SURFACE.raised, border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', overflow: 'hidden' }}
+        className={`portfolio-card-v2 portfolio-card-feature ${cardClass ?? 'theme-dark'}`}
+        style={{ height: '100%', display: 'flex', flexDirection: 'column', background: cardClass === 'theme-card-outline' ? 'transparent' : 'var(--color-bg-card)', border: '1px solid var(--color-border)', borderRadius: '20px', overflow: 'hidden' }}
       >
         <div className="portfolio-card-v2-image" style={{ position: 'relative', background: SURFACE.card }}>
           {coverImage ? (
@@ -60,7 +63,7 @@ export default function PortfolioCard({
         </div>
 
         <div style={{ padding: '20px 24px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-text-dim)', marginBottom: '10px' }}>
             <span>{categories}</span>
             {item.caseStudy?.year && item.caseStudy.year !== TBD && <span style={{ flexShrink: 0 }}>{item.caseStudy.year}</span>}
           </div>

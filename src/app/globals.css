@@ -11,6 +11,11 @@
      funcionar nas bordas reais da tela. */
   --container-max: 80vw;
 
+  /* ── Motion (curvas compartilhadas) ── */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* entradas e saídas de UI */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* movimento já na tela */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* drawer estilo iOS */
+
   /* ── Typography Scale ── */
   /* Em rem pra acompanhar o tamanho de texto configurado pelo usuário no navegador. */
   --fs-h1:          clamp(2.75rem, 7vw, 5.25rem);
@@ -415,10 +420,10 @@ section[id] {
    BOTÕES — feedback de hover e clique
    ============================================ */
 .cta-primary {
-  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease-out;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease-out;
 }
 .cta-ghost {
-  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease-out;
+  transition: transform 160ms var(--ease-out), border-color 160ms ease-out;
 }
 .cta-primary:active:not(:disabled),
 .cta-ghost:active:not(:disabled) {
@@ -429,8 +434,34 @@ section[id] {
     background-color: var(--color-primary-text-hover) !important;
   }
   .cta-ghost:hover:not(:disabled) {
-    border-color: rgba(255,255,255,0.45) !important;
+    border-color: color-mix(in srgb, var(--color-text) 45%, transparent) !important;
   }
+}
+
+/* Cards com hover: sobem 4px e ganham borda laranja (só mouse; reduced-motion tira o deslocamento). */
+.hover-lift { transition: transform 220ms var(--ease-out), border-color 200ms ease, background-color 200ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover { transform: translateY(-4px); border-color: var(--color-primary); }
+  .process-step h3, .cproc-step h3 { transition: color 160ms ease; }
+  .process-step:hover h3, .cproc-step:hover h3 { color: var(--color-primary-text); }
+  .btn-outline-orange svg, .cta-primary svg { transition: transform 200ms var(--ease-out); }
+  .btn-outline-orange:hover svg, .cta-primary:hover svg { transform: translateX(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift:hover, .btn-outline-orange:hover svg, .cta-primary:hover svg { transform: none; }
+}
+
+/* Botão outline: neutro (borda cinza, texto do tema) e laranja no hover — equivalente ao "ghost" do fundo preto. */
+.btn-outline-orange {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 52px; box-sizing: border-box; padding: 0 32px; border-radius: 999px;
+  border: 1px solid var(--color-border-subtle); background: transparent; color: var(--color-text);
+  font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap;
+  transition: color 160ms ease-out, border-color 160ms ease-out, transform 160ms var(--ease-out);
+}
+.btn-outline-orange:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-outline-orange:hover { color: var(--color-primary-text); border-color: var(--color-primary); }
 }
 
 /* Opções de múltipla escolha do briefing: confirmam o toque logo ao pressionar. */

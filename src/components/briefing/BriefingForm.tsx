@@ -206,7 +206,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
           >
             <div style={{
               height: '100%', borderRadius: '100px', background: '#ff5625',
-              width: `${progressPercent}%`, transition: 'width 0.3s ease-out',
+              width: '100%', transformOrigin: 'left', transform: `scaleX(${progressPercent / 100})`, transition: 'transform 300ms var(--ease-out)',
             }} />
           </div>
         </div>

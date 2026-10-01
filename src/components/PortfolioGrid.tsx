@@ -56,14 +56,14 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
           @media (max-width: 560px) {
             .portfolio-full-grid { grid-template-columns: 1fr; }
           }
-          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+          .portfolio-card-v2-link { display: block; text-decoration: none; height: 100%; transition: transform 160ms var(--ease-out); }
           .portfolio-card-v2-link:active { transform: scale(0.98); }
           .filter-pill:active { transform: scale(0.97); }
           /* Cinza por padrão em mouse, cor no hover: camada cinza com mix-blend-mode: saturation
              cujo opacity anima (compositor), em vez de animar filter na imagem. */
           .portfolio-card-v2-image { isolation: isolate; }
           .portfolio-card-v2-image img {
-            transition: transform 0.5s ease;
+            transition: transform 350ms var(--ease-out);
           }
           @media (hover: hover) and (pointer: fine) {
             .portfolio-card-v2-image::after {
@@ -74,7 +74,7 @@ export default function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
               mix-blend-mode: saturation;
               opacity: 1;
               pointer-events: none;
-              transition: opacity 0.5s ease;
+              transition: opacity 350ms var(--ease-out);
             }
             .portfolio-card-v2-link:hover .portfolio-card-v2-image::after,
             .portfolio-card-v2-link:focus-visible .portfolio-card-v2-image::after,

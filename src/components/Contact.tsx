@@ -226,10 +226,12 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
                     <div
                       style={{
                         height: '100%',
-                        width: `${(secondsLeft / SUCCESS_AUTO_RETURN_SECONDS) * 100}%`,
+                        width: '100%',
+                        transformOrigin: 'left',
+                        transform: `scaleX(${secondsLeft / SUCCESS_AUTO_RETURN_SECONDS})`,
                         background: 'var(--color-primary)',
                         borderRadius: '100px',
-                        transition: 'width 1s linear',
+                        transition: 'transform 1s linear',
                       }}
                     />
                   </div>
