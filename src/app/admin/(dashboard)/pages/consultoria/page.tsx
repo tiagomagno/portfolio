@@ -18,7 +18,7 @@ const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => b
   { title: 'Processo', hint: 'Visão geral (Problema/Solução) e detalhamento de cada etapa.', filter: (i) => i.group === 'consultingProcess' || i.group === 'process' },
   { title: 'Evolução contínua (adendo do processo)', filter: (i) => i.key.startsWith('consulting.pillars.escala.') },
   { title: 'Impacto real', filter: (i) => i.group === 'consultingImpact' },
-  { title: 'Portfólio + Sobre (blocos)', hint: 'O texto do Sobre reduzido vem de aboutBento.p1.', filter: (i) => i.group === 'consultingPage' || i.key === 'aboutBento.p1' || i.key === 'aboutBento.p2' },
+  { title: 'Portfólio + Sobre (blocos)', hint: 'O texto do Sobre reduzido vem de aboutBento.p1.', filter: (i) => i.group === 'consultingPage' || i.key === 'aboutBento.p1' },
   { title: 'FAQ', filter: (i) => i.group === 'faq' },
 ];
 

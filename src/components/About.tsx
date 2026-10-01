@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
+import { splitParagraphs } from '@/lib/paragraphs';
 
 export default function About() {
   const { t } = useLang();
 
-  const paragraphs = [1, 2, 3, 4, 5].map((n) => t(`about.p${n}`));
+  const paragraphs = splitParagraphs([1, 2, 3, 4, 5].map((n) => t(`about.p${n}`)));
 
   return (
     <section id="about" style={{ background: SURFACE.raised, padding: 'var(--section-pad-y) 0' }}>
