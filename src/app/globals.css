@@ -178,6 +178,13 @@ section[id] {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* Tablet (inclusive na horizontal, ex.: iPad Air 1180px): margem lateral de 24px
+   em vez dos 10% do desktop. Notebooks (1280px+) mantêm os 80vw. */
+@media (max-width: 1199px) {
+  :root { --container-max: 100%; }
+  .section-container { padding-left: 24px !important; padding-right: 24px !important; }
+}
+
 /* ============================================
    RESPONSIVE LAYOUT
    ============================================ */
