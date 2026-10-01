@@ -33,14 +33,14 @@ export default function CtaFooter() {
 
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1} direction="up">
-          <div style={{ textAlign: 'center', paddingBottom: '72px' }}>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 auto 16px', maxWidth: '760px' }}>
+          <div style={{ paddingBottom: '72px' }}>
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: '0 0 20px', textWrap: 'balance' }}>
               {t('work.cta.title')}
             </h2>
-            <p style={{ fontSize: '16px', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: '0 auto 32px', maxWidth: '560px' }}>
+            <p style={{ fontSize: 'clamp(1rem, 1.2vw, 1.125rem)', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: '0 0 32px', maxWidth: '620px' }}>
               {t('work.cta.text')}
             </p>
-            <div className="ctaf-btns" style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div className="ctaf-btns" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
               <a
                 href="/briefing"
                 className="cta-primary"

@@ -8,6 +8,10 @@ import type { LabItem } from '@/data/labs';
 import { useLang } from '@/context/LangContext';
 
 
+// Os filtros (Todos / No ar / Protótipos) só voltam quando houver mais projetos que isso — com poucos,
+// só ocupam espaço.
+const FILTERS_MIN_ITEMS = 5;
+
 const matches = (item: LabItem, tab: string) =>
   tab === 'all' || (tab === 'live' ? item.status === 'MVP no ar' : item.status !== 'MVP no ar');
 
@@ -19,24 +23,27 @@ export default function LabsGrid({ items: allItems }: { items: LabItem[] }) {
     { id: 'live', label: t('labs.tab.live') },
     { id: 'proto', label: t('labs.tab.proto') },
   ];
-  const items = allItems.filter((item) => matches(item, tab));
+  const showFilters = allItems.length >= FILTERS_MIN_ITEMS;
+  const items = showFilters ? allItems.filter((item) => matches(item, tab)) : allItems;
 
   return (
     <section id="lab" style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1}>
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: '0 0 16px' }}>
-              <span style={{ color: 'var(--color-primary-text)' }}>{t('labs.title.accent')}</span>
-              {t('labs.title.rest').split('\n').map((line, i) => (i === 0 ? line : <span key={i}><br className="labs-br" />{line}</span>))}
+          <div className="section-head">
+            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+              <span style={{ color: 'var(--color-accent-text, var(--color-primary-text))' }}>{t('labs.title.accent')}</span>
+              {t('labs.title.rest').split('\n').join(' ')}
             </h2>
-            <p style={{ fontSize: 'var(--fs-body-lg)', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 auto', maxWidth: '520px' }}>
-              {t('labs.subtitle')}
-            </p>
+            <div className="section-head-aside">
+              <p>{t('labs.subtitle')}</p>
+            </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '48px' }}>
-            <PillTabs tabs={TABS} activeId={tab} onChange={setTab} layoutId="labs-tabs-indicator" />
-          </div>
+          {showFilters && (
+            <div style={{ display: 'flex', marginBottom: '32px', ['--pill-bg' as string]: 'rgba(0,0,0,0.14)', ['--pill-inactive-text' as string]: 'rgba(11,11,11,0.78)', ['--pill-hover-text' as string]: '#000000', ['--pill-active-bg' as string]: '#0b0b0b', ['--pill-active-text' as string]: '#ffffff' }}>
+              <PillTabs tabs={TABS} activeId={tab} onChange={setTab} layoutId="labs-tabs-indicator" />
+            </div>
+          )}
         </FadeIn>
 
         <style>{`
@@ -64,7 +71,6 @@ export default function LabsGrid({ items: allItems }: { items: LabItem[] }) {
           .labs-frame-phone { width: 205px; height: 440px; border: 5px solid #171b1e; border-radius: 34px; }
           .labs-frame-phone img { height: 100%; object-position: top center; }
           @media (hover: hover) and (pointer: fine) { .labs-card:hover .labs-frame { transform: translateY(-8px) rotate(0deg) !important; } }
-          @media (max-width: 800px) { .labs-br { display: none; } }
           @media (max-width: 800px) { .labs-card { min-height: 520px; border-radius: 24px !important; } }
           @media (hover: hover) and (pointer: fine) { .labs-bento-link:hover .labs-card-cta { background: var(--color-primary-text-hover); border-color: transparent; } }
         `}</style>
@@ -104,7 +110,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
   const frame = FRAMES[index % FRAMES.length];
   return (
     <div
-      className="labs-card"
+      className="labs-card theme-card-outline"
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -127,7 +133,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
               textTransform: 'uppercase',
               lineHeight: 1,
               color: 'var(--color-primary-text)',
-              border: '1px solid rgba(255,86,37,0.7)',
+              border: '1px solid var(--color-primary-text)',
               padding: '6px 10px 5px',
               borderRadius: '999px',
               whiteSpace: 'nowrap',
@@ -179,7 +185,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
             gap: '8px',
             fontSize: '0.75rem',
             fontWeight: 700,
-            color: 'var(--color-text)',
+            color: '#ffffff',
             padding: '0.7rem 1rem',
             borderRadius: '999px',
             border: '1px solid rgba(255,255,255,0.18)',
