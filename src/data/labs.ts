@@ -23,28 +23,28 @@ export const DEFAULT_LAB_ITEMS: Omit<LabItem, 'id' | 'gradient'>[] = [
     tagline: 'Simula a mesma paleta em mobile e desktop, valida a regra 60/30/10 e dá feedback heurístico de hierarquia visual.',
     status: 'MVP no ar',
     href: '',
-    image: '',
+    image: '/labs/design-system-lab.png',
   },
   {
     title: 'Dine — Comanda Digital',
     tagline: 'Gestão de comandas por QR Code pra bares e restaurantes, com separação automática de pedidos entre bar e cozinha.',
     status: 'MVP no ar',
     href: '',
-    image: '',
+    image: '/labs/dine.png',
   },
   {
     title: 'Seu Mercado',
     tagline: 'Escaneia o QR Code da nota fiscal do mercado e organiza preços e gastos automaticamente, sem digitar nada.',
     status: 'Protótipo',
     href: '',
-    image: '',
+    image: '/labs/seu-mercado.png',
   },
   {
     title: 'Webtools',
     tagline: 'Mais de 80 ferramentas gratuitas — conversores, calculadoras e utilitários rodando 100% no navegador, sem upload.',
     status: 'MVP no ar',
     href: 'https://webtools.tiagosmagno.com.br',
-    image: '',
+    image: '/labs/webtools.png',
   },
 ];
 
