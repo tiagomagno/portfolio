@@ -6,16 +6,16 @@ import PillTabs from '@/components/ui/PillTabs';
 import HomeSectionsEditor from '@/components/admin/HomeSectionsEditor';
 import TextGroupEditor from '@/components/admin/TextGroupEditor';
 import SeoEditor from '@/components/admin/SeoEditor';
-import type { ContentItem } from '@/components/admin/TextGroupEditor';
+import type { ContentItem, MergedBlock } from '@/components/admin/TextGroupEditor';
 
 // Na ordem em que aparecem na página. Os filtros são por chave (não só por grupo) porque alguns
 // textos ficam em chaves de outra seção (ex.: o CTA final usa work.cta.*, os Números usam
 // hero.stat2, about.badge e stats.stat4). Renomear as chaves deixaria órfãs as edições já salvas.
-const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => boolean }[] = [
+const SECTIONS: { title: string; hint?: string; filter: (item: ContentItem) => boolean; merge?: MergedBlock }[] = [
   { title: 'Hero', hint: 'Título, nome, texto e botões do topo da Home.', filter: (i) => i.group === 'hero' && !i.key.startsWith('hero.stat') },
-  { title: 'Cases (portfólio)', filter: (i) => ['cases.eyebrow', 'cases.heading', 'cases.intro', 'cases.viewAll'].includes(i.key) },
+  { title: 'Cases (portfólio)', filter: (i) => ['cases.eyebrow', 'cases.heading', 'cases.intro', 'cases.viewAll', 'cases.viewProject'].includes(i.key) },
   { title: 'Processo (Problema → Solução)', filter: (i) => i.group === 'process' },
-  { title: 'Sobre mim', hint: 'Título da seção, nome e textos (Sobre em blocos).', filter: (i) => i.key === 'aboutBento.title' || i.key === 'about.eyebrow' || i.key === 'about.heading' || i.key === 'about.newPhoto.alt' || /^about\.p[1-5]$/.test(i.key) },
+  { title: 'Sobre mim', hint: 'Título da seção, rótulos e o texto de apresentação (um parágrafo por linha).', merge: { label: 'Texto de apresentação', keys: ['about.p1', 'about.p2', 'about.p3', 'about.p4', 'about.p5'] }, filter: (i) => ['about.eyebrow', 'aboutBento.title', 'about.heading', 'about.newPhoto.alt'].includes(i.key) || /^about\.p[1-5]$/.test(i.key) || /^aboutBento\.(expLabel|since|yearsCaption|skillsLabel)$/.test(i.key) },
   { title: 'Sobre: números', hint: 'Os três números do bloco.', filter: (i) => i.key.startsWith('about.badge') || i.key.startsWith('hero.stat') || i.key.startsWith('stats.stat4') },
   { title: 'Sobre: habilidades', hint: 'Rótulos dos grupos e as listas de habilidades (a Home mostra só algumas etiquetas de cada grupo).', filter: (i) => i.group === 'skills' || ['aboutBento.skill2', 'aboutBento.skill5', 'aboutBento.skillAi', 'aboutBento.toolsList', 'aboutBento.aiList'].includes(i.key) },
   { title: 'Sobre: tipos de projetos', filter: (i) => i.key === 'aboutBento.areas' || i.key === 'aboutBento.areasList' },
@@ -75,7 +75,7 @@ export default function AdminPagesHome() {
             ))}
           </div>
           {SECTIONS.map((s) => (
-            <TextGroupEditor key={s.title} title={s.title} hint={s.hint} filter={s.filter} lang={lang} />
+            <TextGroupEditor key={s.title} title={s.title} hint={s.hint} filter={s.filter} lang={lang} merge={s.merge} />
           ))}
         </div>
       )}
