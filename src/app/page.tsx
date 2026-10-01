@@ -50,10 +50,15 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
 const SECTION_GRADIENT: Record<string, string> = {
   hero: GRADIENT.ltr,
   cases: GRADIENT.rtl,
-  services: GRADIENT.ltr,
-  aboutBento: GRADIENT.rtl,
-  labs: GRADIENT.ltr,
   ctaFooter: GRADIENT.rtl,
+};
+
+// Seções com fundo sólido próprio (branco/laranja) em vez do gradiente preto; a classe de tema
+// (globals.css) inverte as cores de texto dentro delas.
+const SECTION_THEME: Record<string, { className: string; background: string }> = {
+  services: { className: 'theme-light', background: '#ffffff' },
+  aboutBento: { className: 'theme-light', background: '#ffffff' },
+  labs: { className: 'theme-primary', background: 'var(--color-primary)' },
 };
 
 const DEFAULT_ORDER: string[] = [...HOME_SECTION_KEYS];
@@ -123,7 +128,8 @@ export default async function Home() {
                 return Section ? <Section key={key} /> : null;
               })();
           if (!section) return null;
-          return <div key={key} style={{ background: SECTION_GRADIENT[key] }}>{section}</div>;
+          const theme = SECTION_THEME[key];
+          return <div key={key} className={theme?.className} style={{ background: theme?.background ?? SECTION_GRADIENT[key] }}>{section}</div>;
         })}
       </main>
     </>

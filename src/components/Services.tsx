@@ -38,25 +38,18 @@ export default function Services() {
         `}</style>
 
         <FadeIn delay={0.1}>
-          <div style={{ marginBottom: '48px' }}>
-            <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
-              {t('process.eyebrow')}
-            </span>
-            <h2
-              style={{
-                fontSize: 'var(--fs-h2)',
-                fontWeight: 900,
-                color: 'var(--color-text)',
-                lineHeight: 1.1,
-                margin: '0 0 16px',
-                maxWidth: '900px',
-              }}
-            >
-              {t('process.title')}
-            </h2>
-            <p style={{ fontSize: 'var(--fs-body)', color: 'var(--color-text-muted)', lineHeight: 1.8, maxWidth: '520px', margin: 0 }}>
-              {t('process.subtitle2')}
-            </p>
+          <div className="section-head">
+            <div>
+              <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
+                {t('process.eyebrow')}
+              </span>
+              <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>
+                {t('process.title')}
+              </h2>
+            </div>
+            <div className="section-head-aside">
+              <p>{t('process.subtitle2')}</p>
+            </div>
           </div>
         </FadeIn>
 

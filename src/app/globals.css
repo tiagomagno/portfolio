@@ -14,7 +14,7 @@
   /* ── Typography Scale ── */
   /* Em rem pra acompanhar o tamanho de texto configurado pelo usuário no navegador. */
   --fs-h1:          clamp(2.75rem, 7vw, 5.25rem);
-  --fs-h2:          clamp(1.75rem, 4vw, 2.75rem);
+  --fs-h2:          clamp(2.25rem, 5.4vw, 4.75rem);
   --fs-card-title:  1.125rem;
   --fs-body-lg:     1rem;
   --fs-btn:         0.875rem;
@@ -74,6 +74,79 @@
 }
 
 /* ============================================
+   TEMAS DE SEÇÃO
+   Cada seção da Home escolhe o fundo (preto, branco ou laranja). Estas classes só redefinem as
+   variáveis de cor no escopo da seção, então os componentes continuam usando var(--color-*).
+   ============================================ */
+/* Preto (padrão do site) — também serve pra "devolver" o escuro a um card dentro de uma seção clara. */
+.theme-dark {
+  --color-bg-card: #1a1a1a;
+  --color-bg-high: #262626;
+  --color-border: #2e2e2e;
+  --color-border-subtle: #3a3a3a;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a8a8a8;
+  --color-text-dim: #71717A;
+  --color-primary-text: #ff5625;
+  --color-primary-text-hover: #e84e20;
+  --color-accent-text: #ff5625;
+  color: var(--color-text);
+}
+/* Branco: o laranja puro não passa em AA como texto sobre branco, então usa uma variante mais escura. */
+.theme-light {
+  --color-bg-card: #f4f4f2;
+  --color-bg-high: #ebebe8;
+  --color-border: #e2e2de;
+  --color-border-subtle: #d6d6d1;
+  --color-text: #111111;
+  --color-text-muted: #55555a;
+  --color-text-dim: #77777c;
+  --color-primary-text: #d63d0f;
+  --color-primary-text-hover: #b8340c;
+  --color-accent-text: #d63d0f;
+  color: var(--color-text);
+}
+/* Laranja da marca: títulos escuros (contraste bem melhor que branco sobre #ff5625), palavra de destaque e texto de apoio em branco. */
+.theme-primary {
+  --color-bg-card: rgba(0, 0, 0, 0.12);
+  --color-bg-high: rgba(0, 0, 0, 0.18);
+  --color-border: rgba(0, 0, 0, 0.22);
+  --color-border-subtle: rgba(0, 0, 0, 0.28);
+  --color-text: #0b0b0b;
+  --color-text-muted: #ffffff;
+  --color-text-dim: rgba(11, 11, 11, 0.6);
+  --color-primary-text: #0b0b0b;
+  --color-primary-text-hover: #000000;
+  --color-accent-text: #ffffff;
+  color: var(--color-text);
+}
+
+/* Card vazado (sem preenchimento) dentro de uma seção .theme-primary: borda, etiqueta e destaques em
+   laranja claro, texto branco. */
+.theme-card-outline {
+  --color-bg-card: transparent;
+  --color-bg-high: rgba(255, 255, 255, 0.12);
+  --color-border: #ffb5a0;
+  --color-border-subtle: #ffb5a0;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.92);
+  --color-text-dim: rgba(255, 255, 255, 0.75);
+  --color-primary-text: #ffb5a0;
+  --color-primary-text-hover: #8f2807;
+  --color-accent-text: #ffffff;
+  color: var(--color-text);
+}
+
+/* Cabeçalho padrão das seções da Home: título à esquerda (~70%) e texto de apoio (+ ações) à direita (~30%). */
+.section-head { display: grid; grid-template-columns: 7fr 3fr; align-items: end; gap: 24px 48px; margin-bottom: 40px; }
+.section-head h2 { text-wrap: balance; }
+.section-head-aside { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.section-head-aside p { font-size: 14px; line-height: 1.7; color: var(--color-text-muted); margin: 0; }
+@media (max-width: 1024px) {
+  .section-head { grid-template-columns: 1fr; }
+}
+
+/* ============================================
    BASE RESET
    ============================================ */
 *,
@@ -106,7 +179,7 @@ h1, h2, h3, h4, h5, h6, button {
 
 /* Tracking acompanha o tamanho: títulos grandes fecham, texto pequeno fica como está. */
 .section-container h2 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.045em;
 }
 @media (max-width: 1024px) {
   .section-container h2 {
@@ -192,7 +265,7 @@ section[id] {
 @media (max-width: 1024px) {
   :root {
     --fs-h1:         clamp(2rem, 9vw, 2.75rem);
-    --fs-h2:         clamp(1.5rem, 7vw, 2rem);
+    --fs-h2:         clamp(1.75rem, 8vw, 2.5rem);
     --fs-card-title: 0.9375rem;
     --fs-body-lg:    1rem;
     --fs-body:       0.9375rem;

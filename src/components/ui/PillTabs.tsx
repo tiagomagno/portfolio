@@ -34,7 +34,7 @@ export default function PillTabs({
       }}
     >
       <style>{`
-        .pill-tab:not([aria-selected="true"]):hover { color: var(--color-primary) !important; }
+        .pill-tab:not([aria-selected="true"]):hover { color: var(--pill-hover-text, var(--color-primary)) !important; }
       `}</style>
       {tabs.map((tab) => {
         const active = tab.id === activeId;
@@ -70,7 +70,7 @@ export default function PillTabs({
                   position: 'absolute',
                   inset: 0,
                   borderRadius: '999px',
-                  background: 'var(--color-text)',
+                  background: 'var(--pill-active-bg, var(--color-text))',
                   zIndex: -1,
                 }}
               />
