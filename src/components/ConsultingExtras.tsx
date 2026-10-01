@@ -1,64 +1,59 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
 
-const ghost = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '8px',
-  height: '52px',
-  boxSizing: 'border-box' as const,
-  padding: '0 32px',
-  borderRadius: '999px',
-  fontSize: '14px',
-  fontWeight: 700,
-  color: 'var(--color-text)',
-  border: '1px solid rgba(255,255,255,0.2)',
-  textDecoration: 'none',
-  whiteSpace: 'nowrap' as const,
-};
-
-// Dois blocos lado a lado: convite pro portfólio (imagem a inserir) e Sobre reduzido, com link pro Sobre da home.
+// Bloco único: foto + sobre (reduzido) e os dois convites (trajetória e portfólio) em botões outline laranja.
 export function CasesAndAbout() {
   const { t } = useLang();
-  const card = { border: '1px solid rgba(255,255,255,0.06)', borderRadius: '28px', padding: '40px 32px', background: 'transparent', display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-start' };
   return (
     <section style={{ background: 'transparent', padding: 'var(--section-pad-y) 0' }}>
       <style>{`
-        .cpair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        @media (max-width: 800px) { .cpair { grid-template-columns: 1fr; } }
+        .cabout { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); border: 1px solid var(--color-border-subtle); border-radius: 32px; overflow: hidden; }
+        .cabout-photo { position: relative; min-height: 440px; }
+        .cabout-photo img { transition: transform 600ms var(--ease-out); }
+        @media (hover: hover) and (pointer: fine) { .cabout:hover .cabout-photo img { transform: scale(1.04); } }
+        @media (prefers-reduced-motion: reduce) { .cabout:hover .cabout-photo img { transform: none; } }
+        .cabout-body { padding: 56px 48px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+        @media (max-width: 800px) {
+          .cabout { grid-template-columns: 1fr; }
+          .cabout-photo { min-height: 0; aspect-ratio: 4 / 5; }
+          .cabout-photo img { transition: transform 600ms var(--ease-out); }
+        @media (hover: hover) and (pointer: fine) { .cabout:hover .cabout-photo img { transform: scale(1.04); } }
+        @media (prefers-reduced-motion: reduce) { .cabout:hover .cabout-photo img { transform: none; } }
+        .cabout-body { padding: 36px 24px; }
+        }
+        @media (max-width: 560px) { .cabout-btns a { width: 100%; } }
       `}</style>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
-        <div className="cpair">
-          <FadeIn style={{ height: '100%' }}>
-            <div style={{ ...card, height: '100%' }}>
-              {/* Espaço reservado pra imagem de chamada do portfólio (a inserir). */}
-              <h2 style={{ fontSize: 'clamp(1.5rem, 2.6vw, 2rem)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 0 12px' }}>{t('consultingPage.cases.title')}</h2>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '440px' }}>{t('consultingPage.cases.text')}</p>
-              <Link href="/portfolio" className="cta-ghost" style={{ ...ghost, marginTop: 'auto' }}>
-                {t('consultingHero.portfolio')}
-                <ArrowRight size={16} />
-              </Link>
+        <FadeIn>
+          <div className="cabout">
+            <div className="cabout-photo">
+              <Image src="/about-photo.webp" alt={t('hero.name')} fill sizes="(max-width: 800px) 100vw, 35vw" style={{ objectFit: 'cover', objectPosition: '30% 40%' }} />
             </div>
-          </FadeIn>
-          <FadeIn delay={0.1} style={{ height: '100%' }}>
-            <div style={{ ...card, height: '100%' }}>
+            <div className="cabout-body">
               <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
                 {t('about.eyebrow')}
               </span>
-              <h2 style={{ fontSize: 'clamp(1.5rem, 2.6vw, 2rem)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.15, margin: '0 0 12px' }}>{t('hero.name')}</h2>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 28px', maxWidth: '440px' }}>{t('aboutBento.p1')}</p>
-              <Link href="/#about" className="cta-ghost" style={{ ...ghost, marginTop: 'auto' }}>
-                {t('consultingPage.about.link')}
-                <ArrowRight size={16} />
-              </Link>
+              <h2 style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.75rem)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: '0 0 16px' }}>{t('hero.name')}</h2>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 12px', maxWidth: '520px' }}>{t('aboutBento.p1')}</p>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 32px', maxWidth: '520px' }}>{t('consultingPage.cases.text')}</p>
+              <div className="cabout-btns" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <Link href="/#about" className="btn-outline-orange">
+                  {t('consultingPage.about.link')}
+                  <ArrowRight size={16} />
+                </Link>
+                <Link href="/portfolio" className="btn-outline-orange">
+                  {t('consultingHero.portfolio')}
+                  <ArrowRight size={16} />
+                </Link>
+              </div>
             </div>
-          </FadeIn>
-        </div>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );

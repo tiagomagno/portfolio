@@ -10,6 +10,13 @@ import CtaFooter from '@/components/CtaFooter';
 import { GRADIENT } from '@/lib/surfaces';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 
+// Fundos fixos da página (as classes de tema, em globals.css, ajustam texto, bordas e cards de cada um).
+const SECTION_THEME_STYLES = {
+  light: { className: 'theme-light', background: '#ffffff' },
+  dark: { className: 'theme-dark', background: '#000000' },
+  primary: { className: 'theme-primary', background: 'var(--color-primary)' },
+};
+
 const DEFAULT_METADATA: Metadata = {
   title: 'Consultoria - Tiago Magno',
   description: 'Consultoria PJ em UX/UI e Product Design: diagnóstico, execução e evolução contínua, integrado ao seu time.',
@@ -31,19 +38,19 @@ export default function ConsultoriaPage() {
         <div style={{ background: GRADIENT.ltr }}>
           <Hero variant="consulting" />
         </div>
-        <div style={{ background: GRADIENT.rtl }}>
+        <div className={SECTION_THEME_STYLES.light.className} style={{ background: SECTION_THEME_STYLES.light.background }}>
           <ConsultingServices />
         </div>
-        <div style={{ background: GRADIENT.ltr }}>
+        <div className={SECTION_THEME_STYLES.dark.className} style={{ background: GRADIENT.ltr }}>
           <ConsultingProcess />
         </div>
-        <div style={{ background: GRADIENT.rtl }}>
+        <div className={SECTION_THEME_STYLES.primary.className} style={{ background: SECTION_THEME_STYLES.primary.background }}>
           <ConsultingImpact />
         </div>
-        <div style={{ background: GRADIENT.ltr }}>
+        <div className={SECTION_THEME_STYLES.light.className} style={{ background: SECTION_THEME_STYLES.light.background }}>
           <CasesAndAbout />
         </div>
-        <div style={{ background: GRADIENT.rtl }}>
+        <div className={SECTION_THEME_STYLES.light.className} style={{ background: SECTION_THEME_STYLES.light.background }}>
           <Faq />
         </div>
         <CtaFooter />

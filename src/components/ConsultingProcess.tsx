@@ -3,6 +3,7 @@
 import { Check } from 'lucide-react';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
+import RevealHeading from './ui/RevealHeading';
 
 // Mesmo visual do Processo da home (duas fases, quatro etapas), agora com o detalhamento de
 // cada etapa (o que acontece na prática) e a evolução contínua como adendo.
@@ -31,12 +32,16 @@ export default function ConsultingProcess() {
       `}</style>
       <div className="section-container" style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 24px' }}>
         <FadeIn delay={0.1}>
-          <div style={{ marginBottom: '48px' }}>
-            <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
-              {t('process.eyebrow')}
-            </span>
-            <h2 style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.1, margin: '0 0 16px' }}>{t('process.title')}</h2>
-            <p style={{ fontSize: 'var(--fs-body)', color: 'var(--color-text-muted)', lineHeight: 1.8, maxWidth: '520px', margin: 0 }}>{t('consultingProcess.subtitle')}</p>
+          <div className="section-head" style={{ marginBottom: '48px' }}>
+            <div>
+              <span style={{ fontSize: 'var(--fs-eyebrow)', fontWeight: 700, color: 'var(--color-primary-text)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', display: 'block', marginBottom: '14px' }}>
+                {t('process.eyebrow')}
+              </span>
+              <RevealHeading style={{ fontSize: 'var(--fs-h2)', fontWeight: 900, color: 'var(--color-text)', lineHeight: 1.05, margin: 0 }}>{t('process.title')}</RevealHeading>
+            </div>
+            <div className="section-head-aside">
+              <p>{t('consultingProcess.subtitle')}</p>
+            </div>
           </div>
         </FadeIn>
 

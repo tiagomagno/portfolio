@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import { useLang } from '@/context/LangContext';
 import FadeIn from './ui/FadeIn';
-import { ArrowRight, ArrowDown, Mail, Linkedin, Camera } from 'lucide-react';
+import { RevealWords } from './ui/RevealHeading';
+import AutoVideo from './ui/AutoVideo';
+import { ArrowRight, ArrowDown, Mail, Linkedin } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 // variant 'consulting': mesmo hero (foto, título grande, botões, scroll), com o conteúdo da página de consultoria.
@@ -20,8 +22,20 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
   return (
     <section id="hero">
       <div style={{ position: 'relative', overflow: 'hidden' }}>
+        {isConsulting && (
+          // Imagem da consultoria como fundo da seção inteira; o degradê escurece só a área do texto.
+          <div aria-hidden="true" className="hero-bg-consulting" style={{ position: 'absolute', inset: 0 }}>
+            <AutoVideo eager src="/consultoria/hero.mp4" poster="/consultoria/hero.webp" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'right center' }} />
+            <div className="hero-bg-shade" style={{ position: 'absolute', inset: 0 }} />
+          </div>
+        )}
 
         <style>{`
+          .hero-bg-shade { background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.88) 28%, rgba(0,0,0,0.45) 46%, rgba(0,0,0,0) 66%), linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.5) 100%); }
+          .hero-grid-consulting { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto !important; }
+          .hero-grid-consulting .hero-inner { max-width: 760px; }
+          @media (max-width: 1024px), (max-aspect-ratio: 3/2) { .hero-bg-shade { background: rgba(0,0,0,0.6); } }
+          @media (max-width: 1024px) { .hero-grid-consulting .hero-inner { max-width: none; } }
           .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; width: 100%; }
           .hero-visual { position: relative; width: 100%; aspect-ratio: 0.9; }
           .hero-photo { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent 0%, #000 16%, #000 90%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%); mask-composite: intersect; }
@@ -87,14 +101,13 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
             alignItems: 'center',
           }}
         >
-          <div className="hero-grid">
+          <div className={isConsulting ? 'hero-grid hero-grid-consulting' : 'hero-grid'}>
             <div className="hero-inner">
               <FadeIn delay={0.05} duration={0.4} direction="none">
                 <h1
                   aria-label={titleText}
-                  className={isConsulting ? 'hero-title-compact' : undefined}
-                  style={{
-                    fontSize: isConsulting ? 'clamp(2.25rem, 3.9vw, 3.4rem)' : 'clamp(3.25rem, 9vw, 8rem)',
+                                    style={{
+                    fontSize: isConsulting ? 'clamp(2.5rem, 5.6vw, 4.75rem)' : 'clamp(3.25rem, 9vw, 8rem)',
                     fontWeight: 800,
                     lineHeight: 0.98,
                     letterSpacing: '-0.03em',
@@ -102,9 +115,9 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
                     margin: '0 0 36px',
                   }}
                 >
-                  <span aria-hidden="true" style={{ display: 'block', color: 'var(--color-primary-text)' }}>{titleFirst}</span>
+                  <span aria-hidden="true" style={{ display: 'block', color: 'var(--color-primary-text)' }}><RevealWords text={titleFirst} delay={0.1} step={0.07} /></span>
                   <span aria-hidden="true" className="hero-title-second" style={{ display: 'block' }}>
-                    {titleRest}
+                    <RevealWords text={titleRest} delay={0.1 + titleFirst.split(' ').length * 0.07} step={0.07} />
                   </span>
                 </h1>
                 <div className="hero-name-row" style={{ display: 'flex', alignItems: 'center', gap: '14px', margin: '0 0 16px' }}>
@@ -175,20 +188,12 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
               </FadeIn>
             </div>
 
-            {/* Retrato + anotações */}
-            <FadeIn className="hero-visual-wrap" delay={0.15} duration={0.5} direction="none">
+            {/* Retrato + anotações (na consultoria a imagem é o fundo da seção) */}
+            {!isConsulting && <FadeIn className="hero-visual-wrap" delay={0.15} duration={0.5} direction="none">
               <div className="hero-visual">
-                {isConsulting ? (
-                  // Espaço reservado pra imagem da página de consultoria (a inserir).
-                  <div className="hero-photo hero-photo-slot" aria-hidden="true">
-                    <Camera size={32} color="rgba(255,255,255,0.15)" />
-                  </div>
-                ) : (
-                  <div className="hero-photo" aria-hidden="true">
-                    <Image src="/eu.jpg" alt="" fill sizes="(max-width: 1024px) 100vw, 40vw" style={{ objectFit: 'cover', objectPosition: 'center' }} priority />
-                  </div>
-                )}
-                {!isConsulting && (
+                <div className="hero-photo" aria-hidden="true">
+                  <Image src="/eu.jpg" alt="" fill sizes="(max-width: 1024px) 100vw, 40vw" style={{ objectFit: 'cover', objectPosition: 'center' }} priority />
+                </div>
                 <div className="hero-note" aria-hidden="true">
                   <svg width="44" height="40" viewBox="0 0 44 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M40 4C24 4 10 14 6 32" />
@@ -196,9 +201,7 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
                   </svg>
                   <span>{t('hero.note')}</span>
                 </div>
-                )}
 
-                {!isConsulting && (
                 <div className="hero-bottom-stack">
                   <div className="hero-status">
                     <span className="hero-status-dot" />
@@ -209,9 +212,8 @@ export default function Hero({ variant = 'home' }: { variant?: 'home' | 'consult
                     </p>
                   </div>
                 </div>
-                )}
               </div>
-            </FadeIn>
+            </FadeIn>}
           </div>
         </div>
 
