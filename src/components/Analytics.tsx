@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { useLang } from '@/context/LangContext';
 import { CONSENT_KEY, captureAttribution, getConsent, track, type Consent } from '@/lib/analytics';
@@ -19,6 +20,7 @@ export const OPEN_CONSENT_EVENT = 'open-cookie-preferences';
 // componente não carrega nada e nem exibe o banner.
 export default function Analytics() {
   const { lang } = useLang();
+  const pathname = usePathname();
   const [config, setConfig] = useState<Config | null>(null);
   const [consent, setConsent] = useState<Consent>(null);
   const [reopened, setReopened] = useState(false);
@@ -74,6 +76,10 @@ export default function Analytics() {
   };
 
   const pt = lang === 'pt-BR';
+
+  // O painel admin mostra dados de leads: nenhuma ferramenta de medição (Clarity grava a tela)
+  // nem o banner devem rodar lá. Os hooks acima rodam sempre; só a saída é suprimida.
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <>
