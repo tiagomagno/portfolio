@@ -7,6 +7,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 import FadeIn from './ui/FadeIn';
 import { SURFACE } from '@/lib/surfaces';
 import { Check, Send } from 'lucide-react';
+import { getAttribution, track } from '@/lib/analytics';
 
 type SubmitStatus = 'idle' | 'sending' | 'success' | 'error';
 
@@ -64,6 +65,7 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
         name: formData.get('name'),
         email: formData.get('email'),
         message: formData.get('message'),
+        ...getAttribution(),
       }),
     }).catch(() => {});
 
@@ -75,6 +77,7 @@ export default function Contact({ recipientEmail }: { recipientEmail: string }) 
       });
       if (res.ok) {
         setStatus('success');
+        track('contact_submit');
         form.reset();
       } else {
         setStatus('error');

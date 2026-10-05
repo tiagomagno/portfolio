@@ -19,6 +19,7 @@ const manrope = Manrope({
 
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
+import Analytics from '@/components/Analytics';
 import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import { getSeoOverride, withSeoOverride } from '@/lib/seo';
 import { getSiteSettings } from '@/data/siteSettings';
@@ -111,6 +112,7 @@ export default async function RootLayout({
             <SiteSettingsProvider>
               {children}
               <WhatsAppFloat />
+              <Analytics />
             </SiteSettingsProvider>
           </LangProvider>
         </ThemeProvider>

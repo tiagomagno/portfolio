@@ -6,6 +6,7 @@ import { useLang } from '@/context/LangContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import Logo from './ui/Logo';
 import WhatsappIcon from './ui/WhatsappIcon';
+import { OPEN_CONSENT_EVENT } from './Analytics';
 
 /** Formata "5592981168163" como "+55 92 98116-8163" — best-effort, só pra exibição. */
 function formatWhatsapp(digits: string): string {
@@ -15,7 +16,7 @@ function formatWhatsapp(digits: string): string {
 
 // Linha do rodapé usada em todas as páginas: logo | e-mail, WhatsApp e LinkedIn | copyright.
 export default function FooterBar() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { brandName, contactEmail, linkedinUrl, whatsappNumber } = useSiteSettings();
   const year = new Date().getFullYear();
 
@@ -53,6 +54,14 @@ export default function FooterBar() {
         <Link href="/privacidade" style={{ color: 'inherit', textDecoration: 'underline' }}>
           {t('footer.privacy')}
         </Link>
+        {' · '}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event(OPEN_CONSENT_EVENT))}
+          style={{ background: 'none', border: 'none', padding: 0, color: 'inherit', font: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+        >
+          {lang === 'pt-BR' ? 'Preferências de cookies' : 'Cookie preferences'}
+        </button>
       </p>
     </div>
   );

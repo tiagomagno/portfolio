@@ -19,6 +19,7 @@ import {
   getEngagementFormatLabel,
   getPreferredContactLabel,
 } from '@/lib/briefing';
+import { getAttribution, track } from '@/lib/analytics';
 import { BriefingStep1 } from './BriefingStep1';
 import BriefingStep2 from './BriefingStep2';
 import { BriefingStep3 } from './BriefingStep3';
@@ -85,6 +86,10 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
     stepContentRef.current?.focus();
   }, [currentStepKey]);
 
+  useEffect(() => {
+    track('briefing_start');
+  }, []);
+
   const goNext = async () => {
     const fieldsToValidate = getFieldsForStep(currentStepKey);
     const ok = await trigger(fieldsToValidate as (keyof BriefingFormData)[]);
@@ -95,6 +100,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
       if (nextStep === totalSteps) {
         clearErrors(['name', 'email', 'whatsapp', 'preferredContact']);
       }
+      track('briefing_step', { step: currentStep });
       setCurrentStep(nextStep);
     }
   };
@@ -131,7 +137,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
       fetch('/api/briefing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, email: data.email, ...leadFields }),
+        body: JSON.stringify({ name: data.name, email: data.email, ...leadFields, ...getAttribution() }),
       }).catch(() => {});
 
       const res = await fetch(`https://formsubmit.co/ajax/${recipientEmail}`, {
@@ -142,6 +148,7 @@ export function BriefingForm({ recipientEmail }: { recipientEmail: string }) {
       const resData = await res.json();
       if (res.ok && resData.success === 'true') {
         setSubmitStatus('success');
+        track('briefing_submit');
       } else {
         setSubmitStatus('error');
         setErrorMessage(resData.message ?? 'Não foi possível enviar. Tente novamente.');

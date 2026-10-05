@@ -8,6 +8,7 @@ export default function WhatsAppFloat() {
     <aside aria-label="Contato rápido pelo WhatsApp">
       <a
         href={`https://wa.me/${whatsappNumber}`}
+        data-track-location="float"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Abrir conversa no WhatsApp (nova aba)"

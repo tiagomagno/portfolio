@@ -44,6 +44,7 @@ export default function CtaFooter() {
             <div className="ctaf-btns" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
               <a
                 href="/briefing"
+                data-track-location="cta_footer"
                 className="cta-primary"
                 style={{
                   display: 'inline-flex',
@@ -67,6 +68,7 @@ export default function CtaFooter() {
               </a>
               <a
                 href={whatsappHref}
+                data-track-location="cta_footer"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ctaf-whatsapp"
