@@ -2,14 +2,6 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "webtools",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "cwd": "${workspaceFolder}/webtools",
-      "port": 3001,
-      "autoPort": false
-    },
-    {
       "name": "portfolio-designer",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
